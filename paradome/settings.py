@@ -30,11 +30,11 @@ SECRET_KEY = str(os.environ.get('SECRET_KEY'))
 DEBUG = str(os.environ.get('DEBUG')) == "1"
 
 ALLOWED_HOSTS = ['paradome.pythonanywhere.com']
+# ALLOWED_HOSTS = []
 
 
-# cart
 SESSION_COOKIE_AGE = 86400
-CART_SESSION_ID = 'cart'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -104,7 +104,9 @@ WSGI_APPLICATION = 'paradome.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
+DB_NAME = "paradomedatabase"
+DB_USER = "angel_of_chaos"
+DB_PASSWORD = "11qq22ww"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -115,10 +117,16 @@ DATABASES = {
         'PORT': '3306',
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
-
-        }
+        },
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': DB_NAME,
+    #     'USER': DB_USER,
+    #     'PASSWORD': DB_PASSWORD,
+    #     'HOST': 'localhost',
+    #     'PORT': '5432'
+    # },
 }
-
 
 
 # Password validation
