@@ -1,0 +1,138 @@
+{% extends "HusseinAh/base.html" %}
+{% load static %}
+{% block title %}
+{{dome.title}}
+{% endblock title %}
+
+{% block base%}
+<main>
+
+  <div class="columns is-mobile">
+    <div class="column is-2">
+      <div id="dropdown-domes" class="dropdown">
+        <div class="dropdown-trigger">
+          <button id="domesbtn" class="button" aria-haspopup="true" aria-controls="dropdown-menu3">
+            <span>Domes</span>
+          </button>
+        </div>
+        <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+          <div class="dropdown-content" hx-get="{%url 'domes:user-domes' %}" hx-trigger="revealed" hx-swap="innerHTML" style="overflow-y: scroll;max-height:70vh">
+          </div>
+        </div>
+      </div>
+      <aside class="menu">
+        <p class="menu-label">
+          General
+        </p>
+        <ul class="menu-list">
+          <li>
+            <a hx-get="{% url 'domes:dome-info' dome.id %}" hx-target="#main-content" hx-swap="innerHTML">Info</a>
+          </li>
+          <li><a hx-get="{% url 'posts:htmxdomeposts' dome.id %}" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML">Posts</a></li>
+          <li><a hx-get="{% url 'domes:dome-members' dome.id %}" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML">Members</a></li>
+        </ul>
+        <p class="menu-label">
+          Upcomming Features
+        </p>
+        <ul class="menu-list">
+          <li><a>Bookify</a></li>
+          <li><a>Events</a></li>
+          <li>
+            <a>Manage Your Team</a>
+            <ul>
+              <li><a>Tasks</a></li>
+              <li><a>Polls</a></li>
+              <li><a>Invitations</a></li>
+            </ul>
+          </li>
+          <li><a>Statics</a></li>
+          <li><a>rules</a></li>
+        </ul>
+      </aside>
+    </div>
+    <div class="column is-8 is-centered">
+      <div class="container" id="main-content">
+        {% include 'domes/dome_info.html'%}
+      </div>
+    </div>
+
+    <div class="column">
+      {% include 'domes/dome_detail_categories.html' %}
+    </div>
+  </div>
+                
+                
+
+        {% comment %} <nav class="navbar is-fixed-bottom">
+          <form method="post">
+            {% csrf_token %}
+            <div class="field has-addons-centered">
+               <div class="control">
+                   {{ form }}
+               </div>
+               <div class="control">
+                   <button class="button is-light" type="submit">comment</button>
+               </div>
+            </div>
+       </form>
+      </nav>
+        <!-- comments -->
+        {% if dome.comments.all %}
+
+        {% for comment in page_obj %}
+        <div class="box">
+            <article class="media">
+              <div class="media-left">
+                {% if comment.user.profile.picture %}
+                <figure class="image is-48x48">
+                    <img src="{{ comment.user.profile.picture.path }}" alt="{{ comment.user.profile.username }}">
+                  </figure>
+                  {% else %}
+                    <figure class="image is-48x48">
+                    <img src="https://bulma.io/images/placeholders/96x96.png" alt="{{ comment.user.profile.username }}">
+                    </figure>
+                {% endif %}
+              </div>
+              <div class="media-content">
+                <div class="content">
+                  <p>
+                    <strong>{{comment.user}}</strong>  <small>{{comment.commented}}</small>
+                    <br>
+                    <pre>{{comment.comment}}</pre>
+                  </p>
+                </div>
+              </div>
+            </article>
+          </div>
+        
+        
+        {% endfor %}
+                <nav class="pagination is-flex is-justify-content-center is-align-content-center" role="navigation" aria-label="pagination">
+                {% if page_obj.has_previous %}
+                <a class="pagination-previous" href="?page=1">first</a>
+                <a class="pagination-previous" href="?page={{ page_obj.previous_page_number }}">back</a>
+                {%endif%}
+                {% if page_obj.has_next %}
+                <a class="pagination-next" href="?page={{ page_obj.next_page_number }}">load more</a>
+                {% endif %}
+                </nav>
+        {% else %}
+        <p>no comments yet..</p>
+        {%endif%} {% endcomment %}
+        
+        
+
+        
+        </main>
+    <script src="{% static 'js/htmx.min.js' %}" defer></script>
+    <script>
+      document.body.addEventListener('htmx:configRequest', (event) => {
+        event.detail.headers['X-CSRFToken'] = '{{csrf_token}}';
+      });
+      domeBtn = document.querySelector('#domesbtn');
+      domesDropdown = document.querySelector('#dropdown-domes');
+      domeBtn.addEventListener('click', ()=>{
+        domesDropdown.classList.toggle('is-active')
+      })
+    </script>
+  {%endblock base%}

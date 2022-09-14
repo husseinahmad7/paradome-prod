@@ -1,0 +1,19 @@
+{% extends "HusseinAh/base.html" %}
+{% load static %}
+{% block title %}
+Delete {{ object.question_text }}
+{% endblock title %}
+
+{% block base%}
+<main>
+    <form method="post">
+            {% csrf_token %}
+        <fieldset>
+            <legend>delete the post</legend>
+        <h2>are you sure you want to delete the post "{{object.question_text}}"</h2>
+        <button type="submit">delete</button>
+        <a href="{% url 'posts:post-detail' object.pk %}">cancel</a>
+    </fieldset>
+    </form>
+</main>
+{%endblock base%}

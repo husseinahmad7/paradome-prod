@@ -1,0 +1,69 @@
+{%if owned%}
+{%for dome in owned%}
+<div class="dropdown-item p-0">
+    <article class="media">
+        <figure class="media-left">
+          <p class="image is-64x64">
+            <img class="is-rounded" src="{{ dome.picture.url}}">
+          </p>
+        </figure>
+        <div class="media-content">
+          <div class="content">
+            <p>
+              <strong>
+                <a class="heading is-link" href="{% url 'domes:dome-detail' dome.pk %}">
+                    {{dome.title}}
+                </a>
+              </strong>
+            </p>
+          </div>
+      </article>
+</div>
+{%endfor%}
+{%endif%}
+{%if admin%}
+{%for dome in admin%}
+<div class="dropdown-item p-0">
+    <article class="media">
+        <figure class="media-left">
+          <p class="image is-32x32 is-1by1">
+            <img class="is-rounded" src="{{ dome.picture.url}}">
+          </p>
+        </figure>
+        <div class="media-content">
+          <div class="content">
+            <p>
+              <strong>
+                <a class="heading is-link" href="{% url 'domes:dome-detail' dome.pk %}">
+                    {{dome.title}}
+                </a>
+            </strong>
+            </p>
+          </div>
+      </article>
+</div>
+{%endfor%}
+{%endif%}
+{%if member%}
+{%for dome in member%}
+<div class="dropdown-item p-0">
+    <article class="media">
+        <figure class="media-left">
+          <p class="image is-32x32 is-1by1">
+            <img class="is-rounded" src="{{ dome.picture.url}}">
+          </p>
+        </figure>
+        <div class="media-content">
+          <div class="content">
+            <p>
+              <strong>
+                <a class="heading is-link" href="{% url 'domes:dome-detail' dome.pk %}">
+                {{dome.title}}
+                </a>
+            </strong>
+            </p>
+          </div>
+      </article>
+</div>
+{%endfor%}
+{%endif%}

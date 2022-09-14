@@ -1,0 +1,20 @@
+{% extends 'HusseinAh/base.html' %}
+{% block title %}
+Create Chat Channel
+{% endblock title %}
+
+{% block base %}
+
+<div>
+    {% load crispy_forms_tags %}
+<form method="POST">
+    <fieldset>
+        <legend>New Chat channel</legend>
+    {% csrf_token %}
+    {{ form|crispy }}
+    
+    <input class="button is-primary" type="submit" value="Create">
+</fieldset>
+</form>
+</div>
+{% endblock %}

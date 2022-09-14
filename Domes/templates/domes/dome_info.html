@@ -1,0 +1,87 @@
+<div class="card">
+    <div class="card-image">
+      {% if dome.banner %}
+      <figure class="image is-3by1">
+          <img src="{{ dome.banner.url }}" alt="{{dome.title}}">
+        </figure>
+      {% endif %}
+    </div>
+
+  <div class="card-content">
+     <div class="media">
+         <div class="media-left">
+             {% if dome.user.profile.picture %}
+             <figure class="image is-48x48 is-1by1">
+                 <img class="is-rounded" src="{{ dome.user.profile.picture.url }}" alt="{{ dome.user.username }} image">
+               </figure>
+             {% else %}
+             <figure class="image is-48x48 is-1by1">
+             <img class="is-rounded" src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
+           </figure>
+             {% endif %}
+           
+         </div>
+         <div class="media-content">
+           <p class="title is-4"><a href="{% url 'posts:user-posts' dome.user.username %}">{{ dome.user.username }}</a></p>
+         </div>
+       </div>
+       <div class="card-header">
+         <div class="card-header-title is-centered">
+            <nav class="level is-mobile">
+                  {% if dome.picture %}
+                  <div class="level-item has-text-centered">
+                    <div>
+                        <figure class="image is-48x48 is-1by1">
+                            <img class="is-rounded" src="{{ dome.picture.url }}" alt="{{dome.title}}">
+                          </figure>
+                      </div>
+                  </div>
+                  {% endif %}
+                  <div class="level-item has-text-centered">
+                    <div>
+                  <p class="title">{{ dome.title }}</p>
+                    </div>
+                  </div>
+              </nav>
+         </div>
+     </div>
+  </div>
+ <div class="card-content">
+   <div class="content">
+       <h5 class="subtitle is-5">{{ dome.description }}</h5>
+     <br>
+     <time datetime="2016-1-1">{{ dome.date }}</time>
+     {% if dome.user == user %}
+     <br>
+     <div class="field is-horizontal">
+      <div class="field-label is-normal">
+        <label class="label">Invite Link</label>
+      </div>
+      <div class="field-body">
+        <div class="field">
+          <p class="control">
+            <input class="input is-small" type="text" value="{{dome.get_invitation_link}}" readonly>
+          </p>
+        </div>
+      </div>
+    </div>
+    {%endif%}
+   </div>
+</div>
+ <div class="card-footer">
+     <div class="card-footer-item">
+         <span>{{dome.posts.count}} post{{dome.posts.count|pluralize}}</span>
+     </div>
+     <div class="card-footer-item">
+         <span>{{dome.members.count}} member{{dome.members.count|pluralize}}</span>
+     </div>
+     {% if dome.user == user %}
+     <div class="card-footer-item">
+        <a class="button is-secondary" href="{%url 'domes:dome-update' dome.pk %}">update</a>
+     </div>
+     <div class="card-footer-item">
+        <a class="button is-danger" href="{% url 'domes:dome-delete' dome.pk %}">delete</a>
+     </div>
+    {%endif%}
+</div>
+</div>

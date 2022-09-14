@@ -1,0 +1,93 @@
+<div class="is-centered">
+  <a href="{% url 'posts:domepost-create' dome_id %}">new post</a>
+</div>
+{% if object %}
+{% comment %} <div class="columns is-multiline is-mobile is-centered">
+    {% endcomment %}
+<div id="posts-container">
+<div id="posts">
+{% for post in object %}
+  {% comment %} <div class="column"> {% endcomment %}
+      <div class="card is-centered">
+      <div class="card-content">
+        <div class="media">
+            <div class="media-left">
+                {% if post.user.profile.picture %}
+                <figure class="image is-48x48 is-1by1">
+                    <img class="is-rounded" src="{{ post.user.profile.picture.url }}" alt="{{ post.user.username }} image">
+                  </figure>
+                {% else %}
+                <figure class="image is-48x48 is-1by1">
+                <img class="is-rounded" src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
+              </figure>
+                {% endif %}
+              
+            </div>
+            <div class="media-content">
+              <p class="title is-4"><a href="{% url 'posts:user-posts' post.user.username %}">{{ post.user.username }}</a></p>
+            </div>
+          </div>
+          <div class="card-header">
+            <div class="card-header-title is-centered">
+                {{ post.question_text }}
+            </div>
+        </div>
+      </div>
+    <div class="card-image">
+        {% if post.picture %}
+        <figure class="image is-4by3">
+            <img src="{{ post.picture.url }}" alt="{{post.question_text}}">
+          </figure>
+        {% endif %}
+      
+    </div>
+    <div class="card-content">
+        <div class="content">
+          {% autoescape off %}
+          {{ post.content|truncatechars_html:100 }}
+          {% endautoescape %}
+        <br>
+        {%for tag in post.tags.all %}
+            <span class="tag is-info is-light"><a href="{{ tag.get_absolute_url }}">{{tag}}</a></span>
+        {% endfor %}
+        <br>
+        <time datetime="2016-1-1">{{ post.posted_date }}</time>
+        </div>
+    </div>
+        <div class="card-footer">
+        {% if user.is_authenticated %}
+          <div class="card-footer-item" id="like{{post.pk}}">
+           {% if post.pk in likedset %}
+           <a hx-post="{% url 'posts:like' post.pk %}" hx-target="#like{{post.pk}}" hx-swap="innerHtml" class="button is-link">{{post.likes}} like{{post.likes|pluralize}}</a>
+           {% else %}
+           <a hx-post="{% url 'posts:like' post.pk %}" hx-target="#like{{post.pk}}" hx-swap="innerHtml">{{post.likes}} like{{post.likes|pluralize}}</a>
+           {% endif %}
+          </div>
+       {%endif%}
+        <div class="card-footer-item">
+            <a href="{% url 'posts:post-detail' post.pk %}" >{{post.comment_count}} comment{{post.comment_count|pluralize}}</a>
+        </div>
+    </div>
+  </div>
+
+  
+{% endfor %}
+
+
+{% else %}
+<section class="hero is-warning is-small">
+    <div class="hero-body">
+      <p class="title">
+        No posts yet..
+      </p>
+    </div>
+</section>
+{% endif %}
+
+{% if is_paginated %}
+    {% if page_obj.has_next %}
+    <div hx-get="{% url 'posts:htmxdomeposts' dome_id %}?page={{ page_obj.next_page_number }}" hx-trigger="revealed" hx-swap="beforeend" hx-target="#posts-container" hx-select="#posts"></div>
+    {% endif %}
+{%endif%}
+</div>
+</div>

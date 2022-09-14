@@ -1,0 +1,204 @@
+{% extends "HusseinAh/base.html" %}
+{% load static %}
+{% block title %}
+{{ object.question_text }}
+{% endblock title %}
+
+{% block base%}
+        <main>
+        <div class="columns is-centered">
+            <div class="column is-11">
+            <div class="card">
+            <div class="card-content">
+               <div class="media">
+                   <div class="media-left">
+                       {% if object.user.profile.picture %}
+                       <figure class="image is-48x48 is-1by1">
+                           <img class="is-rounded" src="{{ object.user.profile.picture.url }}" alt="{{ object.user.username }} image">
+                         </figure>
+                       {% else %}
+                       <figure class="image is-48x48 is-1by1">
+                       <img class="is-rounded" src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
+                     </figure>
+                       {% endif %}
+                     
+                   </div>
+                   <div class="media-content">
+                     <p class="title is-4"><a href="{% url 'posts:user-posts' object.user.username %}">{{ object.user.username }}</a></p>
+                     {% if object.dome %}
+                     <p class="subtitle is-6 tag is-info is-light">
+                      <a href="{{ object.dome.get_absolute_url }}">
+                        <span>#</span>{{ object.dome.title }}
+                      </a>
+                    </p>
+                     {% endif %}
+                     {% if object.user == user %}
+                        <div>
+                        <a href="{% url 'posts:post-update' object.pk %}">update</a>
+                        <a href="{% url 'posts:post-delete' object.pk %}">delete</a>
+                        </div>
+                    {%endif%}
+                   </div>
+                 </div>
+                 <div class="card-header">
+                   <div class="card-header-title is-centered">
+                       {{ object.question_text }}
+                   </div>
+               </div>
+            </div>
+           <div class="card-image">
+               {% if object.picture %}
+               <figure class="image is-4by3">
+                   <img src="{{ object.picture.url }}" alt="{{object.picture.tags.first}}">
+                 </figure>
+               {% endif %}
+             
+           </div>
+           <div class="card-content">
+             <div class="content">
+                 {{ object.content|safe }}
+                 <br>
+                 {%for tag in object.tags.all %}
+        
+               <span class="tag is-info is-light"><a href="{{ tag.get_absolute_url }}">{{tag}}</a></span>
+                {% endfor %}
+               <br>
+               <time datetime="2016-1-1">{{ object.posted_date }}</time>
+             </div>
+           </div>
+           <div class="card-footer">
+            {% if user.is_authenticated %}
+               <div class="card-footer-item" id="like{{object.pk}}">
+                {% if liked %}
+                <a hx-post="{% url 'posts:like' object.pk %}" hx-target="#like{{object.pk}}" hx-swap="innerHtml" class="button is-link">{{object.likes}} like{{object.likes|pluralize}}</a>
+                {% else %}
+                <a hx-post="{% url 'posts:like' object.pk %}" hx-target="#like{{object.pk}}" hx-swap="innerHtml">{{object.likes}} like{{object.likes|pluralize}}</a>
+                {% endif %}
+               </div>
+            {%endif%}
+               <div class="card-footer-item">
+                   <a href="{% url 'posts:post-detail' object.pk %}" >{{object.comment_count}} comment{{object.comment_count|pluralize}}</a>
+               </div>
+               {% if  user.is_authenticated %}
+               {% if favorite is True %}
+                <div class="card-footer-item">
+                  <a href="{% url 'posts:favorite' post.pk %}">remove from saved</a>
+                </div>
+                {% else %}
+               <div class="card-footer-item">
+                   <a href="{% url 'posts:favorite' post.pk %}">add to saved</a>
+               </div>
+                {% endif %}
+                {% endif %}
+           </div>
+         </div>
+        </div>
+        </div>
+        
+         <!-- add comment form -->
+        <div class="container">
+          <form method="post">
+            {% csrf_token %}
+            {% load crispy_forms_tags %}
+            <div class="field has-addons-centered">
+               <div class="control">
+                {{form.media}}
+                   {{ form|crispy }}
+               </div>
+               <div class="control">
+                   <button class="button is-light" type="submit">comment</button>
+               </div>
+            </div>
+       </form>
+      </div>
+        <!-- comments -->
+        {% if object.comments.all %}
+
+        {% for comment in page_obj %}
+        <div class="box fade-me-out">
+            <article class="media">
+              <div class="media-left">
+                {% if comment.user.profile.picture %}
+                <figure class="image is-48x48 is-1by1">
+                    <img src="{{ comment.user.profile.picture.url }}" alt="{{ comment.user.profile.username }}">
+                  </figure>
+                  {% else %}
+                    <figure class="image is-48x48 is-1by1">
+                    <img src="https://bulma.io/images/placeholders/96x96.png" alt="{{ comment.user.profile.username }}">
+                    </figure>
+                {% endif %}
+              </div>
+              <div class="media-content">
+                <div class="content">
+                  <p>
+                    <strong>{{comment.user}}</strong>  <small>{{comment.commented}}</small> {% if comment.user == user or user in dome_owner or user in dome_mods %}
+                    <button hx-delete="{% url 'posts:comment-delete' comment.pk %}" hx-target="closest .box" hx-swap="outerHTML swap:1s" hx-confirm="Are you sure you wish to remove this Member?" class="delete" aria-label="delete"></button>
+                          {%endif%}
+                    <br>
+                    {{comment.comment|safe}}
+                  </p>
+                </div>
+              </div>
+              <a hx-get="{% url 'posts:comment-replies' comment.pk %}" hx-target="body" hx-swap="beforeend">
+                {{comment.children.count}} repl{{comment.children.count|pluralize:"y,ies"}}
+              </a>
+            </article>
+          </div>
+        
+        
+        {% endfor %}
+                <nav class="pagination is-flex is-justify-content-center is-align-content-center" role="navigation" aria-label="pagination">
+                {% if page_obj.has_previous %}
+                <a class="pagination-previous" href="?page=1">first</a>
+                <a class="pagination-previous" href="?page={{ page_obj.previous_page_number }}">back</a>
+                {%endif%}
+                {% if page_obj.has_next %}
+                <a class="pagination-next" href="?page={{ page_obj.next_page_number }}">load more</a>
+                {% endif %}
+                </nav>
+        {% else %}
+        <section class="hero is-warning is-small">
+          <div class="hero-body">
+            <p class="title">
+              No comments yet..
+            </p>
+          </div>
+        </section>
+        {%endif%}
+        
+        
+
+        
+        </main>
+    <script src="{% static 'js/htmx.min.js' %}" defer></script>
+    <script>
+      document.body.addEventListener('htmx:configRequest', (event) => {
+        event.detail.headers['X-CSRFToken'] = '{{csrf_token}}';
+      });
+    </script>
+
+<script>
+function closeModal($el) {
+  // $el.classList.remove('is-active');
+  $el.remove();
+}
+
+function closeAllModals() {
+  (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+    closeModal($modal);
+  });
+}
+</script>
+    <script>
+      document.body.addEventListener('htmx:load', function(evt) {
+        // Add a keyboard event to close all modals
+        document.addEventListener('keydown', (event) => {
+          const e = event || window.event;
+      
+          if (e.keyCode === 27) { // Escape key
+            closeAllModals();
+          }
+        });
+      });
+    </script>
+{%endblock base%}

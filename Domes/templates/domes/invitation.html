@@ -1,0 +1,57 @@
+{% extends "HusseinAh/base.html" %}
+{% load static %}
+{% block title %}
+{{object.title}}
+{% endblock title %}
+
+{% block base %}
+<main>
+{% if is_member == False %}
+    <section class="hero is-primary is-fullheight-with-navbar">
+        <div class="hero-body">
+            <div class="container has-text-centered">
+          <p class="title">
+            <form method="POST">
+                <fieldset>
+                    <legend>Accept Invitation to {{object.title}}</legend>
+            {% csrf_token %}
+        
+                    <button class="button is-primary" name="join" value="join">
+                        join
+                    </button>
+            </fieldset>
+            </form>
+          </p>
+          <p class="subtitle">
+            {{object.description}}
+          </p>
+        </div>
+        </div>
+        <div class="hero-foot">
+            <nav class="tabs is-boxed is-fullwidth">
+              <div class="container has-text-centered">
+                <ul>
+                  <li>
+                    <span>{{dome.posts.count}} post{{dome.posts.count|pluralize}}</span>
+                  </li>
+                  <li>
+                    <span>{{dome.members.count}} member{{dome.members.count|pluralize}}</span>
+                  </li>
+                </ul>
+              </div>
+            </nav>
+        </div>
+      </section>
+{%else%}
+
+<section class="hero is-warning is-fullheight-with-navbar">
+    <div class="hero-body">
+      <p class="title">
+        You are already a member in <a href="{{object.get_absolute_url}}">{{object.title}}</a>
+      </p>
+    </div>
+  </section>
+{%endif%}
+    
+</main>
+{%endblock base%}

@@ -1,0 +1,45 @@
+{% extends "HusseinAh/base.html" %}
+{% load static %}
+{% block title %}
+Login
+{% endblock title %}
+
+{% block base %}
+
+{% if message %}
+<section class="hero is-warning">
+    <div class="hero-body">
+      <p class="title">
+        Warning:
+      </p>
+      <p class="subtitle">
+        {{ message }}
+      </p>
+    </div>
+  </section>
+{% endif %}
+
+
+<section class="hero is-link is-fullheight-with-navbar">
+    <div class="hero-body" style="justify-content: space-around">
+        <div class="has-text-centered">
+        {% load crispy_forms_tags %}
+        <form action="{% url 'users:login' %}" method="POST">
+            <fieldset>
+                <legend>Login</legend>
+            {% csrf_token %}
+            <table>
+                <input type="hidden" name="next" value="{{ next }}">
+            {{ form|crispy }}
+            
+            <div class="control">
+                <button id="submit-btn" class="button is-primary" type="submit">Send</button>
+            </div>
+            </table>
+            <a href="{% url 'password_reset' %}">reset your password</a>
+            </fieldset>
+        </form>
+    </div>
+    </div>
+</section>
+{% endblock %}

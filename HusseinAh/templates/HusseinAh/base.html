@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" class="has-navbar-fixed-top">
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+        {% load static %}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="{% static 'style-addones.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'normalize.css' %}">
+        
+        
+{% comment %} <link rel="stylesheet" type="text/css" href="{% static 'css/stars.css' %}"> {% endcomment %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+
+{% block style %}{% endblock %}
+    </head>
+    <body>
+        <header>
+            {% include 'HusseinAh/navbar.html' %}
+        {% comment %} <div class="wrapper">
+            <input type="checkbox" id="menu-bar">
+            <label for="menu-bar">menu</label>
+            <div class="top-corner">
+                logo
+            </div>
+            <nav class="navigation">
+                <ul>
+                    <li class="home-meta"><a href="{% url 'posts:index' %}">Posts</a></li>
+                    {% if user.is_anonymous %}
+                    <li class="project-meta"><a href="">projects +</a>
+                        <ul>
+                            <li><a href="">my portfolio</a></li>
+                            <li><a href="">paradome</a>
+                                <ul>
+                                    <li><span>public posts</span></li>
+                                    <li><span>follow others</span></li>
+                                    <li><span>messages</span></li>
+                                </ul>
+                            </li>
+                            <li><a href="{% url 'api' %}">API</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    <li class="about-meta"><a href="{% url 'HusseinAh:home' %}#about">about</a></li>
+                    <li class="contact-meta"><a href="{% url 'HusseinAh:home' %}#contact">contact</a></li>
+                </ul>
+            </nav>
+            <div class="right-column">
+                {% if user.is_authenticated %}
+                <a href="{% url 'posts:stream' %}">Followed Posts</a>
+                <a href="{% url 'messages:inbox' %}">{% if unread_count %}<span class="badge">{{unread_count}}</span>{% endif%}inbox</a>
+                <a href="{% url 'notify:notification' %}">{% if notify_count %}<span class="badge">{{notify_count}}</span>{% endif%}notifications</a>
+                <a href="{% url 'posts:user-posts' user.username %}">Profile</a>
+                <a href="{% url 'users:logout'%}">Logout</a>
+                {%else%}
+                <a href="{% url 'users:register'%}">Register</a>
+                <a href="{% url 'users:login'%}">Login</a>
+                {%endif%}
+            </div>
+        </div> {% endcomment %}
+
+    </header>
+    {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+        {% block base%}
+        {% endblock %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // Get all "navbar-burger" elements
+    const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+    
+    // Add a click event on each of them
+    $navbarBurgers.forEach( el => {
+        el.addEventListener('click', () => {
+    
+        // Get the target from the "data-target" attribute
+        const target = el.dataset.target;
+        const $target = document.getElementById(target);
+    
+        // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+        el.classList.toggle('is-active');
+        $target.classList.toggle('is-active');
+    
+        });
+    });
+    
+    });
+</script>
+    </body>
+</html>

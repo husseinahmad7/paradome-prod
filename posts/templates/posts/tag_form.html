@@ -1,0 +1,20 @@
+{% extends 'HusseinAh/base.html' %}
+{% block title %}
+Add Tag
+{% endblock title %}
+{% block base %}
+
+<div>
+    {% load crispy_forms_tags %}
+<form method="POST">
+    <fieldset>
+        <legend>New tag</legend>
+    {% csrf_token %}
+    <table>
+    {{ form|crispy }}
+    <tr><td><input class="button is-secondary" type="submit" value="Add"></td></tr>
+    </table>
+</fieldset>
+</form>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>
+            {% if title %}{{title}} {% endif %}
+        </title>
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <header>
+        <div class="wrapper">
+            <input type="checkbox" id="menu-bar">
+            <label for="menu-bar">menu</label>
+            <div class="top-corner">
+                logo
+            </div>
+            <nav class="navigation">
+                <ul>
+                    <li><a href="">home</a></li>
+                    <li><a href="">projects +</a>
+                        <ul>
+                            <li><a href="">number one</a></li>
+                            <li><a href="">number two</a>
+                                <ul>
+                                    <li><a href="">p1</a></li>
+                                    <li><a href="">p2</a></li>
+                                    <li><a href="">p3</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="">number three</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="">about</a></li>
+                    <li><a href="">contact</a></li>
+                </ul>
+            </nav>
+            <div class="left-column">is</div>
+            <div class="right-column">nav bar</div>
+        </div>
+
+    </header>
+        {% block base%}
+        {% endblock %}
+    </body>
+</html>

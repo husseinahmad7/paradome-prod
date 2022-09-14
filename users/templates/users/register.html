@@ -1,0 +1,30 @@
+{% extends "HusseinAh/base.html" %}
+{% load static %}
+{% block title %}
+Registration
+{% endblock title %}
+{% block base %}
+
+{% if messages %}
+<div class="alert">
+    {% for message in messages %}
+    {{ message }}
+    {% endfor %}
+</div>
+{% endif %}
+
+    {% load crispy_forms_tags %}
+<div class="container">
+    <form action="{% url 'users:register' %}" method="POST">
+        <fieldset>
+            <legend>Registration</legend>
+        {% csrf_token %}
+        {{ form|crispy }}
+
+        <div class="control">
+            <button id="submit-btn" class="button is-primary" type="submit">Send</button>
+        </div>
+        </fieldset>
+    </form>
+</div>
+{% endblock %}

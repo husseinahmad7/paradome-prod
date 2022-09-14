@@ -1,0 +1,127 @@
+{% extends "HusseinAh/base.html" %}
+{% load static %}
+{% block title %}
+Explore Domes
+{% endblock title %}
+
+{% block base %}
+<main>
+  
+<section class="hero is-info is-small">
+  <div class="hero-head">
+    {% if user.is_authenticated %}
+      <a class="button is-link" href="{% url 'domes:dome-create' %}">Create dome</a>
+    {%endif%}
+    <div class="dropdown is-hoverable">
+      <div class="dropdown-trigger">
+        <button class="button is-link" aria-haspopup="true" aria-controls="dropdown-menu4">
+          <span>Filter</span>
+        </button>
+      </div>
+      <div class="dropdown-menu" id="dropdown-menu4" role="menu">
+        <div class="dropdown-content">
+          <div class="dropdown-item">
+            <div class="hero-body">
+              <fieldset>
+                <legend>filter</legend>
+                <form method="get">
+            {% load crispy_forms_tags %}
+                  {{ filter.form|crispy }}
+                  <input class="button is-secondaty" type="submit" value="filter">
+                </form>
+          
+              </fieldset>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</section>
+{% if domes %}
+<div class="columns is-multiline is-mobile is-centered">
+    
+  {% for dome in domes %}
+  <div class="column is-two-fifths">
+      <div class="card">
+      <div class="card-content">
+        <div class="media">
+            <div class="media-left">
+                {% if dome.user.profile.picture %}
+                <figure class="image is-48x48">
+                    <img class="is-rounded" src="{{ dome.user.profile.picture.url }}" alt="{{ dome.user.username }} image">
+                  </figure>
+                {% else %}
+                <figure class="image is-48x48">
+                <img class="is-rounded" src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
+              </figure>
+                {% endif %}
+              
+            </div>
+            <div class="media-content">
+              <p class="title is-4"><a href="{% url 'posts:user-posts' dome.user.username %}">{{ dome.user.username }}</a></p>
+            </div>
+          </div>
+          <div class="card-header">
+            <div class="card-header-title is-centered">
+              <a href="{% url 'domes:dome-detail' dome.pk %}">
+                {{ dome.title }}
+              </a>
+            </div>
+        </div>
+      </div>
+    <div class="card-image">
+        {% if dome.picture %}
+        <figure class="image is-4by3">
+            <img src="{{ dome.picture.url }}" alt="{{dome.title}}">
+          </figure>
+        {% endif %}
+      
+    </div>
+    <div class="card-content">
+        
+  
+      <div class="content">
+          <pre>{{ dome.description|slice:":100" }}</pre>
+        <br>
+        <time datetime="2016-1-1">{{ dome.date }}</time>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="card-footer-item">
+          <span>{{dome.posts.count}} post{{dome.posts.count|pluralize}}</span>
+      </div>
+      <div class="card-footer-item">
+          <span>{{dome.members.count}} member{{dome.members.count|pluralize}}</span>
+      </div>
+    </div>
+  </div>
+  </div>
+  
+{% endfor %}
+
+</div>
+{% else %}
+  <section class="hero is-warning">
+    <div class="hero-body">
+      <p class="title">
+        No Domes are available.
+      </p>
+    </div>
+  </section>
+{% endif %}
+
+{% if is_paginated %}
+    <nav class="is-flex is-justify-content-center is-align-content-center" role="navigation" aria-label="pagination">
+    {% if page_obj.has_previous %}
+    <a class="pagination-previous" href="?page=1">first</a>
+    <a class="pagination-previous" href="?page={{ page_obj.previous_page_number }}">back</a>
+    {%endif%}
+    {% if page_obj.has_next %}
+    <a class="pagination-next" href="?page={{ page_obj.next_page_number }}">load more</a>
+    {% endif %}
+    </nav>
+{%endif%}
+</main>
+{% endblock base %}
