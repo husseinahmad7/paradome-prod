@@ -1,0 +1,96 @@
+{% extends "HusseinAh/base.html" %}
+{% load static %}
+{% block title %}
+{{active_direct}} messages
+{% endblock title %}
+
+{% block base %}
+
+        <main>
+            {% load humanize %}
+            <div class="columns">
+                <div class="column is-one-quarter" style="overflow-y: scroll; height: 50vh;">
+                    {% for message in messages %}
+                    <div class="box {%if message.user.username == active_direct %}is-active{%endif%}">
+                        <a href="{% url 'messages:directs' message.user.username %}">
+                            <div class="level is-mobile">
+                                <div class="level-item">
+                                    {{ message.user.username }}
+                                </div>
+                                <div class="level-item">
+                                    {{ message.last|naturaltime }}
+                                </div>
+                                <div class="level-item">
+                                  {% if message.unread %}
+                                  <i class="material-icons mark_chat_unread"></i>
+                                    {{ message.unread}}
+                                    {% endif %}
+                                </div>
+                            </div>
+                    
+                    </a>
+                      </div>
+                    {%endfor %}
+                </div>
+                <div class="column" style="overflow-y: scroll; height: 100vh;">
+                    {% for direct in directs %}
+                    <div class="box">
+                        <article class="media {% ifchanged direct.sender.id %}
+                        {% cycle 'is-primary is-light' 'is-info is-light'%}
+                        {% endifchanged %}">
+                          <div class="media-left">
+                            <figure class="image is-64x64">
+                                {% if direct.sender.profile.picture %}
+                                <img class="is-rounded" src="{{ direct.sender.profile.picture.url }}" alt="{{direct.sender.username}}">
+                                {% else %}
+                              <img class="is-rounded" src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
+                              {% endif %}
+                            </figure>
+                          </div>
+                          <div class="media-content">
+                            <div class="content">
+                              <p>
+                                <strong>{{direct.sender.username}}</strong> <small>{{direct.date|naturaltime}}</small>
+                                <pre>{{direct.body}}</pre>
+                              </p>
+                            </div>
+                          </div>
+                        </article>
+                      </div>
+                    
+                    {% endfor %}
+                    {% if active_direct %}
+                    <fieldset class="field">
+                    <legend class="label">reply</legend>
+                    <form action="{% url 'messages:directs' active_direct %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="to_user" value="{{ active_direct }}">
+                        <div class="control">
+                            <textarea autofocus class="input is-medium" name="body" cols="30" rows="10" placeholder="reply"></textarea>
+                        </div>
+                        <div class="control">
+                            <button class="button is-primary" type="submit" >Send</button>
+                        </div>
+                    </form>
+                    </fieldset>
+                    {% endif %}
+
+                </div>
+                <div class="column is-narrow">
+                  <fieldset class="field">
+                    <form action="{%url 'users:user_search' %}" method="get">              
+                        <div class="control">
+                          <input class="input" name="q" type="text" value="{{ request.GET.q }}" placeholder="Find a user">
+                        </div>
+                        <div class="control">
+                          <button class="button is-info">
+                            Search
+                          </button>
+                        </div>
+                    </form>
+                  </fieldset>
+                    
+                </div>
+            </div>
+        </main>
+{% endblock base %}

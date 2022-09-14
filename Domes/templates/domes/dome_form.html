@@ -1,0 +1,19 @@
+{% extends 'HusseinAh/base.html' %}
+{% block title %}
+Launch a Dome
+{% endblock title %}
+{% block base %}
+<main>
+<div class="container">
+    {% load crispy_forms_tags %}
+<form method="POST" enctype="multipart/form-data">
+    <fieldset>
+        <legend>Dome</legend>
+    {% csrf_token %}
+        {{ form|crispy }}
+    <input class="button is-primary" type="submit" value="Done">
+</fieldset>
+</form>
+</div>
+</main>
+{% endblock %}

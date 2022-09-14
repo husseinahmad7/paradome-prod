@@ -1,0 +1,129 @@
+{% extends "HusseinAh/base.html" %}
+{% load static %}
+{% block title %}
+Hussein Portfolio
+{% endblock title %}
+
+{% block style %}<link rel="stylesheet" type="text/css" href="{% static 'footer.css' %}">{% endblock %}
+
+{% block base%}
+<main>
+    <div class="sky">
+        <span class="glow">
+            my portolio
+        </span>
+        
+        <div class="stars">
+        </div>
+    </div>
+
+    <div class="intro-text">
+            <div class="static-txt">
+                I'm a
+            </div>
+            <ul class="dynamic-txts">
+                <li><span>Thinker</span></li>
+                <li><span>developer</span></li>
+                <li><span>researcher</span></li>
+                <li><span>freelancer</span></li>
+            </ul>
+    </div>
+        
+    <div id="skills">
+            <div id="flag-text">
+                <div class="centered"><div class="gradient">i have a lot of solid bubbles</div></div>
+            </div>
+            <div class="bubble x1"></div>
+            <div class="bubble x2"></div>
+            <div class="bubble x3"></div>
+            <div class="bubble x4"></div>
+            <div class="bubble x5"></div>
+            <div class="bubble x6"></div>
+            <div class="bubble x7"></div>
+            <div class="bubble x8"></div>
+            <div class="bubble x9"></div>
+            <div class="bubble x10"></div>
+    </div>
+    <div class="sections">
+        <div class="one">section one</div>
+        <div class="two">section two</div>
+        <div class="three">section three</div>
+        <div class="four">section four</div>
+    </div>
+        
+    <div class="glass">
+        <div class="left-side">
+            <div class="about">
+                <img src="{% static 'images/personal.jpg'%}" alt="CV face picture" width="150" height="150">
+                <h2>about me</h2>
+                <blockquote>
+                    Everything is Code, Truth is Passion, Matrix is a documentary...
+                </blockquote>
+            </div>
+            <div class="contacts">
+                <a href="mailto:h7osanna.xyc@gmail.com" id="contact">h7osanna.xyc@gmail.com</a>
+                <a href="tel:+963982489354" id="contact">+963982489354</a>
+            </div>
+            
+            <div class="lang">
+                <h2>Languages</h2><br>
+                <span id="enlang">English</span>
+                <span id="arlang">Arabic</span>
+            </div>
+        </div>
+        <div class="right-side">
+            <div>
+                <h2>Education</h2>
+                <h4>Bachelor in information technology engineering</h4>
+                <span>still studying</span>
+            </div>
+            <div>
+                <h2>Hobbies</h2>
+                <ul>
+                    <li>
+                        Astronomy
+                    </li>
+                    <li>
+                        Football
+                    </li>
+                    <li>
+                        Researching
+                    </li>
+                    <li>
+                        Music
+                    </li>
+                    <li>
+                        Movies & Series
+                    </li>
+                </ul>
+            </div>
+            
+        </div>
+    </div>
+    <section class="glass">
+        <div class="left-side">left</div>
+        <div class="right-side">right</div>
+    </section>
+    <h1>test</h1>
+    <div class="background-circles">
+    <span class="bg-circle"></span>
+    <span class="bg-circle"></span>
+    <span class="bg-circle"></span>
+    <span class="bg-circle"></span>
+    </div>
+</main>
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js' crossorigin="anonymous" 
+integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2"></script>
+<script src="{% static 'js/stars.js' %}"></script>
+<script>
+    // document.addEventListener('DOMContentLoaded', function() {
+    // document.querySelector('.bubble').addEventListener('click', function() {
+    //     this.remove();
+
+    // } );
+    // document.querySelector('.bubble ')
+    // });
+
+</script>
+{% endblock base %}
+{% include "HusseinAh/footer.html" %}

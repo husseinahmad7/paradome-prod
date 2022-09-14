@@ -1,0 +1,5 @@
+*.pyc
+.vscode/
+apiapp/
+static_files/
+store/

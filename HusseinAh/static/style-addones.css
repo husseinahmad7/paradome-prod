@@ -1,0 +1,57 @@
+
+.glow {
+    margin: 0;
+    z-index: 1;
+  font-family: 'Times New Roman', Times, serif ;
+    text-transform: uppercase;
+    animation: glow 2s ease-in-out infinite alternate;
+    text-align: center;
+    -webkit-text-stroke: thick;
+}
+@keyframes glow {
+    from {
+      text-shadow: 0 0 20px #2d9da9;
+    }
+    to {
+      text-shadow: 0 0 30px #34b3c1, 0 0 10px #4dbbc7;
+    }
+  }
+
+  .badge {
+    background-color: #00d1b2;
+    border: 2px solid transparent;
+    border-radius: 14px;
+    box-shadow: 0 0 0 2px white;
+    color: white;
+    font-size: 0.65rem;
+    height: 14px;
+    line-height: calc(7px + 1px);
+    min-width: 14px;
+    overflow: hidden;
+    padding: 0.05rem 0.15rem;
+    position: absolute;
+    right: 0;
+    text-overflow: ellipsis;
+    top: 0;
+    transform: translate(50%, -50%);
+    white-space: nowrap;
+  }
+  .badge.is-top-left {
+    bottom: auto;
+    left: 0;
+    right: auto;
+    top: 0;
+    transform: translate(50%, 50%);
+  }
+  .badge.is-bottom {
+    bottom: 0;
+    left: 50%;
+    right: auto;
+    top: auto;
+    transform: translate(-50%, 50%);
+  }
+
+.fade-me-out.htmx-swapping{
+  opacity: 0;
+  transition: opacity 1s ease-out;
+}

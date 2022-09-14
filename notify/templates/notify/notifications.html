@@ -1,0 +1,37 @@
+{% extends "HusseinAh/base.html" %}
+
+{% block base %}
+{% load humanize %}
+<main>
+{% for notification in notifications %}
+<div class="notification is-info">
+    <a class="delete" href="{% url 'notify:del' notification.pk %}"></a>
+    <div class="box">
+        <article class="media">
+          <div class="media-left">
+            <figure class="image is-64x64">
+                {% if notification.sender.profile.picture %}
+                <img class="is-rounded" src="{{ notification.sender.profile.picture.url }}" alt="{{notification.sender.username}}">
+                {% else %}
+              <img class="is-rounded" src="https://bulma.io/images/placeholders/96x96.png" alt="Image">
+              {% endif %}
+            </figure>
+          </div>
+          <div class="media-content">
+            <div class="content">
+                <a href="{{ notification.get_absolute_url }}">
+                    <p>
+                    <p><strong>{{notification.sender.username}}</strong> {{notification.text_preview}}</p>
+                    <small>{{notification.date|naturaltime}}</small>
+                    </p>
+                </a>
+                
+                
+            </div>
+          </div>
+        </article>
+      </div>
+</div>
+{% endfor %}
+</main>
+{% endblock base %}

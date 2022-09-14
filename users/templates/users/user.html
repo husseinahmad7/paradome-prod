@@ -1,0 +1,36 @@
+{% extends "HusseinAh/base.html" %}
+{% load static %}
+{% block title %}
+logged in
+{% endblock title %}
+
+{% block base %}
+
+<section class="hero is-primary is-fullheight-with-navbar">
+    <div class="hero-body">
+        <div class="container has-text-centered">
+      <p class="title">
+        <h1>welcome , {{request.user.username}}</h1>
+      </p>
+      <p class="subtitle">
+        <a href="{% url 'users:logout' %}">logout</a>
+      </p>
+    </div>
+    </div>
+    <div class="hero-foot">
+        <nav class="tabs is-boxed is-fullwidth">
+          <div class="container has-text-centered">
+            <ul>
+              <li>
+                <span><a href="{% url 'users:user_search' %}">search user</a></span>
+              </li>
+              <li>
+                <span><a href="{% url 'posts:user-posts' user.username %}">your profile</a></span>
+              </li>
+            </ul>
+          </div>
+        </nav>
+    </div>
+  </section>
+
+{% endblock %}

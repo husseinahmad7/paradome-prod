@@ -1,0 +1,30 @@
+{% load humanize %}
+
+<div class="box" id="msg{{object.pk}}">
+    <article class="media {% ifchanged object.user.id %}
+    {% cycle 'is-primary is-light' 'is-info is-light'%}
+    {% endifchanged %}">
+      <div class="media-left">
+        <figure class="image is-48x48 is-1by1">
+            {% if object.user.profile.picture %}
+            <img class="is-rounded" src="{{ object.user.profile.picture.url }}" alt="{{object.user.username}}">
+            {% else %}
+          <img class="is-rounded" src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
+          {% endif %}
+        </figure>
+      </div>
+      <div class="media-content">
+        <div class="content">
+          <p>
+            <strong>{{object.user.username}}</strong> <small>{{object.date|naturaltime}}</small>
+            <pre>{{object.body}}</pre>
+          </p>
+        </div>
+      </div>
+      {% if object.user == user  or user in moderators or user == dome_owner %}
+      <div class="media-right">
+        <button hx-trigger="click" hx-target="#msg{{object.pk}}" hx-swap="beforeend" hx-get="{% url 'chat:msg-delete' object.pk %}" class="delete"></button>
+      </div>
+      {% endif %}
+    </article>
+</div>
