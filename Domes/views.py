@@ -5,13 +5,15 @@ from django.views import generic
 from .models import Dome, Category
 from .filters import DomeFilter, MembersFilter
 from .forms import DomeCreation, CategoryCreation
-from django.http.response import HttpResponseRedirect, HttpResponse
+from django.http.response import HttpResponseRedirect, HttpResponse, HttpResponseForbidden
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.core.paginator import Paginator
 from django.utils.text import slugify
 from django.http import Http404
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+
 
 
 
@@ -227,3 +229,21 @@ def MemberRemoveView(request,dome_id, user_id):
                 dome.members.remove(removed)
         return HttpResponse(f'{removed.username} has removed successfully')
 
+@login_required
+def ModeratorRaiseOrDown(request, pk, user_pk, option):
+    dome = Dome.objects.get(pk=pk)
+    dome_user = dome.user
+    selected_user = User.objects.get(pk=user_pk)
+    if request.user == dome_user:
+        if int(option) == 0:
+            dome.moderators.remove(selected_user)
+            dome.members.add(selected_user)
+            return HttpResponse('The moderator has become a member')
+        elif int(option) == 1:
+            dome.moderators.add(selected_user)
+            dome.members.remove(selected_user)
+            return HttpResponse('The member has become a moderator')
+        else:
+            return HttpResponseForbidden('Not allowed')
+    else:
+        HttpResponseForbidden('Not allowed')
