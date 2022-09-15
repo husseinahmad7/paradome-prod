@@ -1,5 +1,7 @@
 {% extends 'HusseinAh/base.html' %}
-
+{% block title%}
+Post  factory
+{%endblock%}
 {% block base %}
 
 <div>
@@ -14,7 +16,7 @@
     <a class="is-link is-light" target="_blank" rel="noopener noreferrer" id="add_id_tags" href="{% url 'posts:tag-create'%}" title="Add another Tag">
         add tag
     </a>
-    
+
     <tr><td><input class="button is-secondary" type="submit" value="Done"></td></tr>
     </table>
 </fieldset>
