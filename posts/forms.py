@@ -1,12 +1,25 @@
 from django import forms
 from .models import Post, Comment,Tag
 # from ckeditor.widgets import CKEditorWidget
+from django.core.exceptions import ValidationError
 
 class PostCreation(forms.ModelForm):
     tags = forms.ModelMultipleChoiceField(Tag.objects.all().order_by('title'))
     class Meta:
         model = Post
         fields=['picture','question_text','content','tags']
+    
+    def clean(self):
+        data = super().clean()
+        image = self.cleaned_data.get('picture', False)
+        if image:
+            if image.size > 4*1024*1024:
+                raise ValidationError("Image file too large ( > 4mb )")
+            return image
+        else:
+            raise ValidationError("Couldn't read uploaded image")
+        return data
+    
 class CommentCreation(forms.ModelForm):
     class Meta:
         model = Comment

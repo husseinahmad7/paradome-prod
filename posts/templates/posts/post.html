@@ -34,8 +34,8 @@
                      {% endif %}
                      {% if object.user == user %}
                         <div>
-                        <a href="{% url 'posts:post-update' object.pk %}">update</a>
-                        <a href="{% url 'posts:post-delete' object.pk %}">delete</a>
+                        <a class="button is-info" href="{% url 'posts:post-update' object.pk %}">update</a>
+                        <a class="button is-danger" href="{% url 'posts:post-delete' object.pk %}">delete</a>
                         </div>
                     {%endif%}
                    </div>

@@ -33,11 +33,12 @@
 </p>
 <ul class="menu-list">
 {% for mod in mods %}
-<li id="memb{{mod.id}}" class="fade-me-out">
+<li id="mod" class="fade-me-out">
     {% if dome_owner == user %}
-    <button hx-delete="{% url 'domes:dome-member-delete' dome_id=dome_pk user_id=mod.pk %}" hx-target="#memb{{mod.id}}" hx-swap="outerHTML swap:1" hx-confirm="Are you sure you wish to remove this Admin?" class="delete" aria-label="delete"></button>
+    <button hx-delete="{% url 'domes:dome-member-delete' dome_id=dome_pk user_id=mod.pk %}" hx-target="closest #mod" hx-swap="outerHTML swap:1" hx-confirm="Are you sure you wish to remove this Admin?" class="delete" aria-label="delete"></button>
+    <button hx-get="{% url 'domes:dome-member-raiseordown' pk=dome_pk user_pk=mod.pk option=0 %}" hx-target="closest #mod" hx-swap="outerHTML swap:1" hx-confirm="Are you sure you wish to downgrade this Admin?" class="button is-warning">Downgrade</button>
     {%endif%}
-    <a class="is-link" href="{% url 'posts:user-posts' mod.username %}">{{mod.username}}</a>
+    <a class="is-link is-pulled-left" href="{% url 'posts:user-posts' mod.username %}">{{mod.username}}</a>
 </li>  
 {%endfor%}
 </ul>
@@ -51,9 +52,10 @@
 {% for member in members %}
     <li id="memb" class="fade-me-out">
         {% if dome_owner == user or user in mods %}
-            <button hx-delete="{% url 'domes:dome-member-delete' dome_id=dome_pk user_id=member.pk %}" hx-target="closest .memb" hx-swap="outerHTML swap:1s" hx-confirm="Are you sure you wish to remove this Member?" class="delete" aria-label="delete"></button>
+            <button hx-delete="{% url 'domes:dome-member-delete' dome_id=dome_pk user_id=member.pk %}" hx-target="closest #memb" hx-swap="outerHTML swap:1s" hx-confirm="Are you sure you wish to remove this Member?" class="delete" aria-label="delete"></button>
+            <button hx-get="{% url 'domes:dome-member-raiseordown' pk=dome_pk user_pk=member.pk option=1 %}" hx-target="closest #memb" hx-swap="outerHTML swap:1s" hx-confirm="Are you sure you wish to raise this Member?" class="button is-info">Raise</button>
         {%endif%}
-        <a class="is-link" href="{% url 'posts:user-posts' member.username %}">{{member.username}}</a>
+        <a class="is-link is-pulled-left" href="{% url 'posts:user-posts' member.username %}">{{member.username}}</a>
     </li>
 {% endfor %}
 </ul>
