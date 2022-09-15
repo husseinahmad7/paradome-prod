@@ -8,10 +8,16 @@ from django.utils.text import slugify
 from django.db.models.signals import post_save
 from Domes.models import Dome
 from ckeditor.fields import RichTextField
+from django.core.exceptions import ValidationError
 
 def user_directory_path(instance,filename):
      return f'posts/{filename}'
 
+def validate_image(fieldfile_obj):
+    filesize = fieldfile_obj.file.size
+    megabyte_limit = 4.0
+    if filesize > megabyte_limit*1024*1024:
+        raise ValidationError("Max file size is %sMB" % str(megabyte_limit))
 class Tag(models.Model):
     title = models.CharField(max_length=75, verbose_name='Tag')
     slug = models.SlugField(null=False, unique=True)
@@ -32,7 +38,7 @@ class Post(models.Model):
     question_text = models.CharField(max_length=200)
     content = RichTextField(config_name='default')
     # content = models.TextField(max_length=2000)
-    picture = models.ImageField(upload_to=user_directory_path,null=True, blank=True)
+    picture = models.ImageField(upload_to=user_directory_path,null=True, blank=True, validators=[validate_image])
     likes = models.IntegerField(default=0)
     tags = models.ManyToManyField(Tag, related_name="tags", blank=True)
     posted_date = models.DateTimeField(default=timezone.now)
@@ -53,6 +59,8 @@ class Post(models.Model):
     @property
     def comment_count(self):
         return Comment.objects.filter(post=self).count()
+    
+
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
