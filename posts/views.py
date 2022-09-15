@@ -465,3 +465,6 @@ def deleteComment(request,comment_id):
             HttpResponseForbidden('Not allowed')
     else:
         HttpResponseForbidden('Not allowed')
+
+
+        

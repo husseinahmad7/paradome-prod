@@ -11,6 +11,7 @@ urlpatterns = [
     path('<int:pk>/',views.DomeView.as_view(),name='dome-detail'),
     path('<int:pk>/members',views.DomeMembersView.as_view(),name='dome-members'),
     path('<int:dome_id>/members/<int:user_id>/del',views.MemberRemoveView,name='dome-member-delete'),
+    path('<int:pk>/member/<int:user_pk>/option/<int:option>',views.ModeratorRaiseOrDown,name='dome-member-raiseordown'),
     path('<int:pk>/info',views.DomeViewHtmx.as_view(),name='dome-info'),
     path('<int:pk>/newcategory/',views.CategoryCreateView.as_view(),name='category-create'),
     path('<str:slug>/<str:code>', views.DomeInvitationView.as_view(),name='dome-invitation'),
