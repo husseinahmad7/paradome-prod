@@ -31,9 +31,9 @@ Login
             <table>
                 <input type="hidden" name="next" value="{{ next }}">
             {{ form|crispy }}
-            
+
             <div class="control">
-                <button id="submit-btn" class="button is-primary" type="submit">Send</button>
+                <button id="submit-btn" class="button is-primary" type="submit">Login</button>
             </div>
             </table>
             <a href="{% url 'password_reset' %}">reset your password</a>
