@@ -211,12 +211,12 @@ REST_FRAMEWORK = {
     ]
 }
 
-CKEDITOR_CONFIGS = {
-    'default': {
-        'toolbar': 'full',
-    },
-    'comment': {
-        'toolbar': 'basic',
-        'height': 200,
-    },
-}
+# CKEDITOR_CONFIGS = {
+#     'default': {
+#         'toolbar': 'full',
+#     },
+#     'comment': {
+#         'toolbar': 'basic',
+#         'height': 200,
+#     },
+# }
