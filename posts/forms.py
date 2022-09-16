@@ -9,8 +9,7 @@ class PostCreation(forms.ModelForm):
         model = Post
         fields=['picture','question_text','content','tags']
     
-    def clean(self):
-        data = super().clean()
+    def clean_picture(self):
         image = self.cleaned_data.get('picture', False)
         if image:
             if image.size > 4*1024*1024:
@@ -18,7 +17,6 @@ class PostCreation(forms.ModelForm):
             return image
         else:
             raise ValidationError("Couldn't read uploaded image")
-        return data
     
 class CommentCreation(forms.ModelForm):
     class Meta:
