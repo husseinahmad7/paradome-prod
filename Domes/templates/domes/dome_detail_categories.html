@@ -1,23 +1,25 @@
-<a class="is-link" href="{% url 'domes:category-create' object.pk %}">create category</a>
+{% if user.is_authenticated and object.user == user %}
+<a class="button is-secondary" href="{% url 'domes:category-create' object.pk %}">create category</a>
+{% endif %}
 {% if object.categories.all %}
 {% comment %} <div class="content is-small"> {% endcomment %}
 <aside class="menu">
 
 {% for category in object.categories.all %}
 {% comment %} <div class="box"> {% endcomment %}
-    <p class="menu-label">
+    <p class="menu-label has-text-light has-background-dark">
         {{category.title}}
     </p>
-    <a class="is-link" href="{% url 'chat:chatchannel-create' category.id %}">add chat channel</a>
+    <a class="button is-light" href="{% url 'chat:chatchannel-create' category.id %}">add chat channel</a>
     <ul class="menu-list">
     {%for chat in category.chat_chnls.all %}
         <div class="block {% ifchanged %}
-        {% cycle 'is-primary is-light' 'is-info is-light'%}
+        {% cycle 'has-background-info-light' 'has-background-link-light'%}
         {% endifchanged %}">
             <li>
                 <a hx-get="{% url 'chat:chat-channel' chat.id %}" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML">{{chat.title}}</a>
                 <ul>
-                    <li>{{chat.topic}}</li>
+                    <li class="subtitle is-6">{{chat.topic}}</li>
                 </ul>
             </li>
             <div></div>

@@ -400,29 +400,33 @@ class HtmxDomePostsView(LoginRequiredMixin,UserPassesTestMixin,generic.ListView)
         dome_obj = self.get_dome_object(self.kwargs.get('pk'))
         dome_owner = dome_obj.user
         dome_members = dome_obj.members.all()
+        dome_mods = dome_obj.moderators.all()
         dome_privacy = dome_obj.privacy
-        if (self.request.user == dome_owner) | (self.request.user in dome_members) | (dome_privacy ==1):
+        if (self.request.user == dome_owner) | (self.request.user in dome_members) | (self.request.user in dome_mods) | (dome_privacy ==1):
             return True
         return False
     
-class RepliesListView(LoginRequiredMixin, generic.ListView):
+class RepliesListView(generic.ListView):
     template_name = 'posts/replies_list.html'
     context_object_name = 'replies'
     paginate_by = 20
     
     def post(self,request, *args, **kwargs):
-
-        form = CommentReplyCreation(self.request.POST)
-        if form.is_valid():
-            commenttxt = form.cleaned_data.get('comment')
-            post_pk = self.get_comment().post.pk
-            post = get_object_or_404(Post, pk=post_pk)
-            user =self.request.user
-            reply_to_com = self.get_comment()
-            Reply, created = Comment.objects.get_or_create(post=post,user=user,comment=commenttxt,reply_to=reply_to_com)
-            if created:
-                Reply.save()
-            return HttpResponseRedirect(reverse('posts:comment-replies', args=[self.kwargs.get('pk')]))
+        if self.request.user.is_authenticated:
+            
+            form = CommentReplyCreation(self.request.POST)
+            if form.is_valid():
+                commenttxt = form.cleaned_data.get('comment')
+                post_pk = self.get_comment().post.pk
+                post = get_object_or_404(Post, pk=post_pk)
+                user =self.request.user
+                reply_to_com = self.get_comment()
+                Reply, created = Comment.objects.get_or_create(post=post,user=user,comment=commenttxt,reply_to=reply_to_com)
+                if created:
+                    Reply.save()
+                return HttpResponseRedirect(reverse('posts:comment-replies', args=[self.kwargs.get('pk')]))
+        else:
+            return HttpResponseForbidden('Please Log in first')
         
     def get_comment(self):
         return get_object_or_404(Comment, pk=self.kwargs.get('pk'))

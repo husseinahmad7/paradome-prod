@@ -62,7 +62,7 @@
             </a>
           </p>
           <p class="control">
-              <a class="button is-primary" href="{% url 'users:login'%}">
+              <a class="button is-primary" href="{% url 'users:login'%}?next={{request.path}}">
               <span>
                   Login
               </span>

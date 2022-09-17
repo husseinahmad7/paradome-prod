@@ -64,15 +64,15 @@
     </form>
 </fieldset>
 <script>
-  const form = document.querySelector("#send-message");
+    myform = document.querySelector("#send-message");
+    btn = document.querySelector("#submit-btn");
+  
 
-form.addEventListener('htmx:afterRequest', function(evt) {
-  const btn = document.querySelector("#submit-btn");
+myform.addEventListener('htmx:afterRequest', function(evt) {
   btn.classList.remove('is-loading');
-  form.reset();
+  myform.reset();
 });
-form.addEventListener('htmx:beforeRequest', function(evt) {
-  const btn = document.querySelector("#submit-btn");
+myform.addEventListener('htmx:beforeRequest', function(evt) {
   btn.classList.add('is-loading');
 });
 </script>
