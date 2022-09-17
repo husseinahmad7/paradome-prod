@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 class DomeFilter(django_filters.FilterSet):
     q = django_filters.CharFilter(method='title_description_search', label='search')
-    date = django_filters.DateTimeFromToRangeFilter(field_name='date')
+    date = django_filters.DateFromToRangeFilter(field_name='date',label='Date d/m/y')
     class Meta:
         model = Dome
         fields = ['q','date']

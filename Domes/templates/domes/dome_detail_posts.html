@@ -1,6 +1,8 @@
-<div class="is-centered">
-  <a href="{% url 'posts:domepost-create' dome_id %}">new post</a>
-</div>
+<section class="hero is-info is-small">
+  <div class="is-centered">
+    <a href="{% url 'posts:domepost-create' dome_id %}">new post</a>
+  </div>
+</section>
 {% if object %}
 {% comment %} <div class="columns is-multiline is-mobile is-centered">
     {% endcomment %}

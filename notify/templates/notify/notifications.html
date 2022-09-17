@@ -1,5 +1,7 @@
 {% extends "HusseinAh/base.html" %}
-
+{% block title %}
+{{notify_count}} Notification{{notify_count|pluralize}}
+{%endblock%}
 {% block base %}
 {% load humanize %}
 <main>

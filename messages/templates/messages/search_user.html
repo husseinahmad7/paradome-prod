@@ -1,48 +1,49 @@
 {% extends "HusseinAh/base.html" %}
 {% load static %}
+{% load humanize %}
 {% block title %}
 Search for user
 {% endblock title %}
-{% block style %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
-{% endblock style %}
+
 {% block base %}
-<form method="get">
-    <div class="field has-addons">
-    <div class="control">
-      <input class="input" name="q" type="text" value="{{ request.GET.q }}" placeholder="Find a user">
-    </div>
-    <div class="control">
-      <button class="button is-info">
-        Search
-      </button>
-    </div>
-  </div>
-</form>
-{% for user in users %}
-<div class="box">
-    <article class="media">
-      <div class="media-left">
-        <figure class="image is-64x64">
-            {% if user.profile.picture %}
-            <img src="{{ user.profile.picture.url }}" alt="{{user.username}}">
-            {% else %}
-          <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
-          {% endif %}
-        </figure>
+<div class="container">
+  <form method="get">
+      <div class="field has-addons">
+      <div class="control">
+        <input class="input" name="q" type="text" value="{{ request.GET.q }}" placeholder="Find a user">
       </div>
-      <div class="media-content">
-        <div class="content">
-          <p>
-            <strong>{{user.username}}</strong> <small>@{{user.username}}</small> <small>{{user.last_login}}</small>
-            <br>
-            {{user.profile.bio|slice:":30"}}
-          </p>
-          <a href="{% url 'posts:user-posts' user.username %}">view profile</a> ||
-          <a href="{% url 'messages:directs' user.username %}">start a conversation</a>
+      <div class="control">
+        <button class="button is-info">
+          Search
+        </button>
+      </div>
+    </div>
+  </form>
+  {% for user in users %}
+  <div class="box">
+      <article class="media">
+        <div class="media-left">
+          <figure class="image is-64x64">
+              {% if user.profile.picture %}
+              <img src="{{ user.profile.picture.url }}" alt="{{user.username}}">
+              {% else %}
+            <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
+            {% endif %}
+          </figure>
         </div>
-      </div>
-    </article>
-  </div>
+        <div class="media-content">
+          <div class="content">
+            <p>
+              <strong>{{user.username}}</strong> <span> last login </span><small>{{user.last_login|naturaltime}}</small>
+              <br>
+              {{user.profile.bio}}
+            </p>
+            <a href="{% url 'posts:user-posts' user.username %}">view profile</a> ||
+            <a href="{% url 'messages:directs' user.username %}">start a conversation</a>
+          </div>
+        </div>
+      </article>
+    </div>
   {% endfor %}
+</div>
   {% endblock %}

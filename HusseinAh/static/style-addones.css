@@ -1,3 +1,61 @@
+/* ===== Scrollbar CSS ===== */
+/* Firefox */
+* {
+  /* scrollbar-width: thin; */
+  /* scrollbar-color: #c67bdb #194748; */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  /* width: 11px;
+  display: none; */
+  width: 3px !important;
+  background-color: transparent;
+}
+
+*::-webkit-scrollbar-track {
+  /* background: #194748; */
+  -webkit-box-shadow: none !important;
+    background-color: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  /* background-color: #c67bdb; */
+  /* border-radius: 10px;
+  border: 3px solid #183c3e; */
+  background-color: transparent;
+
+}
+.on-scrollbar{
+  scrollbar-width: thin; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+.on-scrollbar::-webkit-scrollbar-track {
+  -webkit-box-shadow: none !important;
+  background-color: transparent !important;
+}
+
+.on-scrollbar::-webkit-scrollbar {
+  width: 6px !important;
+  background-color: transparent;
+}
+
+.on-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #acacac;
+  border-radius: 10px;
+  border: 3px solid #183c3e; 
+}
+
+
+
+
+
 
 .glow {
     margin: 0;
