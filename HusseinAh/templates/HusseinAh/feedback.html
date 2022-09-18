@@ -1,0 +1,46 @@
+{% extends 'HusseinAh/base.html' %}
+{% load static %}
+{% block title %}
+Send me Feedback
+{% endblock title %}
+
+{% block base %}
+<main>
+<div class="container" id="feedback">
+    <fieldset id="feedbackform">
+<form method="POST" hx-post="." hx-target="#feedback" hx-swap="outerHtml" hx-select="main">
+    {% load crispy_forms_tags %}
+        <legend>Feedback</legend>
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button id="submit-btn" class="button is-primary" type="submit" hx-post="." hx-target="#feedback" hx-swap="outerHtml" hx-select="main">
+        Send
+    </button>
+    
+</form>
+</fieldset>
+</div>
+<script>
+    myform = document.querySelector("#feedback");
+    btn = document.querySelector("#submit-btn");
+  
+
+myform.addEventListener('htmx:afterRequest', function(evt) {
+  btn.classList.remove('is-loading');
+  myform.reset();
+});
+myform.addEventListener('htmx:beforeRequest', function(evt) {
+  btn.classList.add('is-loading');
+});
+btn.addEventListener('htmx:afterRequest', function(evt) {
+    btn.classList.remove('is-loading');
+    myform.reset();
+  });
+  btn.addEventListener('htmx:beforeRequest', function(evt) {
+    btn.classList.add('is-loading');
+  });
+</script>
+</main>
+<script src="{% static 'js/htmx.min.js' %}" defer></script>
+
+{% endblock base %}
