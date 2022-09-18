@@ -35,7 +35,7 @@ General Posts
 {% if page_obj %}
 <div class="columns is-multiline is-mobile is-centered" id="posts-container">
   {% for post in page_obj %}
-  <div class="column is-two-fifths" id="post">
+  <div class="column is-half" id="post">
       <div class="card">
       <div class="card-content">
         <div class="media">
@@ -52,7 +52,7 @@ General Posts
 
             </div>
             <div class="media-content">
-              <p class="title is-4"><a href="{% url 'posts:user-posts' post.user.username %}">{{ post.user.username }}</a></p>
+              <p class="title is-6"><a href="{% url 'posts:user-posts' post.user.username %}">{{ post.user.username }}</a></p>
               {% if post.dome %}
               <p class="subtitle is-6 tag is-info is-light">
               <a href="{{ post.dome.get_absolute_url }}">

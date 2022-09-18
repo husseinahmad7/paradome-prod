@@ -410,7 +410,7 @@ section#section-edu::before{
     background: -moz-radial-gradient(bottom right, #e0e793, #6dd0f1);
     background: radial-gradient(to top left, #e0e793, #6dd0f1);
     background: -webkit-radial-gradient(bottom right, #e0e793, #6dd0f1);
-    right: 0;
+    right: 50%;
     top: 25%;
     z-index: 0;
     transform-style: preserve-3d;
