@@ -47,13 +47,13 @@ class DomeCreateView(LoginRequiredMixin, generic.CreateView):
         form = DomeCreation(self.request.POST, self.request.FILES)
         if form.is_valid():
             user =self.request.user
-            form_pic = form.cleaned_data.get('picture')
+            form_pic = form.cleaned_data.get('icon')
             form_banner = form.cleaned_data.get('banner')
             form_title = form.cleaned_data.get('title')
             form_description = form.cleaned_data.get('description')
             form_privacy = form.cleaned_data.get('privacy')
 
-            dome,created = Dome.objects.get_or_create(picture=form_pic,banner=form_banner,title=form_title,description=form_description, user = user,privacy=form_privacy )
+            dome,created = Dome.objects.get_or_create(icon=form_pic,banner=form_banner,title=form_title,description=form_description, user = user,privacy=form_privacy )
             dome.save()
             return HttpResponseRedirect(reverse('domes:explore')) #fix url latter
 

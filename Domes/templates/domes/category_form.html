@@ -2,12 +2,9 @@
 {% block title %}
 Create Category
 {% endblock title %}
-{% block style %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
-{% endblock style %}
 {% block base %}
-
-<div>
+<main>
+<div class="container">
     {% load crispy_forms_tags %}
 <form method="POST">
     <fieldset>
@@ -16,9 +13,9 @@ Create Category
     <table>
     {{ form|crispy }}
     
-    <tr><td><input type="submit" value="Create"></td></tr>
-    </table>
+    <input class="button is-primary" type="submit" value="Create">
 </fieldset>
 </form>
 </div>
+</main>
 {% endblock %}

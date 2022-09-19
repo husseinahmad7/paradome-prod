@@ -4,6 +4,8 @@ import os
 from django.conf import settings
 from django.urls import reverse
 from django.utils.text import slugify
+from PIL import Image
+
 
 
 
@@ -36,7 +38,7 @@ def dome_directory_path_picture(instance, filename):
 
 
 class Dome(models.Model):
-    picture = models.ImageField(upload_to=dome_directory_path_picture, null=False)
+    icon = models.ImageField(upload_to=dome_directory_path_picture, null=False)
     banner = models.ImageField(upload_to=dome_directory_path_banner, null=False)
     title = models.CharField(max_length=25, null=False, blank=False)
     description = models.CharField(max_length=144, null=False, blank=False)
@@ -56,6 +58,16 @@ class Dome(models.Model):
     def get_invitation_link(self):
         slug = slugify(self.title)
         return reverse('domes:dome-invitation', kwargs={'slug': slug,'code':self.invitationstr})
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.icon:
+            old = self.icon.path
+            img = Image.open(self.icon.path)
+            if img.height > 256 and img.width > 256:
+                output_size = (256,256)
+                img.thumbnail(output_size)
+                img.save(self.icon.path)
 
 class Category(models.Model):
     title = models.CharField(max_length=35)
@@ -83,3 +95,8 @@ class Category(models.Model):
 
 #     class Meta:
 #         unique_together = ('dome', 'member')
+
+# class Attachment(models.Model):
+#     item = models.ForeignKey(
+#         Category, on_delete=models.CASCADE, related_name='attachments')
+#     upload = models.FileField(upload_to='attachments')
