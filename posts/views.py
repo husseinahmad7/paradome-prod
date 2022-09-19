@@ -366,7 +366,7 @@ class TagCreationView(LoginRequiredMixin,generic.CreateView):
     
 class HtmxDomePostsView(LoginRequiredMixin,UserPassesTestMixin,generic.ListView):
     model = Post
-    template_name = 'domes/dome_detail_posts.html'
+    template_name = 'Domes/dome_detail_posts.html'
     paginate_by = 5
     
     def get_dome_object(self, pk):
