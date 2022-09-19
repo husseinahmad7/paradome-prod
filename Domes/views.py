@@ -19,7 +19,7 @@ from django.contrib.auth.decorators import login_required
 
 class ExploreDomesView(generic.ListView):
     model = Dome
-    template_name = 'domes/explore.html'
+    template_name = 'Domes/explore.html'
     context_object_name = 'domes'
     paginate = 10
 
@@ -41,7 +41,7 @@ class ExploreDomesView(generic.ListView):
 class DomeCreateView(LoginRequiredMixin, generic.CreateView):
     model = Dome
     form_class = DomeCreation
-    template_name = 'domes/dome_form.html'
+    template_name = 'Domes/dome_form.html'
 
     def post(self, request, *args, **kwargs):
         form = DomeCreation(self.request.POST, self.request.FILES)
@@ -81,7 +81,7 @@ class DomeDeleteView(LoginRequiredMixin,UserPassesTestMixin , generic.DeleteView
         return False
 class DomeView(LoginRequiredMixin,UserPassesTestMixin,generic.DetailView):
     model = Dome
-    template_name = 'domes/dome_detail.html'
+    template_name = 'Domes/dome_detail.html'
 
     def test_func(self):
         dome_obj = self.get_object()
@@ -95,7 +95,7 @@ class DomeView(LoginRequiredMixin,UserPassesTestMixin,generic.DetailView):
 
 class DomeViewHtmx(LoginRequiredMixin,UserPassesTestMixin,generic.DetailView):
     model = Dome
-    template_name = 'domes/dome_info.html'
+    template_name = 'Domes/dome_info.html'
 
     def get(self, request, *args, **kwargs):
         if 'HX-Request' in self.request.headers.keys() and self.request.headers.get('HX-Request') == 'true':
@@ -117,7 +117,7 @@ class DomeViewHtmx(LoginRequiredMixin,UserPassesTestMixin,generic.DetailView):
 class CategoryCreateView(LoginRequiredMixin,generic.DetailView, generic.edit.FormMixin):
     model = Dome
     form_class = CategoryCreation
-    template_name = 'domes/category_form.html'
+    template_name = 'Domes/category_form.html'
     def post(self, request, *args, **kwargs):
         form = CategoryCreation(self.request.POST)
         if form.is_valid():
@@ -129,7 +129,7 @@ class CategoryCreateView(LoginRequiredMixin,generic.DetailView, generic.edit.For
 
 class DomeInvitationView(LoginRequiredMixin, generic.DetailView):
     model = Dome
-    template_name = 'domes/invitation.html'
+    template_name = 'Domes/invitation.html'
 
     def get_object(self):
         code = self.kwargs.get('code')
@@ -157,7 +157,7 @@ class DomeInvitationView(LoginRequiredMixin, generic.DetailView):
         return context
 
 class DomeMembersView(LoginRequiredMixin,UserPassesTestMixin, generic.ListView):
-    template_name = 'domes/members_list.html'
+    template_name = 'Domes/members_list.html'
     context_object_name = 'members'
     paginate_by = 20
 
@@ -196,7 +196,7 @@ class DomeMembersView(LoginRequiredMixin,UserPassesTestMixin, generic.ListView):
         return False
 
 class UserDomesView(LoginRequiredMixin, generic.ListView):
-    template_name = 'domes/user_domes.html'
+    template_name = 'Domes/user_domes.html'
     context_object_name = 'owned'
 
     def get_queryset(self):
