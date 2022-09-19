@@ -1,8 +1,6 @@
-from urllib import response
 from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render
 from django.http.response import Http404
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from .models import ChatChannel, ChatMessage
@@ -11,10 +9,9 @@ from Domes.models import Category,Dome
 # streming
 import time
 from django.http import StreamingHttpResponse
-from django.db import transaction
 
 class ChatMessageList(LoginRequiredMixin, generic.ListView,generic.edit.FormMixin):
-    template_name = 'chat/chat_messages.html'
+    template_name = 'Chat/chat_messages.html'
     model = ChatMessage
     context_object_name = 'messages'
     paginate = 10
@@ -58,7 +55,7 @@ class ChatMessageList(LoginRequiredMixin, generic.ListView,generic.edit.FormMixi
         
 class ChatChannelCreateView(LoginRequiredMixin, generic.DetailView, generic.edit.FormMixin):
     model = Category
-    template_name = 'chat/chatchannel_form.html'
+    template_name = 'Chat/chatchannel_form.html'
     form_class = ChatChannelCreation
     def post(self, *args, **kwargs):
          form = ChatChannelCreation(self.request.POST)
@@ -103,7 +100,7 @@ def stream(request, chat_pk):
     return StreamingHttpResponse(event_stream(), content_type='text/event-stream')
 
 class getNewMsgsView(LoginRequiredMixin, generic.DetailView):
-    template_name = 'chat/requested_msgs.html'
+    template_name = 'Chat/requested_msgs.html'
     context_object_name = 'object'
     
     def get_channel_obj(self, pk):
