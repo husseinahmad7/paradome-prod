@@ -67,7 +67,7 @@
       </div>
     </div>
 
-    
+
   </div>
 {% comment %} mobile bottom navbar {% endcomment %}
   <nav class="navbar is-fixed-bottom is-hidden-tablet" role="navigation" aria-label="main navigation">
@@ -91,7 +91,7 @@
         <span aria-hidden="true"></span>
       </a>
     </div>
-  
+
     <div id="navbarBasicExample" class="navbar-menu" >
       <div class="navbar-start">
         <div style="overflow-y: auto; height: 50vh" class="on-scrollbar">
@@ -102,15 +102,15 @@
           <a class="navbar-link">
             Joined Domes
           </a>
-  
+
           <div class="navbar-dropdown">
             <div class="dropdown-content" hx-get="{%url 'domes:user-domes' %}" hx-trigger="intersect once" hx-swap="innerHTML" style="overflow-y: scroll;max-height:70vh">
             </div>
           </div>
         </div>
-     
+
       </div>
-  
+
       <div class="navbar-end">
         <a class="navbar-item" href="{% url 'messages:directs' dome.user %}">
           Report an issue
