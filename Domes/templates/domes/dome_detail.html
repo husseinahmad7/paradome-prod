@@ -73,9 +73,9 @@
   <nav class="navbar is-fixed-bottom is-hidden-tablet" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
       <a class="navbar-item" hx-get="{% url 'domes:dome-info' dome.id %}" hx-target="#main-content" hx-swap="innerHTML">
-        {% if dome.picture %}
+        {% if dome.icon %}
         <figure class="image is-48x48 is-1by1">
-            <img class="is-rounded" src="{{ dome.picture.url }}" alt="{{dome.title}}">
+            <img class="is-rounded" src="{{ dome.icon.url }}" alt="{{dome.title}}">
           </figure>
         {% endif %}Info
       </a>

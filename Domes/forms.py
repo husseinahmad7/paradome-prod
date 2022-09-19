@@ -9,7 +9,7 @@ class DomeCreation(forms.ModelForm):
     
     class Meta:
         model = Dome
-        fields=['picture','banner','title','description','privacy']
+        fields=['icon','banner','title','description','privacy']
 
 class CategoryCreation(forms.ModelForm):
     class Meta:

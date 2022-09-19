@@ -11,8 +11,8 @@ Delete {{ object.title }}
         <fieldset>
             <legend>delete the dome</legend>
         <h2>are you sure you want to delete the Dome "{{object.title}}"</h2>
-        <button class="button is-danger" type="submit">delete</button>
-        <a href="{% url 'domes:dome-detail' object.pk %}">cancel</a>
+        <button class="button is-danger" type="submit">Delete</button>
+        <a class="button" href="{% url 'domes:dome-detail' object.pk %}">cancel</a>
     </fieldset>
     </form>
 </main>
