@@ -72,13 +72,24 @@
 {% comment %} mobile bottom navbar {% endcomment %}
   <nav class="navbar is-fixed-bottom is-hidden-tablet" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-      <a class="navbar-item" hx-get="{% url 'domes:dome-info' dome.id %}" hx-target="#main-content" hx-swap="innerHTML">
+      <nav class="level is-mobile">
         {% if dome.icon %}
-        <figure class="image is-48x48 is-1by1">
-            <img class="is-rounded" src="{{ dome.icon.url }}" alt="{{dome.title}}">
-          </figure>
-        {% endif %}Info
-      </a>
+        <div class="level-item has-text-centered">
+          <div>
+              <figure class="image is-32x32 is-1by1">
+                  <img class="is-rounded" src="{{ dome.icon.url }}" alt="{{dome.title}}">
+                </figure>
+            </div>
+        </div>
+        {% endif %}
+        <div class="level-item has-text-centered">
+          <div>
+            <a class="navbar-item" hx-get="{% url 'domes:dome-info' dome.id %}" hx-target="#main-content" hx-swap="innerHTML">
+              info
+            </a>
+          </div>
+        </div>
+    </nav>
           <li class="navbar-item">
             <a hx-get="{% url 'posts:htmxdomeposts' dome.id %}" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML">Posts</a>
           </li>
