@@ -9,6 +9,18 @@ from Domes.models import Category,Dome
 # streming
 import time
 from django.http import StreamingHttpResponse
+import pusher
+from django.template.loader import render_to_string
+
+
+pusher_client = pusher.Pusher(
+  app_id='1480423',
+  key='21ff90b908ef8ddd0e12',
+  secret='9f9d66a68dcf2bd2a07d',
+  cluster='eu',
+  ssl=True
+)
+
 
 class ChatMessageList(LoginRequiredMixin, generic.ListView,generic.edit.FormMixin):
     template_name = 'Chat/chat_messages.html'
@@ -46,9 +58,17 @@ class ChatMessageList(LoginRequiredMixin, generic.ListView,generic.edit.FormMixi
             file = form.cleaned_data.get('file')
             sender = self.request.user
             channel= self.get_channel_obj(self.kwargs.get('pk'))
+<<<<<<< HEAD
+=======
+            channel_id = channel.id
+            
+>>>>>>> a3a10756c4b568be703b6ad684be000e1d1c3328
 
             m, created = ChatMessage.objects.get_or_create(user=sender, body=body, file=file, channel=channel)
-            m.save()
+            if created:
+                m.save()
+                html = render_to_string('Chat/requested_msgs.html',{'object':m})
+                pusher_client.trigger(f'{channel_id}', 'my-event', html)
             if 'HX-Request' in self.request.headers.keys() and self.request.headers.get('HX-Request') == 'true':
                 return HttpResponse(status=204)
             return HttpResponseRedirect(reverse('chat:chat-channel',args=[channel.id]))
@@ -73,7 +93,10 @@ class ChatMessageDeleteView(LoginRequiredMixin, generic.DeleteView, UserPassesTe
 
     def test_func(self):
         message = self.get_object()
-        if self.request.user == message.user:
+        dome = message.channel.category.dome
+        mods = dome.moderators
+        owner = dome.user
+        if self.request.user == message.user or self.request.user == owner or self.request.user in mods:
             return True
         return False
 

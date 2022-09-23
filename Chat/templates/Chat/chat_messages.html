@@ -1,9 +1,29 @@
 {% load humanize %}
 {% load static %}
+{{channel_id|json_script:"channel_id"}}
+<script>
+  var pusher = new Pusher('21ff90b908ef8ddd0e12', {
+    cluster: 'eu'
+  });
+  var socketId = null;
+  pusher.connection.bind('connected', function() {
+      socketId = pusher.connection.socket_id;
 
+  })
+  channelid = JSON.parse(document.getElementById('channel_id').textContent);
+
+  var channel = pusher.subscribe(channelid.toString());
+  channel.bind('my-event', function(data) {
+   document.getElementById('messages').insertAdjacentHTML("beforeend",data);
+   deletebtn = htmx.find('.delete.new');
+   htmx.process(deletebtn);
+   htmx.removeClass(deletebtn, "new");
+  });
+</script>
+<div id="messages">
 {% if messages %}
 {% for message in messages %}
-<div class="box fade-me-out">
+<div class="box fade-me-out is-size-7">
     <article class="media {% ifchanged message.user.id %}
     {% cycle 'is-primary is-light' 'is-info is-light'%}
     {% endifchanged %}">
@@ -40,12 +60,13 @@
 </div>
 {% endfor %}
 {% endif %}
-<div class="container">
+</div>
+{% comment %} <div class="container">
   <div hx-sse="connect:{% url 'chat:event-stream' channel_id %}" id="ssetr">
     <div hx-swap="beforeend" hx-trigger="sse:new_msg" hx-get="{% url 'chat:new_msgs_htmx' channel_id %}">
     </div>
   </div>
-</div>
+</div> {% endcomment %}
 <fieldset class="field">
     {% comment %} <legend class="label">reply</legend> {% endcomment %}
     <form id="send-message" action="{% url 'chat:chat-channel' channel_id %}" method="POST" enctype="multipart/form-data">
@@ -76,6 +97,7 @@ myform.addEventListener('htmx:beforeRequest', function(evt) {
   btn.classList.add('is-loading');
 });
 </script>
+
 {% comment %} <script>
   $('button#del').click(function(){
   
