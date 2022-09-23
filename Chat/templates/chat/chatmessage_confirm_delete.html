@@ -11,8 +11,6 @@
                     <legend>delete the message</legend>
                 <h2>are you sure you want to delete the message "{{object.body}}"</h2>
                 <button hx-post="{% url 'chat:msg-delete' object.pk %}" hx-trigger="click" hx-target="closest .box" hx-swap="outerHTML swap:1s" type="submit" class="button is-danger">delete</button>
-                {% comment %} <a hx-get="{% url 'chat:chat-channel' chat.id %}" >{{chat.title}}</a> {% endcomment %}
-                {% comment %} <a href="{% url 'chat:chat-channel' object.chat_msg.pk %}">cancel</a> {% endcomment %}
                 </fieldset>
                 </form>
               </div>
