@@ -116,11 +116,10 @@ def msgDeleted(request):
 #                         id = id +1
 #             time.sleep(3)
 
-<<<<<<< HEAD
 # class getNewMsgsView(LoginRequiredMixin, generic.DetailView):
 #     template_name = 'Chat/requested_msgs.html'
 #     context_object_name = 'object'
-    
+
 #     def get_channel_obj(self, pk):
 #         try:
 #             return ChatChannel.objects.get(pk=pk)
@@ -130,7 +129,7 @@ def msgDeleted(request):
 #         channel = self.get_channel_obj(self.kwargs.get('chat_pk'))
 #         msg = ChatMessage.objects.filter(channel=channel, is_read=False).earliest('date')
 #         return msg
-    
+
 #     def get(self,request, *args, **kwargs):
 #         obj = self.get_object()
 #         channel = self.get_channel_obj(self.kwargs.get('chat_pk'))
@@ -142,47 +141,13 @@ def msgDeleted(request):
 #         context['dome_owner'] = dome_owner
 #         context['moderators'] = moderators
 #         time.sleep(1)
-        
+
 #         obj.is_read = True
 #         obj.save()
 #         context['object'] = obj
-        
+
 #         return self.render_to_response(context)
-    
-=======
-class getNewMsgsView(LoginRequiredMixin, generic.DetailView):
-    template_name = 'Chat/requested_msgs.html'
-    context_object_name = 'object'
 
-    def get_channel_obj(self, pk):
-        try:
-            return ChatChannel.objects.get(pk=pk)
-        except ChatChannel.DoesNotExist:
-            raise Http404
-    def get_object(self, *args, **kwargs):
-        channel = self.get_channel_obj(self.kwargs.get('chat_pk'))
-        msg = ChatMessage.objects.filter(channel=channel, is_read=False).earliest('date')
-        return msg
-
-    def get(self,request, *args, **kwargs):
-        obj = self.get_object()
-        channel = self.get_channel_obj(self.kwargs.get('chat_pk'))
-        category = channel.category
-        dome = Dome.objects.get(pk=category.Dome.id)
-        moderators = dome.moderators.all()
-        dome_owner = dome.user
-        context = {}
-        context['dome_owner'] = dome_owner
-        context['moderators'] = moderators
-        time.sleep(1)
-
-        obj.is_read = True
-        obj.save()
-        context['object'] = obj
-
-        return self.render_to_response(context)
-
->>>>>>> b8bee8d04ac0de14ae259f8ca19a48ddbe177aaa
     # def get_context_data(self, **kwargs):
     #     context = super(getNewMsgsView,self).get_context_data(**kwargs)
     #     channel = self.get_channel_obj(self.kwargs.get('pk'))
