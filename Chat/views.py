@@ -28,7 +28,7 @@ class ChatMessageList(LoginRequiredMixin, generic.ListView,generic.edit.FormMixi
     context_object_name = 'messages'
     paginate = 10
     form_class = ChatMessageCreation
-    
+
     def get_channel_obj(self, pk):
         try:
             return ChatChannel.objects.get(pk=pk)
@@ -50,7 +50,7 @@ class ChatMessageList(LoginRequiredMixin, generic.ListView,generic.edit.FormMixi
         context['moderators'] = moderators
         # context['form']= form
         return context
-    
+
     def post(self, request, *args, **kwargs):
         form = ChatMessageCreation(self.request.POST, self.request.FILES)
         if form.is_valid():
@@ -59,7 +59,6 @@ class ChatMessageList(LoginRequiredMixin, generic.ListView,generic.edit.FormMixi
             sender = self.request.user
             channel= self.get_channel_obj(self.kwargs.get('pk'))
             channel_id = channel.id
-            
 
             m, created = ChatMessage.objects.get_or_create(user=sender, body=body, file=file, channel=channel)
             if created:
@@ -69,7 +68,7 @@ class ChatMessageList(LoginRequiredMixin, generic.ListView,generic.edit.FormMixi
             if 'HX-Request' in self.request.headers.keys() and self.request.headers.get('HX-Request') == 'true':
                 return HttpResponse(status=204)
             return HttpResponseRedirect(reverse('chat:chat-channel',args=[channel.id]))
-        
+
 class ChatChannelCreateView(LoginRequiredMixin, generic.DetailView, generic.edit.FormMixin):
     model = Category
     template_name = 'Chat/chatchannel_form.html'
@@ -83,11 +82,11 @@ class ChatChannelCreateView(LoginRequiredMixin, generic.DetailView, generic.edit
              chatchannel = ChatChannel(title=title,topic=topic,category= chtchnl_category)
              chatchannel.save()
              return HttpResponseRedirect(reverse('domes:dome-detail', args=[chtchnl_category.Dome.id]))
-         
+
 class ChatMessageDeleteView(LoginRequiredMixin, generic.DeleteView, UserPassesTestMixin):
     model = ChatMessage
     # success_url = ''
-    
+
     def test_func(self):
         message = self.get_object()
         dome = message.channel.category.dome
@@ -96,13 +95,13 @@ class ChatMessageDeleteView(LoginRequiredMixin, generic.DeleteView, UserPassesTe
         if self.request.user == message.user or self.request.user == owner or self.request.user in mods:
             return True
         return False
-    
+
     def get_success_url(self) -> str:
         return reverse('chat:msg-deleted')
-    
+
 def msgDeleted(request):
     return HttpResponse('<article class="message"><div class="message-body">Message has been deleted</div></article>')
-    
+
 # @login_required
 # def stream(request, chat_pk):
 #     def event_stream():
@@ -117,8 +116,7 @@ def msgDeleted(request):
 #                         id = id +1
 #             time.sleep(3)
 
-#     return StreamingHttpResponse(event_stream(), content_type='text/event-stream')
-
+<<<<<<< HEAD
 # class getNewMsgsView(LoginRequiredMixin, generic.DetailView):
 #     template_name = 'Chat/requested_msgs.html'
 #     context_object_name = 'object'
@@ -151,6 +149,40 @@ def msgDeleted(request):
         
 #         return self.render_to_response(context)
     
+=======
+class getNewMsgsView(LoginRequiredMixin, generic.DetailView):
+    template_name = 'Chat/requested_msgs.html'
+    context_object_name = 'object'
+
+    def get_channel_obj(self, pk):
+        try:
+            return ChatChannel.objects.get(pk=pk)
+        except ChatChannel.DoesNotExist:
+            raise Http404
+    def get_object(self, *args, **kwargs):
+        channel = self.get_channel_obj(self.kwargs.get('chat_pk'))
+        msg = ChatMessage.objects.filter(channel=channel, is_read=False).earliest('date')
+        return msg
+
+    def get(self,request, *args, **kwargs):
+        obj = self.get_object()
+        channel = self.get_channel_obj(self.kwargs.get('chat_pk'))
+        category = channel.category
+        dome = Dome.objects.get(pk=category.Dome.id)
+        moderators = dome.moderators.all()
+        dome_owner = dome.user
+        context = {}
+        context['dome_owner'] = dome_owner
+        context['moderators'] = moderators
+        time.sleep(1)
+
+        obj.is_read = True
+        obj.save()
+        context['object'] = obj
+
+        return self.render_to_response(context)
+
+>>>>>>> b8bee8d04ac0de14ae259f8ca19a48ddbe177aaa
     # def get_context_data(self, **kwargs):
     #     context = super(getNewMsgsView,self).get_context_data(**kwargs)
     #     channel = self.get_channel_obj(self.kwargs.get('pk'))
@@ -161,4 +193,3 @@ def msgDeleted(request):
     #     context['dome_owner'] = dome_owner
     #     context['moderators'] = moderators
     #     return context
-        
