@@ -55,12 +55,12 @@ class ChatMessageList(LoginRequiredMixin, generic.ListView,generic.edit.FormMixi
         form = ChatMessageCreation(self.request.POST, self.request.FILES)
         if form.is_valid():
             body = form.cleaned_data.get('body')
-            file = form.cleaned_data.get('file')
+            # file = form.cleaned_data.get('file')
             sender = self.request.user
             channel= self.get_channel_obj(self.kwargs.get('pk'))
             channel_id = channel.id
 
-            m, created = ChatMessage.objects.get_or_create(user=sender, body=body, file=file, channel=channel)
+            m, created = ChatMessage.objects.get_or_create(user=sender, body=body, channel=channel)
             if created:
                 m.save()
                 html = render_to_string('Chat/requested_msgs.html',{'object':m})

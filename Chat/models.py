@@ -20,6 +20,6 @@ class ChatMessage(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     body = models.TextField(max_length=1500, blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
-    file = models.FileField(upload_to=user_directory_path, blank=True, null=True)
+    # file = models.FileField(upload_to=user_directory_path, blank=True, null=True)
     channel = models.ForeignKey(ChatChannel, on_delete=models.CASCADE, related_name='chat_msg')
     is_read = models.BooleanField(default=False)
