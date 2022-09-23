@@ -58,11 +58,7 @@ class ChatMessageList(LoginRequiredMixin, generic.ListView,generic.edit.FormMixi
             file = form.cleaned_data.get('file')
             sender = self.request.user
             channel= self.get_channel_obj(self.kwargs.get('pk'))
-<<<<<<< HEAD
-=======
             channel_id = channel.id
-            
->>>>>>> a3a10756c4b568be703b6ad684be000e1d1c3328
 
             m, created = ChatMessage.objects.get_or_create(user=sender, body=body, file=file, channel=channel)
             if created:
