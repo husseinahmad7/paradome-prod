@@ -7,8 +7,8 @@ from .models import ChatChannel, ChatMessage
 from .forms import ChatMessageCreation,ChatChannelCreation
 from Domes.models import Category,Dome
 # streming
-import time
-from django.http import StreamingHttpResponse
+# import time
+# from django.http import StreamingHttpResponse
 import pusher
 from django.template.loader import render_to_string
 
@@ -104,52 +104,52 @@ def msgDeleted(request):
     return HttpResponse('<article class="message"><div class="message-body">Message has been deleted</div></article>')
     
 # @login_required
-def stream(request, chat_pk):
-    def event_stream():
-        id = 1    
-        while True:
-            channel = ChatChannel.objects.get(pk=chat_pk)
-            msgs = ChatMessage.objects.filter(channel=channel, is_read=False)
+# def stream(request, chat_pk):
+#     def event_stream():
+#         id = 1    
+#         while True:
+#             channel = ChatChannel.objects.get(pk=chat_pk)
+#             msgs = ChatMessage.objects.filter(channel=channel, is_read=False)
                 
-            if msgs.exists():
-                    for msg in msgs:
-                        yield f'event:new_msg\ndata:\nid:{id}\n\n'
-                        id = id +1
-            time.sleep(3)
+#             if msgs.exists():
+#                     for msg in msgs:
+#                         yield f'event:new_msg\ndata:\nid:{id}\n\n'
+#                         id = id +1
+#             time.sleep(3)
 
-    return StreamingHttpResponse(event_stream(), content_type='text/event-stream')
+#     return StreamingHttpResponse(event_stream(), content_type='text/event-stream')
 
-class getNewMsgsView(LoginRequiredMixin, generic.DetailView):
-    template_name = 'Chat/requested_msgs.html'
-    context_object_name = 'object'
+# class getNewMsgsView(LoginRequiredMixin, generic.DetailView):
+#     template_name = 'Chat/requested_msgs.html'
+#     context_object_name = 'object'
     
-    def get_channel_obj(self, pk):
-        try:
-            return ChatChannel.objects.get(pk=pk)
-        except ChatChannel.DoesNotExist:
-            raise Http404
-    def get_object(self, *args, **kwargs):
-        channel = self.get_channel_obj(self.kwargs.get('chat_pk'))
-        msg = ChatMessage.objects.filter(channel=channel, is_read=False).earliest('date')
-        return msg
+#     def get_channel_obj(self, pk):
+#         try:
+#             return ChatChannel.objects.get(pk=pk)
+#         except ChatChannel.DoesNotExist:
+#             raise Http404
+#     def get_object(self, *args, **kwargs):
+#         channel = self.get_channel_obj(self.kwargs.get('chat_pk'))
+#         msg = ChatMessage.objects.filter(channel=channel, is_read=False).earliest('date')
+#         return msg
     
-    def get(self,request, *args, **kwargs):
-        obj = self.get_object()
-        channel = self.get_channel_obj(self.kwargs.get('chat_pk'))
-        category = channel.category
-        dome = Dome.objects.get(pk=category.Dome.id)
-        moderators = dome.moderators.all()
-        dome_owner = dome.user
-        context = {}
-        context['dome_owner'] = dome_owner
-        context['moderators'] = moderators
-        time.sleep(1)
+#     def get(self,request, *args, **kwargs):
+#         obj = self.get_object()
+#         channel = self.get_channel_obj(self.kwargs.get('chat_pk'))
+#         category = channel.category
+#         dome = Dome.objects.get(pk=category.Dome.id)
+#         moderators = dome.moderators.all()
+#         dome_owner = dome.user
+#         context = {}
+#         context['dome_owner'] = dome_owner
+#         context['moderators'] = moderators
+#         time.sleep(1)
         
-        obj.is_read = True
-        obj.save()
-        context['object'] = obj
+#         obj.is_read = True
+#         obj.save()
+#         context['object'] = obj
         
-        return self.render_to_response(context)
+#         return self.render_to_response(context)
     
     # def get_context_data(self, **kwargs):
     #     context = super(getNewMsgsView,self).get_context_data(**kwargs)
