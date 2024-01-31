@@ -1,5 +1,12 @@
 from django.urls import path
 from . import views
+from django.contrib.sitemaps.views import sitemap
+from .sitemap import DomesSitemap
+
+sitemaps = {
+    'domes': DomesSitemap,
+}
+
 
 
 app_name = 'domes'
@@ -15,5 +22,7 @@ urlpatterns = [
     path('<int:pk>/info',views.DomeViewHtmx.as_view(),name='dome-info'),
     path('<int:pk>/newcategory/',views.CategoryCreateView.as_view(),name='category-create'),
     path('<str:slug>/<str:code>', views.DomeInvitationView.as_view(),name='dome-invitation'),
-    path('mine/', views.UserDomesView.as_view(), name='user-domes')
+    path('mine/', views.UserDomesView.as_view(), name='user-domes'),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+
 ]
