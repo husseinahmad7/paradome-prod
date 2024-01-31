@@ -1,5 +1,12 @@
 from django.urls import path
 from . import views
+from django.contrib.sitemaps.views import sitemap
+from .sitemap import PostsSitemap
+
+sitemaps = {
+    'posts': PostsSitemap,
+}
+
 
 
 app_name = 'posts'
@@ -20,6 +27,7 @@ urlpatterns = [
     path('dposts/<int:pk>/', views.HtmxDomePostsView.as_view(),name='htmxdomeposts'),
     path('comment/<int:pk>/', views.RepliesListView.as_view(), name='comment-replies'),
     path('comment/del/<int:comment_id>/', views.deleteComment, name='comment-delete'),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     
     
     
