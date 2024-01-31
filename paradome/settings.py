@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     # 'store',
     'django_filters',
     'ckeditor',
-    'django.contrib.sitemaps'
+    'django.contrib.sitemaps',
 
 
     # 'django_extensions',
