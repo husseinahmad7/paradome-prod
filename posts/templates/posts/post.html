@@ -75,6 +75,11 @@
                 <a hx-post="{% url 'posts:like' object.pk %}" hx-target="#like{{object.pk}}" hx-swap="innerHtml">{{object.likes}} like{{object.likes|pluralize}}</a>
                 {% endif %}
                </div>
+            {% else %}
+            <div class="card-footer-item" id="like{{object.pk}}">
+              {{object.likes}} like{{object.likes|pluralize}}
+            </div>
+
             {%endif%}
                <div class="card-footer-item">
                    <a href="{% url 'posts:post-detail' object.pk %}" >{{object.comment_count}} comment{{object.comment_count|pluralize}}</a>
@@ -139,7 +144,7 @@
                   </p>
                 </div>
               </div>
-              <a hx-get="{% url 'posts:comment-replies' comment.pk %}" hx-target="body" hx-swap="beforeend">
+              <a hx-get="{% url 'posts:comment-replies' comment.pk %}" hx-target="body" hx-swap="beforeend" class="button">
                 {{comment.children.count}} repl{{comment.children.count|pluralize:"y,ies"}}
               </a>
             </article>
