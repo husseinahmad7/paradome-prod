@@ -98,12 +98,16 @@ class PostView(generic.edit.ModelFormMixin ,generic.DetailView):
     def post(self,request, *args, **kwargs):
 
         form = CommentCreation(self.request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.post = get_object_or_404(Post, pk=self.kwargs.get('pk'))
-            comment.user =self.request.user
-            comment.save()
-            return HttpResponseRedirect(reverse('posts:post-detail', args=[self.kwargs.get('pk')]))
+        if self.request.user.is_authenticated:
+        
+            if form.is_valid():
+                comment = form.save(commit=False)
+                comment.post = get_object_or_404(Post, pk=self.kwargs.get('pk'))
+                comment.user =self.request.user
+                comment.save()
+                return HttpResponseRedirect(reverse('posts:post-detail', args=[self.kwargs.get('pk')]))
+        else:
+            return HttpResponseRedirect(reverse('users:login'))
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = self.get_form() # form
