@@ -106,7 +106,7 @@
                    {{ form|crispy }}
                </div>
                <div class="control">
-                   <button class="button is-light" type="submit">comment</button>
+                   <button class="button is-light" type="submit" {% if not request.user.is_authenticated %} disabled="true" {% endif %}>comment</button>
                </div>
             </div>
        </form>
