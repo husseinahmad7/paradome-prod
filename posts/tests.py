@@ -150,7 +150,7 @@ class TestPostCreateView(TestCase):
     def test_post_create_view(self):
         response = self.client.post(reverse('posts:post-create'), {'question_text': 'Test Post', 'content': 'Test content'})
         self.assertEqual(response.status_code, 302)
-        # self.assertEqual(Post.objects.count(), 1)
+        self.assertEqual(Post.objects.count(), 1)
 
 class TestPostUpdateView(TestCase):
     def setUp(self):
