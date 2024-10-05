@@ -366,6 +366,10 @@ backdrop-filter: blur(6px);
 -webkit-backdrop-filter: blur(6px);
 border: 1px solid rgba(44, 149, 163, 0.6);
 transform: translate(0,40px);
+flex-direction: column !important;  /* Stacks the items vertically */
+    align-items: center;                /* Centers items horizontally */
+    justify-content: center;            /* Centers items vertically */
+    gap: 2rem;                          /* Adds spacing between the items */
 }
 
 section#section-upcom{
