@@ -393,7 +393,16 @@ transform: translate(0,40px);
     z-index: 10;
     transition: 0.4s ease-out;
 }
+.list-group-item {
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+    border-radius: 8px !important;
+}
 
+.list-group-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
 #com {
 box-shadow: 2px 6px 30px rgba(0, 0, 0, 0.1);
 backdrop-filter: blur(1px);
