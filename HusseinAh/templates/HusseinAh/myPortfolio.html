@@ -471,6 +471,287 @@
             color: var(--portfolio-accent-dark);
         }
 
+        body.portfolio-page {
+            --signal-x: 50%;
+            --signal-y: 42%;
+            --scroll-progress: 0;
+            --portfolio-bg: #f6f9fc;
+            --portfolio-ink: #07111f;
+            --portfolio-muted: #334155;
+            --portfolio-line: #b8c7d9;
+            --portfolio-accent: #1457ff;
+            --portfolio-accent-dark: #0d3fb8;
+            --portfolio-teal: #087a72;
+            --portfolio-cyan: #18b6d2;
+            --portfolio-night: #08111f;
+        }
+
+        body.portfolio-page .scroll-progress {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            z-index: 90;
+            height: 4px;
+            pointer-events: none;
+            background: transparent;
+        }
+
+        body.portfolio-page .scroll-progress span {
+            display: block;
+            width: 100%;
+            height: 100%;
+            transform: scaleX(var(--scroll-progress));
+            transform-origin: left center;
+            background: linear-gradient(90deg, var(--portfolio-teal), var(--portfolio-accent), var(--portfolio-night));
+        }
+
+        body.portfolio-page .portfolio-hero {
+            overflow: hidden;
+            isolation: isolate;
+            background:
+                radial-gradient(circle at var(--signal-x) var(--signal-y), rgba(24, 182, 210, 0.18), transparent 34rem),
+                linear-gradient(135deg, #f9fbff 0%, #edf6ff 47%, #f6fffb 100%);
+        }
+
+        body.portfolio-page .portfolio-hero::before {
+            position: absolute;
+            inset: -12% -8%;
+            z-index: -2;
+            content: "";
+            pointer-events: none;
+            opacity: 0.78;
+            background-image:
+                linear-gradient(rgba(20, 87, 255, 0.12) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(20, 87, 255, 0.12) 1px, transparent 1px);
+            background-size: 88px 88px;
+            -webkit-mask-image: radial-gradient(circle at var(--signal-x) var(--signal-y), #000 0 32%, transparent 70%);
+            mask-image: radial-gradient(circle at var(--signal-x) var(--signal-y), #000 0 32%, transparent 70%);
+        }
+
+        body.portfolio-page .portfolio-hero::after {
+            position: absolute;
+            right: clamp(1rem, 7vw, 6rem);
+            bottom: clamp(2rem, 7vw, 6rem);
+            z-index: -1;
+            width: min(42vw, 520px);
+            height: 1px;
+            content: "";
+            background: linear-gradient(90deg, transparent, rgba(8, 122, 114, 0.7), transparent);
+            transform: rotate(-18deg);
+        }
+
+        body.portfolio-page .hero-copy h1 {
+            max-width: 8ch;
+            font-size: clamp(3.65rem, 8.5vw, 5.75rem);
+            line-height: 0.94;
+            letter-spacing: -0.025em;
+        }
+
+        body.portfolio-page .hero-line {
+            display: block;
+        }
+
+        body.portfolio-page .hero-kicker {
+            display: inline-flex;
+            gap: 0.55rem;
+            align-items: center;
+            padding: 0.34rem 0.55rem;
+            border: 1px solid rgba(8, 122, 114, 0.24);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.76);
+        }
+
+        body.portfolio-page .status-dot {
+            width: 0.62rem;
+            height: 0.62rem;
+            border-radius: 50%;
+            background: var(--portfolio-teal);
+            box-shadow: 0 0 0 5px rgba(8, 122, 114, 0.14);
+        }
+
+        body.portfolio-page .system-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.55rem;
+            margin: 0 0 1.5rem;
+        }
+
+        body.portfolio-page .system-strip span {
+            display: inline-flex;
+            gap: 0.4rem;
+            align-items: center;
+            min-height: 38px;
+            padding: 0.48rem 0.72rem;
+            border: 1px solid rgba(20, 87, 255, 0.18);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.84);
+            color: var(--portfolio-muted);
+            font-size: 0.92rem;
+            font-weight: 700;
+        }
+
+        body.portfolio-page .system-strip b {
+            color: var(--portfolio-ink);
+        }
+
+        body.portfolio-page .proof-list {
+            padding: 0.9rem;
+            border: 1px solid rgba(184, 199, 217, 0.92);
+            border-radius: var(--portfolio-radius);
+            background: rgba(255, 255, 255, 0.78);
+        }
+
+        body.portfolio-page .hero-visual {
+            align-self: stretch;
+            justify-items: stretch;
+        }
+
+        body.portfolio-page .operator-shell {
+            position: relative;
+            width: min(100%, 440px);
+            margin-inline: auto;
+            padding: 0.78rem;
+            border: 1px solid rgba(7, 17, 31, 0.22);
+            border-radius: 10px;
+            background: var(--portfolio-night);
+            color: #f8fafc;
+            transform: perspective(1100px) rotateY(-4deg) rotateX(2deg);
+            transform-origin: center;
+        }
+
+        body.portfolio-page .operator-shell::before,
+        body.portfolio-page .operator-shell::after {
+            position: absolute;
+            right: 1rem;
+            left: 1rem;
+            height: 1px;
+            content: "";
+            background: linear-gradient(90deg, transparent, rgba(24, 182, 210, 0.72), transparent);
+        }
+
+        body.portfolio-page .operator-shell::before {
+            top: 0.42rem;
+        }
+
+        body.portfolio-page .operator-shell::after {
+            bottom: 0.42rem;
+        }
+
+        body.portfolio-page .operator-topbar {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.18rem 0.1rem 0.7rem;
+            color: #bdeffc;
+            font-size: 0.74rem;
+            font-weight: 800;
+        }
+
+        body.portfolio-page .operator-frame {
+            position: relative;
+            overflow: hidden;
+            border-radius: 7px;
+            background: #dbeafe;
+        }
+
+        body.portfolio-page .operator-frame::after {
+            position: absolute;
+            inset: 0;
+            content: "";
+            pointer-events: none;
+            background:
+                linear-gradient(180deg, transparent 0 46%, rgba(24, 182, 210, 0.2) 48%, transparent 51%),
+                linear-gradient(90deg, rgba(8, 17, 31, 0.36), transparent 30% 70%, rgba(8, 17, 31, 0.2));
+            transform: translateY(-95%);
+            animation: operator-scan 5.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+        }
+
+        body.portfolio-page .operator-frame #personal-img {
+            width: 100%;
+            max-width: none;
+            border: 0;
+            border-radius: 0;
+            filter: saturate(0.93) contrast(1.04);
+        }
+
+        body.portfolio-page .expertise-panel {
+            width: 100%;
+            margin: 0.72rem 0 0;
+            border: 1px solid rgba(157, 235, 220, 0.18);
+            background: rgba(15, 23, 42, 0.92);
+        }
+
+        body.portfolio-page .signal-panel {
+            display: grid;
+            gap: 0.62rem;
+            margin: 0.78rem 0 0;
+        }
+
+        body.portfolio-page .signal-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 0.8rem;
+            align-items: center;
+            padding-bottom: 0.58rem;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.14);
+        }
+
+        body.portfolio-page .signal-row:last-child {
+            padding-bottom: 0;
+            border-bottom: 0;
+        }
+
+        body.portfolio-page .signal-label {
+            color: #cbd5e1;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        body.portfolio-page .signal-value {
+            color: #f8fafc;
+            font-size: 0.82rem;
+            font-weight: 800;
+        }
+
+        body.portfolio-page .signal-meter {
+            grid-column: 1 / -1;
+            height: 4px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: rgba(226, 232, 240, 0.16);
+        }
+
+        body.portfolio-page .signal-meter span {
+            display: block;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #18b6d2, #9debdc);
+        }
+
+        body.portfolio-page .timeline-item,
+        body.portfolio-page .project-card,
+        body.portfolio-page .focus-grid article,
+        body.portfolio-page .credential-list article {
+            transition: transform 220ms ease, border-color 220ms ease, background-color 220ms ease;
+        }
+
+        body.portfolio-page .timeline-item:hover,
+        body.portfolio-page .project-card:hover {
+            border-color: rgba(20, 87, 255, 0.38);
+            transform: translateY(-3px);
+        }
+
+        @keyframes operator-scan {
+            0% {
+                transform: translateY(-95%);
+            }
+            46%,
+            100% {
+                transform: translateY(95%);
+            }
+        }
+
         @media (max-width: 991.98px) {
             body.portfolio-page .portfolio-nav {
                 top: 8px;
@@ -536,6 +817,7 @@
             body.portfolio-page .hero-copy h1 {
                 max-width: calc(100% - 100px);
                 font-size: clamp(2.85rem, 17vw, 4rem);
+                line-height: 0.98;
             }
 
             body.portfolio-page .hero-kicker {
@@ -554,6 +836,37 @@
             body.portfolio-page .timeline-item {
                 grid-template-columns: 1fr;
             }
+
+            body.portfolio-page .system-strip {
+                gap: 0.45rem;
+            }
+
+            body.portfolio-page .system-strip span {
+                min-height: 34px;
+                font-size: 0.82rem;
+            }
+
+            body.portfolio-page .operator-shell {
+                width: 84px;
+                padding: 0;
+                border: 0;
+                background: transparent;
+                transform: none;
+            }
+
+            body.portfolio-page .operator-shell::before,
+            body.portfolio-page .operator-shell::after,
+            body.portfolio-page .operator-topbar,
+            body.portfolio-page .operator-frame::after,
+            body.portfolio-page .signal-panel {
+                display: none;
+            }
+
+            body.portfolio-page .operator-frame {
+                overflow: visible;
+                border-radius: 50%;
+                background: transparent;
+            }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -564,6 +877,10 @@
                 animation-iteration-count: 1 !important;
                 scroll-behavior: auto !important;
                 transition-duration: 0.001ms !important;
+            }
+
+            body.portfolio-page .portfolio-hero {
+                background: linear-gradient(135deg, #f9fbff 0%, #edf6ff 47%, #f6fffb 100%);
             }
         }
     </style>
@@ -579,6 +896,7 @@
     <title>Hussein Ahmad | Full-Stack, DevOps, AI & MLOps Engineer</title>
 </head>
 <body class="portfolio-page" data-bs-spy="scroll" data-bs-target="#navbar-scrolled" data-bs-offset="120" tabindex="0">
+    <div class="scroll-progress" aria-hidden="true"><span></span></div>
     <header>
         <nav id="navbar-scrolled" class="navbar navbar-expand-lg navbar-light fixed-top portfolio-nav" aria-label="Portfolio navigation">
             <div class="container-fluid">
@@ -608,10 +926,15 @@
         <section id="section-intro" class="portfolio-hero">
             <div class="container portfolio-container hero-inner">
                 <div class="hero-copy">
-                    <p class="hero-kicker">DevOps · AI systems · ERP platforms</p>
-                    <h1>Hussein Ahmad</h1>
+                    <p class="hero-kicker"><span class="status-dot" aria-hidden="true"></span>Production systems operator</p>
+                    <h1><span class="hero-line">Hussein</span> <span class="hero-line">Ahmad</span></h1>
                     <p class="hero-role">Full-stack engineer building ERP platforms, AI search systems, and reliable deployment workflows.</p>
                     <p class="hero-summary">I turn complex institutional workflows into deployed products: school operations, finance and reporting, retrieval systems, agentic tooling, and infrastructure that can run in production.</p>
+                    <div class="system-strip" aria-label="Current engineering systems">
+                        <span><b>ERP</b> operations since 2020</span>
+                        <span><b>AI</b> retrieval and extraction</span>
+                        <span><b>DevOps</b> deployable services</span>
+                    </div>
                     <div class="hero-actions" aria-label="Primary portfolio actions">
                         <a class="portfolio-button portfolio-button-primary" href="mailto:h7ussein.ahmad@gmail.com">Contact me</a>
                         <a class="portfolio-button" href="{% static 'files/Hussein_Ahmad_Resume.pdf' %}" target="_blank" rel="noopener">Resume</a>
@@ -632,11 +955,36 @@
                         </div>
                     </dl>
                 </div>
-                <div class="hero-visual" aria-label="Portrait and expertise summary">
-                    <img id="personal-img" src="{% static 'images/m03.jpg'%}" alt="Portrait of Hussein Ahmad" width="420" height="420">
-                    <div class="expertise-panel">
-                        <span>Core work</span>
-                        <strong>ERP · RAG · DevOps · MLOps</strong>
+                <div class="hero-visual" aria-label="Portrait and engineering systems summary">
+                    <div class="operator-shell">
+                        <div class="operator-topbar" aria-hidden="true">
+                            <span>PARADOME / PORTFOLIO SIGNAL</span>
+                            <span>ONLINE</span>
+                        </div>
+                        <div class="operator-frame">
+                            <img id="personal-img" src="{% static 'images/m03.jpg'%}" alt="Portrait of Hussein Ahmad" width="420" height="420">
+                        </div>
+                        <div class="expertise-panel">
+                            <span>Core work</span>
+                            <strong>ERP · RAG · DevOps · MLOps</strong>
+                        </div>
+                        <div class="signal-panel" aria-label="Engineering signal summary">
+                            <div class="signal-row">
+                                <span class="signal-label">ERP platform</span>
+                                <span class="signal-value">2020-now</span>
+                                <span class="signal-meter" aria-hidden="true"><span style="width: 100%"></span></span>
+                            </div>
+                            <div class="signal-row">
+                                <span class="signal-label">Manual entry reduction</span>
+                                <span class="signal-value">90%</span>
+                                <span class="signal-meter" aria-hidden="true"><span style="width: 90%"></span></span>
+                            </div>
+                            <div class="signal-row">
+                                <span class="signal-label">Production focus</span>
+                                <span class="signal-value">Ship-ready</span>
+                                <span class="signal-meter" aria-hidden="true"><span style="width: 82%"></span></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -803,6 +1151,39 @@
     <script>
         (function () {
             const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const root = document.documentElement;
+            let ticking = false;
+
+            const updateScrollProgress = () => {
+                const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+                const progress = scrollable > 0 ? window.scrollY / scrollable : 0;
+                root.style.setProperty('--scroll-progress', Math.min(1, Math.max(0, progress)).toFixed(4));
+                ticking = false;
+            };
+
+            const requestProgress = () => {
+                if (!ticking) {
+                    window.requestAnimationFrame(updateScrollProgress);
+                    ticking = true;
+                }
+            };
+
+            updateScrollProgress();
+            window.addEventListener('scroll', requestProgress, { passive: true });
+            window.addEventListener('resize', requestProgress);
+
+            if (!prefersReducedMotion) {
+                const hero = document.querySelector('.portfolio-hero');
+                if (hero) {
+                    hero.addEventListener('pointermove', (event) => {
+                        const rect = hero.getBoundingClientRect();
+                        const x = ((event.clientX - rect.left) / rect.width) * 100;
+                        const y = ((event.clientY - rect.top) / rect.height) * 100;
+                        document.body.style.setProperty('--signal-x', `${Math.min(100, Math.max(0, x)).toFixed(2)}%`);
+                        document.body.style.setProperty('--signal-y', `${Math.min(100, Math.max(0, y)).toFixed(2)}%`);
+                    }, { passive: true });
+                }
+            }
 
             document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
                 anchor.addEventListener('click', (event) => {
