@@ -7,6 +7,566 @@
     {% load static %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'css/m03.css'%}">
+    <style>
+        /* Critical portfolio styles are inline so PythonAnywhere pulls do not depend on stale collected static files. */
+        :root {
+            --portfolio-bg: #f8fafc;
+            --portfolio-surface: #ffffff;
+            --portfolio-surface-2: #eef6ff;
+            --portfolio-ink: #09090b;
+            --portfolio-muted: #465567;
+            --portfolio-line: #c8d3df;
+            --portfolio-accent: #2563eb;
+            --portfolio-accent-dark: #1747a6;
+            --portfolio-teal: #0f766e;
+            --portfolio-radius: 8px;
+            --portfolio-nav-height: 76px;
+        }
+
+        html {
+            scroll-padding-top: calc(var(--portfolio-nav-height) + 28px);
+        }
+
+        body.portfolio-page {
+            margin: 0;
+            background: var(--portfolio-bg);
+            color: var(--portfolio-ink);
+            font: 400 16px/1.65 'Noto Sans', Arial, sans-serif;
+            text-rendering: optimizeLegibility;
+        }
+
+        body.portfolio-page:focus {
+            outline: none;
+        }
+
+        body.portfolio-page main {
+            display: block;
+            min-height: 100vh;
+            max-width: none;
+            overflow: clip;
+            position: relative;
+            top: auto;
+            background: var(--portfolio-bg);
+            color: var(--portfolio-ink);
+        }
+
+        body.portfolio-page h1,
+        body.portfolio-page h2,
+        body.portfolio-page h3,
+        body.portfolio-page .portfolio-brand,
+        body.portfolio-page .portfolio-button {
+            font-family: 'Figtree', 'Noto Sans', Arial, sans-serif;
+        }
+
+        body.portfolio-page h1,
+        body.portfolio-page h2,
+        body.portfolio-page h3,
+        body.portfolio-page p {
+            margin-top: 0;
+        }
+
+        body.portfolio-page h1,
+        body.portfolio-page h2,
+        body.portfolio-page h3 {
+            color: var(--portfolio-ink);
+            letter-spacing: 0;
+            text-wrap: balance;
+        }
+
+        body.portfolio-page p {
+            color: var(--portfolio-muted);
+            text-wrap: pretty;
+        }
+
+        body.portfolio-page a {
+            color: var(--portfolio-accent-dark);
+        }
+
+        body.portfolio-page a:focus-visible,
+        body.portfolio-page button:focus-visible {
+            outline: 3px solid rgba(37, 99, 235, 0.38);
+            outline-offset: 3px;
+        }
+
+        body.portfolio-page .portfolio-nav {
+            top: 12px;
+            left: clamp(12px, 4vw, 48px);
+            right: clamp(12px, 4vw, 48px);
+            width: auto;
+            min-height: 52px;
+            background: var(--portfolio-surface);
+            border: 1px solid var(--portfolio-line);
+            border-radius: var(--portfolio-radius);
+            padding: 0.25rem 0.35rem;
+            z-index: 50;
+        }
+
+        body.portfolio-page .portfolio-brand {
+            color: var(--portfolio-ink) !important;
+            font-size: 0.98rem;
+            font-weight: 800;
+            letter-spacing: 0;
+        }
+
+        body.portfolio-page .portfolio-nav .nav-link {
+            color: var(--portfolio-muted) !important;
+            border: 0;
+            border-radius: 6px;
+            font-size: 0.94rem;
+            font-weight: 700;
+            padding: 0.55rem 0.7rem;
+        }
+
+        body.portfolio-page .portfolio-nav .nav-link.active,
+        body.portfolio-page .portfolio-nav .nav-link:hover {
+            background: var(--portfolio-surface-2);
+            color: var(--portfolio-accent-dark) !important;
+        }
+
+        body.portfolio-page .portfolio-nav .nav-link::before,
+        body.portfolio-page .portfolio-nav .nav-link::after {
+            display: none;
+        }
+
+        body.portfolio-page .portfolio-nav-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+            align-items: center;
+        }
+
+        body.portfolio-page .portfolio-nav .btn {
+            border-radius: 6px;
+            font-weight: 700;
+        }
+
+        body.portfolio-page .portfolio-container {
+            width: min(1120px, calc(100vw - 32px));
+            margin-inline: auto;
+        }
+
+        body.portfolio-page #section-intro.portfolio-hero {
+            min-height: 100vh;
+            padding: clamp(8rem, 13vw, 11rem) 0 clamp(4rem, 8vw, 6.5rem);
+            background: var(--portfolio-bg);
+            position: relative;
+        }
+
+        body.portfolio-page .hero-inner {
+            display: grid;
+            grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+            gap: clamp(2rem, 7vw, 5rem);
+            align-items: center;
+        }
+
+        body.portfolio-page .hero-copy {
+            max-width: 760px;
+        }
+
+        body.portfolio-page .hero-kicker,
+        body.portfolio-page .section-label,
+        body.portfolio-page .project-date,
+        body.portfolio-page .timeline-date {
+            color: var(--portfolio-teal);
+            font-weight: 800;
+            letter-spacing: 0;
+        }
+
+        body.portfolio-page .hero-kicker {
+            margin-bottom: 1rem;
+        }
+
+        body.portfolio-page .hero-copy h1 {
+            font-size: clamp(3.2rem, 9vw, 5.8rem);
+            line-height: 0.96;
+            font-weight: 800;
+            margin-bottom: 1.2rem;
+        }
+
+        body.portfolio-page .hero-role {
+            max-width: 680px;
+            color: var(--portfolio-ink);
+            font-size: clamp(1.25rem, 2.2vw, 1.7rem);
+            font-weight: 700;
+            line-height: 1.35;
+            margin-bottom: 1rem;
+        }
+
+        body.portfolio-page .hero-summary {
+            max-width: 68ch;
+            font-size: 1.03rem;
+            margin-bottom: 1.65rem;
+        }
+
+        body.portfolio-page .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        body.portfolio-page .portfolio-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            border: 1px solid var(--portfolio-line);
+            border-radius: 6px;
+            padding: 0.72rem 1rem;
+            background: var(--portfolio-surface);
+            color: var(--portfolio-ink);
+            font-weight: 800;
+            text-decoration: none;
+            transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+        }
+
+        body.portfolio-page .portfolio-button:hover {
+            border-color: var(--portfolio-accent);
+            background: var(--portfolio-surface-2);
+            color: var(--portfolio-accent-dark);
+        }
+
+        body.portfolio-page .portfolio-button-primary {
+            background: var(--portfolio-accent);
+            border-color: var(--portfolio-accent);
+            color: #fff;
+        }
+
+        body.portfolio-page .portfolio-button-primary:hover {
+            background: var(--portfolio-accent-dark);
+            border-color: var(--portfolio-accent-dark);
+            color: #fff;
+        }
+
+        body.portfolio-page .proof-list {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.8rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        body.portfolio-page .proof-list div {
+            border-top: 2px solid var(--portfolio-line);
+            padding-top: 0.75rem;
+        }
+
+        body.portfolio-page .proof-list dt {
+            color: var(--portfolio-ink);
+            font-weight: 800;
+        }
+
+        body.portfolio-page .proof-list dd {
+            margin: 0.2rem 0 0;
+            color: var(--portfolio-muted);
+        }
+
+        body.portfolio-page .hero-visual {
+            position: relative;
+            display: grid;
+            justify-items: center;
+        }
+
+        body.portfolio-page .hero-visual #personal-img {
+            display: block;
+            width: min(100%, 420px);
+            aspect-ratio: 1 / 1;
+            height: auto;
+            margin: 0;
+            object-fit: cover;
+            border: 1px solid var(--portfolio-line);
+            border-radius: var(--portfolio-radius);
+        }
+
+        body.portfolio-page .expertise-panel {
+            width: min(88%, 340px);
+            margin-top: -2.4rem;
+            margin-right: auto;
+            padding: 1rem;
+            border-radius: var(--portfolio-radius);
+            background: #0f172a;
+            color: #fff;
+        }
+
+        body.portfolio-page .expertise-panel span {
+            display: block;
+            margin-bottom: 0.2rem;
+            color: #9debdc;
+            font-size: 0.85rem;
+            font-weight: 800;
+        }
+
+        body.portfolio-page .expertise-panel strong {
+            display: block;
+            color: #fff;
+            font-size: 1.05rem;
+        }
+
+        body.portfolio-page .portfolio-section {
+            min-height: auto !important;
+            scroll-margin-top: calc(var(--portfolio-nav-height) + 28px);
+            padding: clamp(4.5rem, 9vw, 7rem) 0;
+            background: var(--portfolio-bg) !important;
+        }
+
+        body.portfolio-page .portfolio-section.is-visible,
+        body.portfolio-page .timeline-item.is-visible,
+        body.portfolio-page .project-card.is-visible {
+            animation: portfolio-rise 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        @keyframes portfolio-rise {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        body.portfolio-page .experience-section,
+        body.portfolio-page .education-section,
+        body.portfolio-page .contact-section {
+            background: #ffffff !important;
+        }
+
+        body.portfolio-page .section-heading {
+            max-width: 780px;
+            margin-bottom: clamp(2rem, 5vw, 3.5rem);
+        }
+
+        body.portfolio-page .section-label {
+            margin-bottom: 0.55rem;
+        }
+
+        body.portfolio-page .section-heading h2,
+        body.portfolio-page .contact-inner h2 {
+            font-size: clamp(2rem, 4.5vw, 3.35rem);
+            line-height: 1.04;
+            font-weight: 800;
+            margin-bottom: 0.9rem;
+        }
+
+        body.portfolio-page .section-heading p,
+        body.portfolio-page .contact-inner p {
+            max-width: 72ch;
+            font-size: 1.02rem;
+        }
+
+        body.portfolio-page .timeline {
+            display: grid;
+            gap: 1rem;
+        }
+
+        body.portfolio-page .timeline-item {
+            display: grid;
+            grid-template-columns: minmax(140px, 0.28fr) minmax(0, 1fr);
+            gap: clamp(1rem, 4vw, 2.5rem);
+            padding: clamp(1.1rem, 3vw, 1.65rem);
+            border: 1px solid var(--portfolio-line);
+            border-radius: var(--portfolio-radius);
+            background: var(--portfolio-surface);
+        }
+
+        body.portfolio-page .timeline-item-featured {
+            border-color: rgba(37, 99, 235, 0.44);
+            background: #f7fbff;
+        }
+
+        body.portfolio-page .timeline-body h3,
+        body.portfolio-page .project-card h3,
+        body.portfolio-page .credential-list h3,
+        body.portfolio-page .focus-grid h3 {
+            font-size: 1.22rem;
+            font-weight: 800;
+            margin-bottom: 0.55rem;
+        }
+
+        body.portfolio-page .timeline-body p:last-child,
+        body.portfolio-page .project-card p:last-child,
+        body.portfolio-page .credential-list p:last-child,
+        body.portfolio-page .focus-grid p:last-child {
+            margin-bottom: 0;
+        }
+
+        body.portfolio-page .stack-note {
+            color: var(--portfolio-accent-dark);
+            font-weight: 700;
+        }
+
+        body.portfolio-page .inline-link {
+            display: inline-flex;
+            margin-top: 0.35rem;
+            font-weight: 800;
+            text-decoration-thickness: 2px;
+        }
+
+        body.portfolio-page .project-grid,
+        body.portfolio-page .focus-grid,
+        body.portfolio-page .credential-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1rem;
+        }
+
+        body.portfolio-page .project-card,
+        body.portfolio-page .focus-grid article,
+        body.portfolio-page .credential-list article {
+            padding: clamp(1rem, 3vw, 1.4rem);
+            border: 1px solid var(--portfolio-line);
+            border-radius: var(--portfolio-radius);
+            background: var(--portfolio-surface);
+        }
+
+        body.portfolio-page .project-card {
+            min-height: 210px;
+        }
+
+        body.portfolio-page .project-date {
+            margin-bottom: 0.75rem;
+        }
+
+        body.portfolio-page .split-section {
+            display: grid;
+            grid-template-columns: minmax(0, 0.9fr) minmax(280px, 1.1fr);
+            gap: clamp(2rem, 6vw, 4rem);
+            align-items: start;
+        }
+
+        body.portfolio-page .focus-section {
+            background: #eef6ff !important;
+        }
+
+        body.portfolio-page .contact-section {
+            padding-bottom: clamp(3rem, 6vw, 4.5rem);
+        }
+
+        body.portfolio-page .contact-inner {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(260px, 0.58fr);
+            gap: clamp(2rem, 6vw, 4rem);
+            align-items: start;
+            border-top: 2px solid var(--portfolio-line);
+            padding-top: clamp(2rem, 5vw, 3rem);
+        }
+
+        body.portfolio-page .contact-links {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        body.portfolio-page .contact-links a {
+            display: block;
+            min-height: 44px;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--portfolio-line);
+            color: var(--portfolio-ink);
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        body.portfolio-page .contact-links a:hover {
+            color: var(--portfolio-accent-dark);
+        }
+
+        @media (max-width: 991.98px) {
+            body.portfolio-page .portfolio-nav {
+                top: 8px;
+                right: 8px;
+                left: 8px;
+            }
+
+            body.portfolio-page .portfolio-nav .navbar-collapse {
+                padding: 0.75rem 0.25rem 0.35rem;
+            }
+
+            body.portfolio-page .portfolio-nav-actions {
+                margin-top: 0.75rem;
+            }
+
+            body.portfolio-page .hero-inner,
+            body.portfolio-page .split-section,
+            body.portfolio-page .contact-inner {
+                grid-template-columns: 1fr;
+            }
+
+            body.portfolio-page .hero-visual {
+                justify-items: start;
+            }
+
+            body.portfolio-page .proof-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            body.portfolio-page {
+                font-size: 15px;
+            }
+
+            body.portfolio-page .portfolio-container {
+                width: min(100% - 24px, 1120px);
+            }
+
+            body.portfolio-page #section-intro.portfolio-hero {
+                padding-top: 7.25rem;
+            }
+
+            body.portfolio-page .hero-inner {
+                display: block;
+            }
+
+            body.portfolio-page .hero-visual {
+                position: absolute;
+                top: 6.9rem;
+                right: 1.1rem;
+            }
+
+            body.portfolio-page .hero-visual #personal-img {
+                width: 84px;
+                border-radius: 50%;
+            }
+
+            body.portfolio-page .expertise-panel {
+                display: none;
+            }
+
+            body.portfolio-page .hero-copy h1 {
+                max-width: calc(100% - 100px);
+                font-size: clamp(2.85rem, 17vw, 4rem);
+            }
+
+            body.portfolio-page .hero-kicker {
+                max-width: calc(100% - 112px);
+            }
+
+            body.portfolio-page .hero-actions {
+                display: grid;
+                grid-template-columns: 1fr;
+            }
+
+            body.portfolio-page .portfolio-button {
+                width: 100%;
+            }
+
+            body.portfolio-page .timeline-item {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 0.001ms !important;
+            }
+        }
+    </style>
     <link rel="icon" type="image/x-icon" href="{% static 'images/icon.png' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +578,7 @@
     <meta name="author" content="Hussein Ahmad">
     <title>Hussein Ahmad | Full-Stack, DevOps, AI & MLOps Engineer</title>
 </head>
-<body data-bs-spy="scroll" data-bs-target="#navbar-scrolled" data-bs-offset="120" tabindex="0">
+<body class="portfolio-page" data-bs-spy="scroll" data-bs-target="#navbar-scrolled" data-bs-offset="120" tabindex="0">
     <header>
         <nav id="navbar-scrolled" class="navbar navbar-expand-lg navbar-light fixed-top portfolio-nav" aria-label="Portfolio navigation">
             <div class="container-fluid">
@@ -239,7 +799,46 @@
         </section>
     </main>
 
-    <script src="{% static 'js/m03.js'%}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+    <script>
+        (function () {
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+                anchor.addEventListener('click', (event) => {
+                    const target = document.querySelector(anchor.getAttribute('href'));
+                    if (!target) {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    target.scrollIntoView({
+                        behavior: prefersReducedMotion ? 'auto' : 'smooth',
+                        block: 'start'
+                    });
+
+                    const expandedNav = document.querySelector('.navbar-collapse.show');
+                    if (expandedNav && window.bootstrap) {
+                        window.bootstrap.Collapse.getOrCreateInstance(expandedNav).hide();
+                    }
+                });
+            });
+
+            if (!prefersReducedMotion && 'IntersectionObserver' in window) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.16 });
+
+                document.querySelectorAll('.portfolio-section, .project-card, .timeline-item').forEach((element) => {
+                    observer.observe(element);
+                });
+            }
+        })();
+    </script>
 </body>
 </html>
