@@ -21,24 +21,26 @@ Send me Feedback
 </fieldset>
 </div>
 <script>
-    myform = document.querySelector("#feedback");
-    btn = document.querySelector("#submit-btn");
-  
+document.addEventListener('DOMContentLoaded', function() {
+  const feedback = document.querySelector("#feedback");
+  const form = feedback ? feedback.querySelector("form") : null;
+  const btn = document.querySelector("#submit-btn");
 
-myform.addEventListener('htmx:afterRequest', function(evt) {
-  btn.classList.remove('is-loading');
-  myform.reset();
-});
-myform.addEventListener('htmx:beforeRequest', function(evt) {
-  btn.classList.add('is-loading');
-});
-btn.addEventListener('htmx:afterRequest', function(evt) {
+  if (!feedback || !form || !btn) {
+    return;
+  }
+
+  feedback.addEventListener('htmx:afterRequest', function() {
     btn.classList.remove('is-loading');
-    myform.reset();
+    if (form.isConnected) {
+      form.reset();
+    }
   });
-  btn.addEventListener('htmx:beforeRequest', function(evt) {
+
+  feedback.addEventListener('htmx:beforeRequest', function() {
     btn.classList.add('is-loading');
   });
+});
 </script>
 </main>
 <script src="{% static 'js/htmx.min.js' %}" defer></script>
