@@ -9,376 +9,237 @@
     <link rel="stylesheet" href="{% static 'css/m03.css'%}">
     <link rel="icon" type="image/x-icon" href="{% static 'images/icon.png' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Clicker+Script&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Rubik+Distressed&display=swap" rel="stylesheet">
-<meta name="google-site-verification" content="KAzHgH3qTwUULTu0rMkZgIK3Uv7u8Md0gH1eyqSc2Pc" />
-<meta name="description" content="DevOps, AI Developer and MLOps . Expert in RAG applications, Django, MCP, agentic systems, vector databases, LangChain, HuggingFace, Ollama, OpenAI APIs, Jina embeddings, TensorFlow, PyTorch. SVU graduate. Specialized in Deep Learning and MLOps.">
-    <meta name="keywords" content="Hussein Ahmad, DevOps, AI Developer , MLOps, SVU, Syrian Virtual University, RAG, Django, MCP, agents, agentic search, Arabic, vector database, LangChain, HuggingFace, Ollama, OpenAI, Jina embeddings, TensorFlow, PyTorch, Deep Learning, MLOps, ERP, model monitoring, school ERP, ML projects, LLM, API, Postgres, Docker, Celery, Nginx, Redis, Firebase">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="google-site-verification" content="KAzHgH3qTwUULTu0rMkZgIK3Uv7u8Md0gH1eyqSc2Pc" />
+    <meta name="description" content="Hussein Ahmad is a full-stack, DevOps, AI and MLOps engineer building ERP platforms, AI search systems, and reliable deployment workflows.">
+    <meta name="keywords" content="Hussein Ahmad, DevOps, AI Developer, MLOps, ERP, RAG, Django, Laravel, LangChain, vector search, Docker, Nginx, Redis, RabbitMQ, Celery, PostgreSQL, MLflow, SVU">
     <meta name="author" content="Hussein Ahmad">
-    <title>Hussein Portfolio</title>
-    <style>
-      .my-link {
-        display: inline-block;
-        font-size: 14px; 
-        text-decoration: none;
-        color: #333;
-        border: 1px solid #333; 
-        padding: 8px 14px;
-        border-radius: 4px;
-        transition: background-color 0.3s ease, color 0.3s ease; 
-      }
-      .my-link:hover {
-        background-color: #333;
-        color: #fff;
-      }
-      </style>
+    <title>Hussein Ahmad | Full-Stack, DevOps, AI & MLOps Engineer</title>
 </head>
-<body data-bs-spy="scroll" data-bs-target="#navbar-scrolled">
+<body data-bs-spy="scroll" data-bs-target="#navbar-scrolled" data-bs-offset="120" tabindex="0">
     <header>
-        <nav id="navbar-scrolled" class="navbar navbar-expand-lg navbar-light bg-light fixed-top rounded bluring gradientclass" id="navbar">
-          <div class="container-fluid">
-            <a class="nav-link glow" href="index.html">Hussein</a>
-            <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-              <div class="navbar-nav mx-auto mb-2 mb-lg-0">
-                <li id="section-intro-link" class="home-meta">
-                    <a class="nav-link" aria-current="page" href="#section-intro">Main</a>
-                </li>
-                <li id="section-edu-link" class="skills-meta">
-                    <a class="nav-link" href="#section-edu">My Education</a>
-                </li>
-                <li id="section-exp-link" class="project-meta">
-                    <a class="nav-link" href="#section-exp">
-                      My Experience
-                    </a>
-                  </li>
-                <li id="section-upcom-link" class="about-meta">
-                    <a href="#section-upcom" class="nav-link">My Goals</a>
-                </li>
-
-              </div>
-              <span class="navbar-text">
-                  <a class="btn btn-info btn-sm" href="{% url 'posts:index' %}">PARADOME project</a>
-                  <a class="btn btn-outline-dark btn-sm" role="button" href="{% url 'HusseinAh:feedback' %}">Feedback</a>
-            </span>
+        <nav id="navbar-scrolled" class="navbar navbar-expand-lg navbar-light fixed-top portfolio-nav" aria-label="Portfolio navigation">
+            <div class="container-fluid">
+                <a class="navbar-brand portfolio-brand" href="#section-intro">Hussein Ahmad</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                    <div class="navbar-nav mx-auto">
+                        <a class="nav-link" aria-current="page" href="#section-intro">Profile</a>
+                        <a class="nav-link" href="#section-exp">Experience</a>
+                        <a class="nav-link" href="#section-projects">Projects</a>
+                        <a class="nav-link" href="#section-edu">Education</a>
+                        <a class="nav-link" href="#section-focus">Focus</a>
+                        <a class="nav-link" href="#section-contact">Contact</a>
+                    </div>
+                    <div class="navbar-text portfolio-nav-actions">
+                        <a class="btn btn-info btn-sm" href="{% url 'posts:index' %}">ParaDome</a>
+                        <a class="btn btn-outline-dark btn-sm" href="{% url 'HusseinAh:feedback' %}">Feedback</a>
+                    </div>
+                </div>
             </div>
-          </div>
         </nav>
-</header>
+    </header>
 
-<main>
-      <section id="section-intro" style="min-height: 100vh; overflow: hidden;">
-            <div id="particles-js" style="z-index: 0; position: fixed;">
+    <main>
+        <section id="section-intro" class="portfolio-hero">
+            <div class="container portfolio-container hero-inner">
+                <div class="hero-copy">
+                    <p class="hero-kicker">DevOps · AI systems · ERP platforms</p>
+                    <h1>Hussein Ahmad</h1>
+                    <p class="hero-role">Full-stack engineer building ERP platforms, AI search systems, and reliable deployment workflows.</p>
+                    <p class="hero-summary">I turn complex institutional workflows into deployed products: school operations, finance and reporting, retrieval systems, agentic tooling, and infrastructure that can run in production.</p>
+                    <div class="hero-actions" aria-label="Primary portfolio actions">
+                        <a class="portfolio-button portfolio-button-primary" href="mailto:h7ussein.ahmad@gmail.com">Contact me</a>
+                        <a class="portfolio-button" href="{% static 'files/Hussein_Ahmad_Resume.pdf' %}" target="_blank" rel="noopener">Resume</a>
+                        <a class="portfolio-button" href="{% url 'posts:index' %}">View ParaDome</a>
+                    </div>
+                    <dl class="proof-list" aria-label="Career proof points">
+                        <div>
+                            <dt>Jan 2020 - Present</dt>
+                            <dd>School ERP platform engineering</dd>
+                        </div>
+                        <div>
+                            <dt>90% less manual entry</dt>
+                            <dd>AI extraction and classification pipeline</dd>
+                        </div>
+                        <div>
+                            <dt>SVU 2025</dt>
+                            <dd>Information Technology Engineering, ML specialization</dd>
+                        </div>
+                    </dl>
+                </div>
+                <div class="hero-visual" aria-label="Portrait and expertise summary">
+                    <img id="personal-img" src="{% static 'images/m03.jpg'%}" alt="Portrait of Hussein Ahmad" width="420" height="420">
+                    <div class="expertise-panel">
+                        <span>Core work</span>
+                        <strong>ERP · RAG · DevOps · MLOps</strong>
+                    </div>
+                </div>
             </div>
-            <h1 id="myname" class="rotated-border"><span id="name">Hussein Ahmad</span></h1>
-            <img id="personal-img" src="{% static 'images/m03.jpg'%}" class="img-fluid rounded-circle personal-border" style="transform: translate(30vw,30vh);" alt="hussein ahmad" width="150" height="150">
-            <figure class="text-center" style="z-index: 2;transform:translate(0,45vh)">
-              <blockquote class="blockquote">
-                <p>Everything is Code, Truth is Passion, Matrix is a documentary...</p>
-              </blockquote>
-              <figcaption class="blockquote-footer">
-                <cite title="Source Title">Hussein Ahmad</cite>
-              </figcaption>
-            </figure>
+        </section>
 
-      </section>
+        <section id="section-exp" class="portfolio-section experience-section">
+            <div class="container portfolio-container">
+                <div class="section-heading">
+                    <p class="section-label">Production experience</p>
+                    <h2>Built systems that carry real operations.</h2>
+                    <p>Recent work spans institutional ERP, DevOps pipelines, retrieval-augmented search, product extraction, reporting, and multi-device deployments.</p>
+                </div>
 
-      <section id="section-cube">
-        <div class="sky-container">
-          <div class="shooting-star"></div>
-        </div>
+                <div class="timeline">
+                    <article class="timeline-item timeline-item-featured">
+                        <div class="timeline-date">Jan 2020 - Present</div>
+                        <div class="timeline-body">
+                            <h3>School ERP System / ERP Platform Engineer</h3>
+                            <p>Built and deployed a school ERP platform for educational institutions, covering student and staff records, attendance, exams and grades, payments, payroll, transport, library, inventory, messaging, custom reports, dynamic fields, multilingual/RTL support, role-based access, offline multi-device usage, and synchronization.</p>
+                            <p class="stack-note">Implemented across Laravel and Django services/apps.</p>
+                        </div>
+                    </article>
 
-        <div class="container code-board">
-          <code class="line">
-            <span class="declaring">class </span><span class="class">Hussein(SVUGraduate, DevOps, MLOps, AIDeveloper)</span><span class="normal">:</span><br> <!-- Modernized roles -->
-          </code>
+                    <article class="timeline-item">
+                        <div class="timeline-date">Mar 2025 - Oct 2025</div>
+                        <div class="timeline-body">
+                            <h3>Eprocurments / AI Engineer</h3>
+                            <p>Designed an AI-powered product extraction and classification pipeline that ingests unstructured web and file data, validates output, and routes low-confidence cases to human review. Reduced manual data-entry effort by 90%.</p>
+                        </div>
+                    </article>
 
-          <div class="padding">
-            <code class="line">
-             <span class="classvar">name </span><span class="class">= </span><span class="string">'hussein ahmad'</span><br>
-            </code>
-            <code class="line">
-              <span class="classvar">specialization </span><span class="class">= </span><span class="string">'DevOps, AI Developer, MLOps'</span><br> <!-- Updated specialization -->
-            </code>
-            <code class="line">
-             <span class="classvar">hobbies </span><span class="class">= [</span><span class="string">'astronomy'</span><span class="normal">, </span><span class="string">'coding'</span>
-            <span class="normal">, </span><span class="string">'researching'</span><span class="class">]</span><br>
-            </code>
-            <code class="line">
-              <span class="classvar">languages </span><span class="class">= [</span><span class="string">'arabic'</span><span class="normal">, </span>
-            <span class="string">'english'</span><span class="class">]</span><br>
-            </code>
-            <code class="line">
-              <span class="classvar">skills </span><span class="class">= [</span><span class="string">'Python'</span><span class="normal">, </span>
-               <span class="string">'Django'</span><span class="normal">, </span><span class="string">'DevOps'</span><span class="normal">, </span><span class="string">'MLOps'</span><span class="normal">, </span><span class="string">'AI'</span><span class="normal">, </span><span class="string">'RAG'</span><span class="normal">, </span><span class="string">'MCP'</span><span class="normal">, </span><span class="string">'Agents'</span><span class="normal">, </span><span class="string">'Agentic Search (Arabic)'</span><span class="normal">, </span><span class="string">'Vector DB'</span><span class="normal">, </span><span class="string">'LangChain'</span><span class="normal">, </span><span class="string">'HuggingFace APIs'</span><span class="normal">, </span><span class="string">'Ollama'</span><span class="normal">, </span><span class="string">'OpenAI APIs'</span><span class="normal">, </span><span class="string">'Jina Embeddings'</span><span class="normal">, </span><span class="string">'TensorFlow'</span><span class="normal">, </span><span class="string">'PyTorch'</span><span class="normal">, </span><span class="string">'Nginx'</span><span class="normal">, </span><span class="string">'Celery'</span><span class="normal">, </span><span class="string">'RabbitMQ'</span><span class="normal">, </span><span class="string">'Flutter'</span><span class="normal">, </span><span class="string">'PostgreSQL'</span><span class="normal">, </span><span class="string">'HTMX'</span><span class="normal">, </span><span class="string">'Docker'</span><span class="normal">]</span><br>
-            </code>
-            <code class="line">
-              <span class="declaring">def </span><span class="class">UltimateModeFunc(</span><span class="self">self</span><span class="normal">, </span>
-                <span class="normal">obsession </span><span class="declaring">= </span><span class="class">True</span>
-                <span class="class">)</span><br>
-            </code>
-            <div class="padding">
-              <code class="line">
-                <span class="class">return </span><span class="class">super()</span><span class="normal">.</span><span class="class">__init__()</span>
-              </code>
+                    <article class="timeline-item">
+                        <div class="timeline-date">Feb 2024 - Jul 2025</div>
+                        <div class="timeline-body">
+                            <h3>Dorar / AI Engineer</h3>
+                            <p>Implemented website, API, and document ingestion for question answering and semantic search over private files, including Arabic embeddings and multi-agent RAG search workflows.</p>
+                        </div>
+                    </article>
+
+                    <article class="timeline-item">
+                        <div class="timeline-date">Jan 2023 - May 2025</div>
+                        <div class="timeline-body">
+                            <h3>Duraa / DevOps Engineer</h3>
+                            <p>Built deployment pipelines, service containers, reverse-proxy configuration, queue infrastructure, CI/CD automation, geospatial data support, asynchronous processing, and Firebase integrations.</p>
+                        </div>
+                    </article>
+
+                    <article class="timeline-item">
+                        <div class="timeline-date">Sep 2021 - Present</div>
+                        <div class="timeline-body">
+                            <h3>ParaDome / Personal Product</h3>
+                            <p>Designed and deployed a social/community platform with posts, domes, messaging, notifications, dynamic interactions, and production hosting.</p>
+                            <a class="inline-link" href="https://paradome.pythonanywhere.com/posts/" target="_blank" rel="noopener">Open ParaDome</a>
+                        </div>
+                    </article>
+                </div>
             </div>
+        </section>
 
+        <section id="section-projects" class="portfolio-section projects-section">
+            <div class="container portfolio-container">
+                <div class="section-heading">
+                    <p class="section-label">Selected work</p>
+                    <h2>Projects with operational depth.</h2>
+                    <p>Each project emphasizes a useful capability rather than a tool list: retrieval, scheduling, service workflows, reporting, automation, and data quality.</p>
+                </div>
 
-
-
-
-          </div>
-        </div>
-        <div class="container cube">
-          <div class="top"></div>
-          <div>
-            <span style="--i:0"></span>
-            <span style="--i:1"></span>
-            <span style="--i:2"></span>
-            <span style="--i:3"></span>
-          </div>
-        </div>
-      </section>
-
-      <section id="section-edu" style="min-height: 100vh;">
-        <div class="d-flex justify-content-center" id="section-edu-content" style="    flex-direction: row;
-        flex-wrap: wrap;">
-
-          <div class="mb-5">
-            <h1 class="mb-5 text-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-mortarboard-fill" viewBox="0 0 16 16">
-            <path d="M8.211 2.047a.5.5 0 0 0-.422 0l-7.5 3.5a.5.5 0 0 0 .025.917l7.5 3a.5.5 0 0 0 .372 0L14 7.14V13a1 1 0 0 0-1 1v2h3v-2a1 1 0 0 0-1-1V6.739l.686-.275a.5.5 0 0 0 .025-.917l-7.5-3.5Z"/>
-            <path d="M4.176 9.032a.5.5 0 0 0-.656.327l-.5 1.7a.5.5 0 0 0 .294.605l4.5 1.8a.5.5 0 0 0 .372 0l4.5-1.8a.5.5 0 0 0 .294-.605l-.5-1.7a.5.5 0 0 0-.656-.327L8 10.466 4.176 9.032Z"/>
-          </svg> Education</h1>
-            <ul class="list-group">
-              <li class="list-group-item bg-info">
-                <h3 class="text-primary"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                  <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                  <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a1.5 1.5 0 0 1-.5.5h-11a1.5 1.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-                </svg> Syrian Virtual University</h3>
-                <p class="date text-white">Graduated 2025</p>
-                <p class="text-white">Graduated with a degree in Information Technology Engineering, specialized in Machine Learning. Completed Deep Learning and MLOps specializations (Coursera).</p>
-              </li>
-
-            </ul>
-
-          </div>
-          <div class="m-5 text-center">
-            <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-            <lottie-player src="https://assets6.lottiefiles.com/packages/lf20_jiinm99h.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
-            <span class="fw-light">Current Role:</span>
-      <div class="badge bg-secondary text-wrap fs-4">DevOps, AI Developer & MLOps </div> 
-          </div>
-        </div>
-
-      </section>
-
-      <section id="section-exp" style="min-height: 100vh;">
-          <div class="d-flex justify-content-center" id="section-exp-content" style="    flex-direction: row;
-          flex-wrap: wrap;">
-            <div class="mb-5">
-              <h1 class="mb-5 text-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-briefcase-fill" viewBox="0 0 16 16">
-                <path d="M6.5 1A1.5 1.5 0 0 0 5 2.5V3H1.5A1.5 1.5 0 0 0 0 4.5v1.384l7.614 2.03a1.5 1.5 0 0 0 .772 0L16 5.884V4.5A1.5 1.5 0 0 0 14.5 3H11v-.5A1.5 1.5 0 0 0 9.5 1h-3zm0 1h3a.5.5 0 0 1 .5.5V3H6v-.5a.5.5 0 0 1 .5-.5z"/>
-                <path d="M0 12.5A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5V6.85L8.129 8.947a.5.5 0 0 1-.258 0L0 6.85v5.65z"/>
-              </svg> Experience</h1>
-              <ul class="list-group">
-
-                <!-- Booking App -->
-                <li class="list-group-item bg-info">
-                  <h3 class="text-primary text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
-                      <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z"/>
-                      <path d="m8.354 10.354 7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"/>
-                    </svg> Booking App
-                  </h3>
-                  <p class="date text-white">2024</p>
-                  <p class="text-white">booking system using Django, DRF, PostGIS, Docker, Redis, RabbitMQ, Celery, Nginx, Firebase , and vector search</p>
-                </li>
-                <!-- RAG App -->
-                <li class="list-group-item bg-secondary">
-                  <h3 class="text-primary text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
-                      <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5.5 0 0 0-.5.5v10a.5.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z"/>
-                      <path d="m8.354 10.354 7-7a.5.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5.5 0 1 0-.708.708l3 3a.5.5.5 0 0 0 .708 0z"/>
-                    </svg> RAG App
-                  </h3>
-                  <p class="date text-white">2024</p>
-                  <p class="text-white">(RAG) app using ChromaDB and LangChain alongside Ollama LLMs to provide intelligent document question-answering capabilities.</p>
-                </li>
-                
-                <li class="list-group-item bg-info">
-                  <h3 class="text-primary text-white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
-                    <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z"/>
-                    <path d="m8.354 10.354 7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"/>
-                  </svg> PARADOME project</h3>
-                  <p class="date text-white">Sep 2021 - Present</p>
-                  <p class="text-white">my own project have been deployed with many skills as django, htmx, pusher.. <a href="https://paradome.pythonanywhere.com/posts/" class="my-link" target="_blank">Take a look</a></p>
-                </li>
-
-                <li class="list-group-item bg-secondary">
-                  <h3 class="text-primary text-white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
-                    <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z"/>
-                    <path d="m8.354 10.354 7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"/>
-                  </svg> Tickets Django API</h3>
-                  <p class="date text-white" datetime="2024">2024</p>
-                  <p class="text-white">Fixit, a Django api endpoints for a fully functional ticket tracking ,service management and staff logic, with notifications via Firebase ..<br>
-                    <a href="https://github.com/husseinahmad7" class="my-link" target="_blank">my github</a>
-                  </p>
-                </li>
-                {% comment %} Survey system {% endcomment %}
-                <li class="list-group-item bg-info">
-                  <h3 class="text-primary text-white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
-                    <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z"/>
-                    <path d="m8.354 10.354 7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"/>
-                  </svg> Survey System</h3>
-                  <p class="date text-white" datetime="2022"> 2022</p>
-                  <p class="text-white">Dynamic survey platform with real-time analytics and statistical reporting</p>
-                </li>
-                
-                  {% comment %} Celestial mapper {% endcomment %}
-                <li class="list-group-item bg-secondary">
-                  <h3 class="text-primary text-white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
-                    <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z"/>
-                    <path d="m8.354 10.354 7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"/>
-                  </svg> Celestial mapper</h3>
-                  <p class="date text-white" datetime="2024"> 2024</p>
-                  <p class="text-white">Real-time astronomical visualization tool with star position tracking with pattern and paths recognition.</p>
-                </li>
-                {% comment %} MultiToolCalling agent {% endcomment %}
-                <li class="list-group-item bg-info">
-                  <h3 class="text-primary text-white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
-                    <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z"/>
-                    <path d="m8.354 10.354 7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"/>
-                  </svg> MultiToolCalling Agent</h3>
-                  <p class="date text-white" datetime="2022"> 2022</p>
-                  <p class="text-white">AI-Agent to search think analyze then provide code.</p>
-                </li>
-              </ul>
+                <div class="project-grid">
+                    <article class="project-card">
+                        <p class="project-date">2024</p>
+                        <h3>Booking Platform</h3>
+                        <p>Booking and location-aware service workflows with asynchronous jobs, notifications, API boundaries, and search.</p>
+                    </article>
+                    <article class="project-card">
+                        <p class="project-date">2024</p>
+                        <h3>RAG App</h3>
+                        <p>Document question-answering and semantic search using local model orchestration and vector retrieval.</p>
+                    </article>
+                    <article class="project-card">
+                        <p class="project-date">2025</p>
+                        <h3>Product Extraction Pipeline</h3>
+                        <p>ETL flow for product data classification, validation, human review, and ERP-ready structured output.</p>
+                    </article>
+                    <article class="project-card">
+                        <p class="project-date">2024</p>
+                        <h3>Ticket Service API</h3>
+                        <p>Service, staff, and worker logic for ticket tracking with notifications and a paired mobile experience.</p>
+                    </article>
+                    <article class="project-card">
+                        <p class="project-date">2022</p>
+                        <h3>Survey System</h3>
+                        <p>Dynamic surveys with analytics, statistics, and reporting for structured feedback collection.</p>
+                    </article>
+                    <article class="project-card">
+                        <p class="project-date">2024</p>
+                        <h3>Celestial Mapper</h3>
+                        <p>Real-time astronomical visualization with star-position tracking, path analysis, and pattern recognition.</p>
+                    </article>
+                </div>
             </div>
-            <div class="mb-5">
-              <h1 class="mb-5 text-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-journal-bookmark-fill" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M6 1h6v7a.5.5 0 0 1-.757.429L9 7.083 6.757 8.43A.5.5 0 0 1 6 8V1z"/>
-                <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z"/>
-                <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z"/>
-              </svg> Courses</h1>
-              <ul class="list-group">
-                <li class="list-group-item bg-info">
-                  <h3 class="text-primary text-white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-patch-check-fill" viewBox="0 0 16 16">
-                    <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z"/>
-                  </svg> Deep Learning Specialization</h3>
-                  <p class="date text-white">2023</p>
-                  <p class="text-white">at coursera</p>
-                </li>
-                <li class="list-group-item bg-secondary">
-                  <h3 class="text-primary text-white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-patch-check-fill" viewBox="0 0 16 16">
-                    <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z"/>
-                  </svg> MLOps Specialization</h3>
-                  <p class="date text-white">2025</p>
-                  <p class="text-white">at coursera</p>
-                </li>
-                <li class="list-group-item bg-info">
-                  <h3 class="text-primary text-white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-patch-check-fill" viewBox="0 0 16 16">
-                    <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z"/>
-                  </svg> Machine Learning Spectialization</h3>
-                  <p class="date text-white">2023</p>
-                  <p class="text-white">at coursera</p>
-                </li>
-                <li class="list-group-item bg-secondary">
-                  <h3 class="text-primary text-white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-patch-check-fill" viewBox="0 0 16 16">
-                    <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z"/>
-                  </svg> Python for everybody Spectialization</h3>
-                  <p class="date text-white">2021</p>
-                  <p class="text-white">at coursera</p>
-                </li>
-                <li class="list-group-item bg-info">
-                  <h3 class="text-white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-patch-check-fill" viewBox="0 0 16 16">
-                    <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z"/>
-                  </svg> Apply advanced testing for your Django web app</h3>
-                  <p class="date text-white">2022</p>
-                  <p class="text-white">at coursera</p>
-                </li>
-                <li class="list-group-item bg-secondary">
-                  <h3 class="text-primary text-white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-patch-check-fill" viewBox="0 0 16 16">
-                    <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z"/>
-                  </svg> Deploy a BERT question answering bot on Django</h3>
-                  <p class="date text-white">2022</p>
-                  <p class="text-white">at coursera</p>
-                </li>
-                <li class="list-group-item bg-info">
-                  <h3 class="text-white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-patch-check-fill" viewBox="0 0 16 16">
-                    <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z"/>
-                  </svg> Query data in Django</h3>
-                  <p class="date text-white">2022</p>
-                  <p class="text-white">at coursera</p>
-                </li>
-              </ul>
+        </section>
+
+        <section id="section-edu" class="portfolio-section education-section">
+            <div class="container portfolio-container split-section">
+                <div class="section-heading">
+                    <p class="section-label">Education</p>
+                    <h2>Machine-learning foundation with production engineering practice.</h2>
+                    <p>Graduated from Syrian Virtual University in 2025 with a degree in Information Technology Engineering, specializing in Machine Learning.</p>
+                </div>
+                <div class="credential-list">
+                    <article>
+                        <h3>Syrian Virtual University</h3>
+                        <p>Information Technology Engineering · Machine Learning specialization · Graduated 2025</p>
+                    </article>
+                    <article>
+                        <h3>Coursera Specializations</h3>
+                        <p>Machine Learning, Deep Learning, MLOps, Python, testing, data querying, and question-answering systems.</p>
+                    </article>
+                </div>
             </div>
-          </div>
+        </section>
 
-      </section>
+        <section id="section-focus" class="portfolio-section focus-section">
+            <div class="container portfolio-container">
+                <div class="section-heading">
+                    <p class="section-label">Current focus</p>
+                    <h2>Where the work is moving next.</h2>
+                </div>
+                <div class="focus-grid">
+                    <article>
+                        <h3>MCP servers</h3>
+                        <p>Building tool-facing interfaces that let agents work with real application workflows safely.</p>
+                    </article>
+                    <article>
+                        <h3>Model monitoring</h3>
+                        <p>Improving observability, evaluation, and operational feedback loops for ML projects.</p>
+                    </article>
+                    <article>
+                        <h3>Applied AI systems</h3>
+                        <p>Launching NLP, retrieval, agent, and generative-AI projects that can be deployed and maintained.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
 
-      <section id="section-upcom" style="min-height: 100vh;">
-        <div class="container" id="section-upcom-content">
-          <h1 class="mb-5 text-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-list-task" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M2 2.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V3a.5.5 0 0 0-.5-.5H2zM3 3H2v1h1V3z"/>
-            <path d="M5 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM5.5 7a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1h-9zm0 4a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1h-9z"/>
-            <path fill-rule="evenodd" d="M1.5 7a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5V7zM2 7h1v1H2V7zm0 3.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5H2zm1 .5H2v1h1v-1z"/>
-          </svg> Upcomming Skills</h1>
-          <div class="mb-5">
-            <ul class="list-group">
-              <li class="list-group-item bg-info">
-                <h3 class="text-white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
-                  <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3h6zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4H5z"/>
-                </svg> Build MCP</h3>
-                <p class="text-white">Developing a MCP server.</p>
-              </li>
-              <li class="list-group-item bg-secondary">
-                <h3 class="text-white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
-                  <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3h6zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4H5z"/>
-                </svg> School ERP System</h3>
-                <p class="text-white">Designing a comprehensive ERP system for educational institutions, powered by django and tauri.</p>
-              </li>
-              <li class="list-group-item bg-info">
-                <h3 class="text-white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
-                  <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3h6zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4H5z"/>
-                </svg> Model Monitoring</h3>
-                <p class="text-white">Implementing advanced model monitoring and observability for ML projects.</p>
-              </li>
-              <li class="list-group-item bg-secondary">
-                <h3 class="text-white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
-                  <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3h6zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4H5z"/>
-                </svg> New ML Projects</h3>
-                <p class="text-white">Launching innovative ML projects in NLP, Agents, and generative AI.</p>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
-      <div id="com" class="container text-center mt-5" style="max-width: 95vw !important;">
-        <div class="row align-items-center justify-content-evenly">
-          <div class="col">
-            <a href="mailto:h7osanna.xyc@gmail.com" class="fw-normal">mail me</a>
-          </div>
-          <div class="col">
-            <a href="tel:+963982489354" class="fw-normal">call me</a>
-          </div>
-          <div class="col">
-            <a href="https://www.linkedin.com/in/hussein-ahmadx9/" class="fw-normal">@ linkedin</a>
-          </div>
-        </div>
+        <section id="section-contact" class="portfolio-section contact-section">
+            <div class="container portfolio-container contact-inner">
+                <div>
+                    <p class="section-label">Contact</p>
+                    <h2>Let’s talk about systems that need to ship.</h2>
+                    <p>Available for engineering roles and collaborations around ERP, AI search, DevOps, MLOps, and applied automation.</p>
+                </div>
+                <div class="contact-links">
+                    <a href="mailto:h7ussein.ahmad@gmail.com">h7ussein.ahmad@gmail.com</a>
+                    <a href="tel:+963982489354">+963 982 489 354</a>
+                    <a href="https://www.linkedin.com/in/hussein-ahmadx9/" target="_blank" rel="noopener">LinkedIn</a>
+                    <a href="https://github.com/husseinahmad7" target="_blank" rel="noopener">GitHub</a>
+                </div>
+            </div>
+        </section>
+    </main>
 
-          
-      </div>
-      
-
-</main>
-
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="{% static 'js/m03.js'%}"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
 </body>
 </html>
