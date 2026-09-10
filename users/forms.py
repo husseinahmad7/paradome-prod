@@ -35,3 +35,8 @@ class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['picture', 'first_name', 'last_name', 'bio']
+        widgets = {
+            # Protected media deliberately has no public ``url``. A plain file
+            # input avoids ClearableFileInput dereferencing the stored image.
+            'picture': forms.FileInput(),
+        }
