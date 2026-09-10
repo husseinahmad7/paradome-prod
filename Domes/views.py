@@ -1,249 +1,324 @@
-from django.shortcuts import get_object_or_404
-from django.utils import timezone
-from django.shortcuts import render
-from django.views import generic
-from .models import Dome, Category
-from .filters import DomeFilter, MembersFilter
-from .forms import DomeCreation, CategoryCreation
-from django.http.response import HttpResponseRedirect, HttpResponse, HttpResponseForbidden
-from django.urls import reverse
-from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
-from django.core.paginator import Paginator
-from django.utils.text import slugify
-from django.http import Http404
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.models import User
+from django.core.exceptions import PermissionDenied
+from django.http import FileResponse, Http404, HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
+from django.utils.text import slugify
+from django.views import generic
+from django.views.decorators.http import require_POST
 
-
+from .access import (
+    accessible_domes,
+    can_access_dome,
+    can_administer_dome,
+    can_manage_dome,
+    can_participate_in_chat,
+    is_demo_owned_dome,
+    is_demo_user,
+)
+from .filters import DomeFilter, MembersFilter
+from .forms import CategoryCreation, DomeCreation
+from .models import Category, Dome
+from .ratelimits import UserWriteRateLimitMixin, user_write_rate_limit
+from .storage import open_validated_image, safe_image_filename
 
 
 class ExploreDomesView(generic.ListView):
     model = Dome
-    template_name = 'Domes/explore.html'
-    context_object_name = 'domes'
-    paginate = 10
+    template_name = "Domes/explore.html"
+    context_object_name = "domes"
+    paginate_by = 5
+
+    def get_queryset(self):
+        self.filter = DomeFilter(
+            self.request.GET,
+            queryset=accessible_domes(self.request.user).select_related("user"),
+        )
+        return self.filter.qs.order_by("-date")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        Domes = Dome.objects.filter(privacy=1).order_by('date')
-        filter = DomeFilter(self.request.GET, queryset=Domes)
-        Domes = filter.qs
-        paginator = Paginator(Domes, 5)
-        page_number = self.request.GET.get('page')
-        Domes = paginator.get_page(page_number)
-        context['domes'] = Domes
-        context['filter'] = filter
+        context["filter"] = self.filter
+        context["can_create_dome"] = (
+            self.request.user.is_authenticated
+            and not is_demo_user(self.request.user)
+        )
         return context
 
-    # def get_queryset(self):
-    #     return Dome.objects.filter(date__lte=timezone.now()).order_by('-date') # [:5]
-
-class DomeCreateView(LoginRequiredMixin, generic.CreateView):
+class DomeCreateView(UserWriteRateLimitMixin, LoginRequiredMixin, generic.CreateView):
     model = Dome
     form_class = DomeCreation
-    template_name = 'Domes/dome_form.html'
+    template_name = "Domes/dome_form.html"
+    rate_limit_scope = "dome-create"
+    rate_limit_count = 5
+    success_url = "/dome/"
 
-    def post(self, request, *args, **kwargs):
-        form = DomeCreation(self.request.POST, self.request.FILES)
-        if form.is_valid():
-            user =self.request.user
-            form_pic = form.cleaned_data.get('icon')
-            form_banner = form.cleaned_data.get('banner')
-            form_title = form.cleaned_data.get('title')
-            form_description = form.cleaned_data.get('description')
-            form_privacy = form.cleaned_data.get('privacy')
-
-            dome,created = Dome.objects.get_or_create(icon=form_pic,banner=form_banner,title=form_title,description=form_description, user = user,privacy=form_privacy )
-            dome.save()
-            return HttpResponseRedirect(reverse('domes:explore')) #fix url latter
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and is_demo_user(request.user):
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
-class DomeUpdateView(LoginRequiredMixin,UserPassesTestMixin , generic.UpdateView):
+
+class DomeUpdateView(
+    UserWriteRateLimitMixin,
+    LoginRequiredMixin,
+    UserPassesTestMixin,
+    generic.UpdateView,
+):
     model = Dome
     form_class = DomeCreation
+    rate_limit_scope = "dome-update"
+
+    def get_queryset(self):
+        return accessible_domes(self.request.user)
 
     def test_func(self):
-        if self.get_object().user == self.request.user:
-            return True
-        return False
+        return can_administer_dome(self.request.user, self.get_object())
 
-class DomeDeleteView(LoginRequiredMixin,UserPassesTestMixin , generic.DeleteView):
+
+class DomeDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
     model = Dome
-    form_class = DomeCreation
-    success_url = '/domes'
+    success_url = "/dome/"
+
+    def get_queryset(self):
+        return accessible_domes(self.request.user)
 
     def test_func(self):
-        if self.get_object().user == self.request.user:
-            return True
-        return False
-class DomeView(LoginRequiredMixin,UserPassesTestMixin,generic.DetailView):
-    model = Dome
-    template_name = 'Domes/dome_detail.html'
+        return can_administer_dome(self.request.user, self.get_object())
 
-    def test_func(self):
-        dome_obj = self.get_object()
-        dome_owner = dome_obj.user
-        dome_members = dome_obj.members.all()
-        dome_mod = dome_obj.moderators.all()
-        dome_privacy = dome_obj.privacy
-        if (self.request.user == dome_owner) | (self.request.user in dome_members) | (self.request.user in dome_mod) | (dome_privacy ==1):
-            return True
-        return False
 
-class DomeViewHtmx(LoginRequiredMixin,UserPassesTestMixin,generic.DetailView):
+class DomeView(generic.DetailView):
     model = Dome
-    template_name = 'Domes/dome_info.html'
+    template_name = "Domes/dome_detail.html"
+
+    def get_queryset(self):
+        return accessible_domes(self.request.user).select_related("user")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(
+            {
+                "can_administer": can_administer_dome(self.request.user, self.object),
+                "can_manage": can_manage_dome(self.request.user, self.object),
+                "can_chat": can_participate_in_chat(self.request.user, self.object),
+                "can_direct_message": (
+                    self.request.user.is_authenticated
+                    and not is_demo_user(self.request.user)
+                    and not is_demo_owned_dome(self.object)
+                    and self.request.user != self.object.user
+                ),
+            }
+        )
+        return context
+
+
+class DomeViewHtmx(generic.DetailView):
+    model = Dome
+    template_name = "Domes/dome_info.html"
+
+    def get_queryset(self):
+        return accessible_domes(self.request.user).select_related("user")
 
     def get(self, request, *args, **kwargs):
-        if 'HX-Request' in self.request.headers.keys() and self.request.headers.get('HX-Request') == 'true':
-            return super(DomeViewHtmx, self).get(request, *args, **kwargs)
-        else:
-            return HttpResponseRedirect(reverse('domes:dome-detail',args=[self.get_object().pk]))
-    def test_func(self):
-
-        dome_obj = self.get_object()
-        dome_owner = dome_obj.user
-        dome_members = dome_obj.members.all()
-        dome_mod = dome_obj.moderators.all()
-        dome_privacy = dome_obj.privacy
-        if (self.request.user == dome_owner) | (self.request.user in dome_members) | (self.request.user in dome_mod) | (dome_privacy ==1):
-            return True
-        return False
-
-
-class CategoryCreateView(LoginRequiredMixin,generic.DetailView, generic.edit.FormMixin):
-    model = Dome
-    form_class = CategoryCreation
-    template_name = 'Domes/category_form.html'
-    def post(self, request, *args, **kwargs):
-        form = CategoryCreation(self.request.POST)
-        if form.is_valid():
-            dome_obj = get_object_or_404(Dome, pk= self.kwargs.get('pk'))
-            title = form.cleaned_data.get('title')
-            c = Category(title=title, Dome=dome_obj)
-            c.save()
-            return HttpResponseRedirect(reverse('domes:dome-detail',args=[dome_obj.pk]))
-
-class DomeInvitationView(LoginRequiredMixin, generic.DetailView):
-    model = Dome
-    template_name = 'Domes/invitation.html'
-
-    def get_object(self):
-        code = self.kwargs.get('code')
-        slug = self.kwargs.get('slug')
-        dome_obj = get_object_or_404(Dome, invitationstr = code)
-        if slugify(dome_obj.title) == slug:
-            return dome_obj
-        else:
-            raise Http404
-
-    def post(self, request, *args, **kwargs):
-        if self.request.POST.get('join') == 'join':
-            obj = self.get_object()
-            visitor = self.request.user
-            obj.members.add(visitor)
-            return HttpResponseRedirect(reverse('domes:dome-detail',args=[obj.pk]))
+        if request.headers.get("HX-Request") == "true":
+            return super().get(request, *args, **kwargs)
+        return redirect("domes:dome-detail", pk=self.get_object().pk)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        visitor = self.request.user
-        if visitor in self.get_object().members.all():
-            context['is_member'] = True
-        else:
-            context['is_member'] = False
+        context["can_administer"] = can_administer_dome(
+            self.request.user, self.object
+        )
         return context
 
-class DomeMembersView(LoginRequiredMixin,UserPassesTestMixin, generic.ListView):
-    template_name = 'Domes/members_list.html'
-    context_object_name = 'members'
+
+class CategoryCreateView(
+    UserWriteRateLimitMixin,
+    LoginRequiredMixin,
+    UserPassesTestMixin,
+    generic.FormView,
+):
+    form_class = CategoryCreation
+    template_name = "Domes/category_form.html"
+    rate_limit_scope = "category-create"
+    rate_limit_count = 15
+
+    def get_dome(self):
+        if not hasattr(self, "dome"):
+            self.dome = get_object_or_404(Dome, pk=self.kwargs["pk"])
+        return self.dome
+
+    def test_func(self):
+        return can_manage_dome(self.request.user, self.get_dome())
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["object"] = self.get_dome()
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["dome"] = self.get_dome()
+        return kwargs
+
+    def form_valid(self, form):
+        category = form.save(commit=False)
+        category.Dome = self.get_dome()
+        category.save()
+        return redirect("domes:dome-detail", pk=category.Dome_id)
+
+
+class DomeInvitationView(
+    UserWriteRateLimitMixin, LoginRequiredMixin, generic.DetailView
+):
+    model = Dome
+    template_name = "Domes/invitation.html"
+    rate_limit_scope = "dome-invitation"
+    rate_limit_count = 10
+
+    def get_object(self, queryset=None):
+        dome = get_object_or_404(Dome, invitationstr=self.kwargs["code"])
+        if slugify(dome.title) != self.kwargs["slug"] or is_demo_owned_dome(dome):
+            raise Http404
+        if is_demo_user(self.request.user):
+            raise PermissionDenied
+        return dome
+
+    def post(self, request, *args, **kwargs):
+        dome = self.get_object()
+        if request.POST.get("join") != "join":
+            return HttpResponse("Invalid invitation action", status=400)
+        if request.user != dome.user and not dome.moderators.filter(pk=request.user.pk).exists():
+            dome.members.add(request.user)
+        return redirect("domes:dome-detail", pk=dome.pk)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["is_member"] = self.object.members.filter(
+            pk=self.request.user.pk
+        ).exists()
+        return context
+
+
+class DomeMembersView(LoginRequiredMixin, generic.ListView):
+    template_name = "Domes/members_list.html"
+    context_object_name = "members"
     paginate_by = 20
 
-    def get_object(self):
-        dome = get_object_or_404(Dome, pk=self.kwargs.get('pk'))
-        return dome
+    def get_dome(self):
+        if not hasattr(self, "dome"):
+            self.dome = get_object_or_404(Dome.objects.select_related("user"), pk=self.kwargs["pk"])
+        if not can_participate_in_chat(self.request.user, self.dome):
+            raise PermissionDenied
+        return self.dome
+
     def get_queryset(self):
-        dome = self.get_object()
-        members = dome.members.all()
-        return members
+        self.filter = MembersFilter(
+            self.request.GET, queryset=self.get_dome().members.all()
+        )
+        return self.filter.qs.order_by("username")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        dome = self.get_object()
-        moderators = dome.moderators.all()
-        filter = MembersFilter(self.request.GET, queryset=self.get_queryset())
-        members = filter.qs
-        paginator = Paginator(members, 20) # paging the comments
-        page_number = self.request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-        context['members'] = page_obj
-        context['filter'] = filter
-        context['mods'] = moderators
-        context['dome_owner'] = dome.user
-        context['dome_pk'] = dome.pk
+        dome = self.get_dome()
+        context.update(
+            {
+                "filter": self.filter,
+                "mods": dome.moderators.all(),
+                "dome_owner": dome.user,
+                "dome_pk": dome.pk,
+                "can_administer": can_administer_dome(self.request.user, dome),
+                "can_manage": can_manage_dome(self.request.user, dome),
+            }
+        )
         return context
 
-    def test_func(self):
-
-        dome_obj = self.get_object()
-        dome_owner = dome_obj.user
-        dome_members = dome_obj.members.all()
-        dome_mod = dome_obj.moderators.all()
-        if (self.request.user == dome_owner) | (self.request.user in dome_members) | (self.request.user in dome_mod):
-            return True
-        return False
 
 class UserDomesView(LoginRequiredMixin, generic.ListView):
-    template_name = 'Domes/user_domes.html'
-    context_object_name = 'owned'
+    template_name = "Domes/user_domes.html"
+    context_object_name = "owned"
 
     def get_queryset(self):
-        user = self.request.user
-        return user.server_owner.all()
+        return accessible_domes(
+            self.request.user, self.request.user.server_owner.all()
+        )
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = self.request.user
-        context['admin'] = user.dome_moderators.all()
-        context['member'] = user.dome_members.all()
+        context["admin"] = accessible_domes(
+            self.request.user, self.request.user.dome_moderators.all()
+        )
+        context["member"] = accessible_domes(
+            self.request.user, self.request.user.dome_members.all()
+        )
         return context
 
 
-def MemberRemoveView(request,dome_id, user_id):
-    if request.method == 'DELETE':
+@login_required
+@require_POST
+@user_write_rate_limit("member-remove", limit=20)
+def MemberRemoveView(request, dome_id, user_id):
+    dome = get_object_or_404(Dome, pk=dome_id)
+    removed = get_object_or_404(User, pk=user_id)
+    if not can_manage_dome(request.user, dome) or removed == dome.user:
+        raise PermissionDenied
+    if request.user == dome.user:
+        dome.members.remove(removed)
+        dome.moderators.remove(removed)
+    elif dome.moderators.filter(pk=request.user.pk).exists():
+        if dome.moderators.filter(pk=removed.pk).exists():
+            raise PermissionDenied
+        dome.members.remove(removed)
+    return HttpResponse("")
 
-        user = get_object_or_404(User, username=request.user)
-        dome = get_object_or_404(Dome, pk=dome_id)
-        removed = get_object_or_404(User, pk=user_id)
-        if user == dome.user:
-            if removed in dome.members.all():
-                dome.members.remove(removed)
-
-            elif removed in dome.moderators.all():
-                dome.moderators.remove(removed)
-
-
-        elif user in dome.moderators.all():
-            if removed in dome.members.all():
-                dome.members.remove(removed)
-        return HttpResponse(f'{removed.username} has removed successfully')
 
 @login_required
+@require_POST
+@user_write_rate_limit("member-role", limit=20)
 def ModeratorRaiseOrDown(request, pk, user_pk, option):
-    dome = Dome.objects.get(pk=pk)
-    dome_user = dome.user
-    selected_user = User.objects.get(pk=user_pk)
-    if request.user == dome_user:
-        if int(option) == 0:
-            dome.moderators.remove(selected_user)
-            dome.members.add(selected_user)
-            return HttpResponse('The moderator has become a member')
-        elif int(option) == 1:
-            dome.moderators.add(selected_user)
-            dome.members.remove(selected_user)
-            return HttpResponse('The member has become a moderator')
-        else:
-            return HttpResponseForbidden('Not allowed')
+    dome = get_object_or_404(Dome, pk=pk)
+    selected_user = get_object_or_404(User, pk=user_pk)
+    if not can_administer_dome(request.user, dome) or selected_user == dome.user:
+        raise PermissionDenied
+    if option == 0 and dome.moderators.filter(pk=selected_user.pk).exists():
+        dome.moderators.remove(selected_user)
+        dome.members.add(selected_user)
+    elif option == 1 and dome.members.filter(pk=selected_user.pk).exists():
+        dome.members.remove(selected_user)
+        dome.moderators.add(selected_user)
     else:
-        HttpResponseForbidden('Not allowed')
+        return HttpResponse("Invalid role transition", status=400)
+    return HttpResponse("")
+
+
+def dome_media(request, pk, kind):
+    dome = get_object_or_404(Dome, pk=pk)
+    if not can_access_dome(request.user, dome):
+        raise PermissionDenied
+    if kind not in {"icon", "banner"}:
+        raise Http404
+    image = getattr(dome, kind)
+    if not image:
+        raise Http404
+    try:
+        handle, content_type = open_validated_image(
+            image,
+            max_bytes=5 * 1024 * 1024,
+            max_width=7000,
+            max_height=7000,
+            max_pixels=24_000_000,
+        )
+    except (FileNotFoundError, OSError):
+        raise Http404
+    response = FileResponse(handle, content_type=content_type)
+    filename = safe_image_filename(image.name, content_type)
+    response.headers["Content-Disposition"] = f'inline; filename="{filename}"'
+    response.headers["Cache-Control"] = "private, max-age=300"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    return response

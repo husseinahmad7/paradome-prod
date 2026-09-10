@@ -34,9 +34,9 @@
           <li><a hx-get="{% url 'posts:htmxdomeposts' dome.id %}" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML">Posts</a></li>
           <li><a hx-get="{% url 'domes:dome-members' dome.id %}" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML">Members</a></li>
           <hr class="navbar-divider">
-          <a href="{% url 'messages:directs' dome.user %}">
+          {% if can_direct_message %}<a href="{% url 'messages:directs' dome.user %}">
             Report an issue
-          </a>
+          </a>{% endif %}
         </ul>
         <p class="menu-label has-background-info-light">
           Upcomming Features
@@ -79,7 +79,7 @@
         <div class="level-item has-text-centered">
           <div>
               <figure class="image is-32x32 is-1by1">
-                  <img class="is-rounded" src="{{ dome.icon.url }}" alt="{{dome.title}}">
+                  <img class="is-rounded" src="{% url 'domes:dome-media' dome.pk 'icon' %}" alt="{{dome.title}}">
                 </figure>
             </div>
         </div>
@@ -125,15 +125,15 @@
       </div>
 
       <div class="navbar-end">
-        <a class="navbar-item" href="{% url 'messages:directs' dome.user %}">
+        {% if can_direct_message %}<a class="navbar-item" href="{% url 'messages:directs' dome.user %}">
           Report an issue
-        </a>
+        </a>{% endif %}
       </div>
     </div>
   </nav>
         </main>
     <script src="{% static 'js/htmx.min.js' %}" defer></script>
-    <script>
+    <script nonce="{{ CSP_NONCE }}">
       document.body.addEventListener('htmx:configRequest', (event) => {
         event.detail.headers['X-CSRFToken'] = '{{csrf_token}}';
       });

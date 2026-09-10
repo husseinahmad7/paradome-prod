@@ -1,10 +1,72 @@
-version: '3.4'
-
 services:
-  paradome:
-    image: paradome
-    build:
-      context: .
-      dockerfile: ./Dockerfile
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:?Set DB_NAME in .env}
+      MYSQL_USER: ${DB_USER:?Set DB_USER in .env}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "--host=127.0.0.1", "--silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  web:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DJANGO_SETTINGS_MODULE: paradome.settings.production
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?Set DJANGO_SECRET_KEY in .env}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:?Set DJANGO_ALLOWED_HOSTS in .env},127.0.0.1
+      DJANGO_CSRF_TRUSTED_ORIGINS: ${DJANGO_CSRF_TRUSTED_ORIGINS:?Set DJANGO_CSRF_TRUSTED_ORIGINS in .env}
+      PUBLIC_SITE_URL: ${PUBLIC_SITE_URL:?Set PUBLIC_SITE_URL in .env}
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_NAME: ${DB_NAME:?Set DB_NAME in .env}
+      DB_USER: ${DB_USER:?Set DB_USER in .env}
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      EMAIL_HOST: ${EMAIL_HOST:?Set EMAIL_HOST in .env}
+      EMAIL_PORT: ${EMAIL_PORT:-587}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER:?Set EMAIL_HOST_USER in .env}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD:?Set EMAIL_HOST_PASSWORD in .env}
+      EMAIL_USE_TLS: ${EMAIL_USE_TLS:-true}
+      EMAIL_USE_SSL: ${EMAIL_USE_SSL:-false}
+      DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL:?Set DEFAULT_FROM_EMAIL in .env}
+      SERVER_EMAIL: ${SERVER_EMAIL:-}
+      CONTACT_RECIPIENT: ${CONTACT_RECIPIENT:?Set CONTACT_RECIPIENT in .env}
+      PUSHER_APP_ID: ${PUSHER_APP_ID:?Set PUSHER_APP_ID in .env}
+      PUSHER_KEY: ${PUSHER_KEY:?Set PUSHER_KEY in .env}
+      PUSHER_SECRET: ${PUSHER_SECRET:?Set PUSHER_SECRET in .env}
+      PUSHER_CLUSTER: ${PUSHER_CLUSTER:?Set PUSHER_CLUSTER in .env}
+      DEMO_ACCOUNT_ENABLED: ${DEMO_ACCOUNT_ENABLED:-true}
+      DEMO_USERNAME: ${DEMO_USERNAME:-paradome-demo}
+      DEMO_DOME_SLUG: ${DEMO_DOME_SLUG:-demo}
+      PRIVATE_MEDIA_ROOT: /app/private_media
     ports:
-      - 8000:8000
+      - "8000:8000"
+    volumes:
+      - static_data:/app/static_files
+      - public_media:/app/media
+      - private_media:/app/private_media
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+volumes:
+  mysql_data:
+  static_data:
+  public_media:
+  private_media:

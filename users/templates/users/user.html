@@ -12,9 +12,12 @@ logged in
       <p class="title">
         <h1>welcome , {{request.user.username}}</h1>
       </p>
-      <p class="subtitle">
-        <a href="{% url 'users:logout' %}">logout</a>
-      </p>
+      <div class="subtitle">
+        <form method="post" action="{% url 'users:logout' %}">
+          {% csrf_token %}
+          <button class="button is-light" type="submit">Log out</button>
+        </form>
+      </div>
     </div>
     </div>
     <div class="hero-foot">

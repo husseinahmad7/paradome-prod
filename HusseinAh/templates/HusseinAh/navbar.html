@@ -46,13 +46,10 @@
       <div class="navbar-item">
         <div class="field is-grouped">
           {% if user.is_authenticated %}
-              <p class="control">
-                  <a class="button" href="{% url 'users:logout'%}">
-                  <span>
-                  Logout
-                  </span>
-              </a>
-              </p>
+              <form class="control" method="post" action="{% url 'users:logout' %}">
+                {% csrf_token %}
+                <button class="button" type="submit">Logout</button>
+              </form>
           {%else%}
           <p class="control">
               <a class="button" href="{% url 'users:register'%}">

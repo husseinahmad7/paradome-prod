@@ -9,7 +9,7 @@ Explore Domes
   
 <section class="hero is-info is-small">
   <div class="hero-head">
-    {% if user.is_authenticated %}
+    {% if can_create_dome %}
       <a class="button is-link" href="{% url 'domes:dome-create' %}">Create dome</a>
       <div id="dropdown-domes" class="dropdown is-hoverable">
         <div class="dropdown-trigger">
@@ -62,7 +62,7 @@ Explore Domes
           <div class="media-left">
               {% if dome.icon %}
               <figure class="image is-48x48 is-1by1">
-                  <img class="is-rounded" src="{{ dome.icon.url }}" alt="{{dome.title}}">
+                  <img class="is-rounded" src="{% url 'domes:dome-media' dome.pk 'icon' %}" alt="{{dome.title}}">
                 </figure>
               {% endif %}
           </div>

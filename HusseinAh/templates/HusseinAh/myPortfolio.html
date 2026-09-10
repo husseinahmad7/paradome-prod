@@ -1,945 +1,124 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% load static %}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'css/m03.css'%}">
-    <style>
-        /* Critical portfolio styles are inline so PythonAnywhere pulls do not depend on stale collected static files. */
-        :root {
-            --portfolio-bg: #f8fafc;
-            --portfolio-surface: #ffffff;
-            --portfolio-surface-2: #eef6ff;
-            --portfolio-ink: #09090b;
-            --portfolio-muted: #465567;
-            --portfolio-line: #c8d3df;
-            --portfolio-accent: #2563eb;
-            --portfolio-accent-dark: #1747a6;
-            --portfolio-teal: #0f766e;
-            --portfolio-radius: 8px;
-            --portfolio-nav-height: 76px;
-        }
-
-        html {
-            scroll-padding-top: calc(var(--portfolio-nav-height) + 28px);
-        }
-
-        body.portfolio-page {
-            margin: 0;
-            background: var(--portfolio-bg);
-            color: var(--portfolio-ink);
-            font: 400 16px/1.65 'Noto Sans', Arial, sans-serif;
-            text-rendering: optimizeLegibility;
-        }
-
-        body.portfolio-page:focus {
-            outline: none;
-        }
-
-        body.portfolio-page main {
-            display: block;
-            min-height: 100vh;
-            max-width: none;
-            overflow: clip;
-            position: relative;
-            top: auto;
-            background: var(--portfolio-bg);
-            color: var(--portfolio-ink);
-        }
-
-        body.portfolio-page h1,
-        body.portfolio-page h2,
-        body.portfolio-page h3,
-        body.portfolio-page .portfolio-brand,
-        body.portfolio-page .portfolio-button {
-            font-family: 'Figtree', 'Noto Sans', Arial, sans-serif;
-        }
-
-        body.portfolio-page h1,
-        body.portfolio-page h2,
-        body.portfolio-page h3,
-        body.portfolio-page p {
-            margin-top: 0;
-        }
-
-        body.portfolio-page h1,
-        body.portfolio-page h2,
-        body.portfolio-page h3 {
-            color: var(--portfolio-ink);
-            letter-spacing: 0;
-            text-wrap: balance;
-        }
-
-        body.portfolio-page p {
-            color: var(--portfolio-muted);
-            text-wrap: pretty;
-        }
-
-        body.portfolio-page a {
-            color: var(--portfolio-accent-dark);
-        }
-
-        body.portfolio-page a:focus-visible,
-        body.portfolio-page button:focus-visible {
-            outline: 3px solid rgba(37, 99, 235, 0.38);
-            outline-offset: 3px;
-        }
-
-        body.portfolio-page .portfolio-nav {
-            top: 12px;
-            left: clamp(12px, 4vw, 48px);
-            right: clamp(12px, 4vw, 48px);
-            width: auto;
-            min-height: 52px;
-            background: var(--portfolio-surface);
-            border: 1px solid var(--portfolio-line);
-            border-radius: var(--portfolio-radius);
-            padding: 0.25rem 0.35rem;
-            z-index: 50;
-        }
-
-        body.portfolio-page .portfolio-brand {
-            color: var(--portfolio-ink) !important;
-            font-size: 0.98rem;
-            font-weight: 800;
-            letter-spacing: 0;
-        }
-
-        body.portfolio-page .portfolio-nav .nav-link {
-            color: var(--portfolio-muted) !important;
-            border: 0;
-            border-radius: 6px;
-            font-size: 0.94rem;
-            font-weight: 700;
-            padding: 0.55rem 0.7rem;
-        }
-
-        body.portfolio-page .portfolio-nav .nav-link.active,
-        body.portfolio-page .portfolio-nav .nav-link:hover {
-            background: var(--portfolio-surface-2);
-            color: var(--portfolio-accent-dark) !important;
-        }
-
-        body.portfolio-page .portfolio-nav .nav-link::before,
-        body.portfolio-page .portfolio-nav .nav-link::after {
-            display: none;
-        }
-
-        body.portfolio-page .portfolio-nav-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.45rem;
-            align-items: center;
-        }
-
-        body.portfolio-page .portfolio-nav .btn {
-            border-radius: 6px;
-            font-weight: 700;
-        }
-
-        body.portfolio-page .portfolio-container {
-            width: min(1120px, calc(100vw - 32px));
-            margin-inline: auto;
-        }
-
-        body.portfolio-page #section-intro.portfolio-hero {
-            min-height: 100vh;
-            padding: clamp(6.5rem, 9vw, 8.25rem) 0 clamp(3rem, 5vw, 4.75rem);
-            background: var(--portfolio-bg);
-            position: relative;
-        }
-
-        body.portfolio-page .hero-inner {
-            display: grid;
-            grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
-            gap: clamp(1.75rem, 5vw, 4rem);
-            align-items: center;
-        }
-
-        body.portfolio-page .hero-copy {
-            max-width: 760px;
-        }
-
-        body.portfolio-page .hero-kicker,
-        body.portfolio-page .section-label,
-        body.portfolio-page .project-date,
-        body.portfolio-page .timeline-date {
-            color: var(--portfolio-teal);
-            font-weight: 800;
-            letter-spacing: 0;
-        }
-
-        body.portfolio-page .hero-kicker {
-            margin-bottom: 1rem;
-        }
-
-        body.portfolio-page .hero-copy h1 {
-            font-size: clamp(3.2rem, 8vw, 5rem);
-            line-height: 0.98;
-            font-weight: 800;
-            margin-bottom: 1.2rem;
-        }
-
-        body.portfolio-page .hero-role {
-            max-width: 680px;
-            color: var(--portfolio-ink);
-            font-size: clamp(1.25rem, 2.2vw, 1.7rem);
-            font-weight: 700;
-            line-height: 1.35;
-            margin-bottom: 1rem;
-        }
-
-        body.portfolio-page .hero-summary {
-            max-width: 68ch;
-            font-size: 1.03rem;
-            margin-bottom: 1.65rem;
-        }
-
-        body.portfolio-page .hero-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            margin-bottom: 2rem;
-        }
-
-        body.portfolio-page .portfolio-button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 44px;
-            border: 1px solid var(--portfolio-line);
-            border-radius: 6px;
-            padding: 0.72rem 1rem;
-            background: var(--portfolio-surface);
-            color: var(--portfolio-ink);
-            font-weight: 800;
-            text-decoration: none;
-            transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
-        }
-
-        body.portfolio-page .portfolio-button:hover {
-            border-color: var(--portfolio-accent);
-            background: var(--portfolio-surface-2);
-            color: var(--portfolio-accent-dark);
-        }
-
-        body.portfolio-page .portfolio-button-primary {
-            background: var(--portfolio-accent);
-            border-color: var(--portfolio-accent);
-            color: #fff;
-        }
-
-        body.portfolio-page .portfolio-button-primary:hover {
-            background: var(--portfolio-accent-dark);
-            border-color: var(--portfolio-accent-dark);
-            color: #fff;
-        }
-
-        body.portfolio-page .proof-list {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 0.8rem;
-            margin: 0;
-            padding: 0;
-        }
-
-        body.portfolio-page .proof-list div {
-            border-top: 2px solid var(--portfolio-line);
-            padding-top: 0.75rem;
-        }
-
-        body.portfolio-page .proof-list dt {
-            color: var(--portfolio-ink);
-            font-weight: 800;
-        }
-
-        body.portfolio-page .proof-list dd {
-            margin: 0.2rem 0 0;
-            color: var(--portfolio-muted);
-        }
-
-        body.portfolio-page .hero-visual {
-            position: relative;
-            display: grid;
-            justify-items: center;
-        }
-
-        body.portfolio-page .hero-visual #personal-img {
-            display: block;
-            width: min(100%, 390px);
-            aspect-ratio: 1 / 1;
-            height: auto;
-            margin: 0;
-            object-fit: cover;
-            border: 1px solid var(--portfolio-line);
-            border-radius: var(--portfolio-radius);
-        }
-
-        body.portfolio-page .expertise-panel {
-            width: min(88%, 340px);
-            margin-top: -2.4rem;
-            margin-right: auto;
-            padding: 1rem;
-            border-radius: var(--portfolio-radius);
-            background: #0f172a;
-            color: #fff;
-        }
-
-        body.portfolio-page .expertise-panel span {
-            display: block;
-            margin-bottom: 0.2rem;
-            color: #9debdc;
-            font-size: 0.85rem;
-            font-weight: 800;
-        }
-
-        body.portfolio-page .expertise-panel strong {
-            display: block;
-            color: #fff;
-            font-size: 1.05rem;
-        }
-
-        body.portfolio-page .portfolio-section {
-            min-height: auto !important;
-            scroll-margin-top: calc(var(--portfolio-nav-height) + 28px);
-            padding: clamp(4.5rem, 9vw, 7rem) 0;
-            background: var(--portfolio-bg) !important;
-        }
-
-        body.portfolio-page .portfolio-section.is-visible,
-        body.portfolio-page .timeline-item.is-visible,
-        body.portfolio-page .project-card.is-visible {
-            animation: portfolio-rise 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
-        }
-
-        @keyframes portfolio-rise {
-            from {
-                opacity: 0;
-                transform: translateY(14px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        body.portfolio-page .experience-section,
-        body.portfolio-page .education-section,
-        body.portfolio-page .contact-section {
-            background: #ffffff !important;
-        }
-
-        body.portfolio-page .section-heading {
-            max-width: 780px;
-            margin-bottom: clamp(2rem, 5vw, 3.5rem);
-        }
-
-        body.portfolio-page .section-label {
-            margin-bottom: 0.55rem;
-        }
-
-        body.portfolio-page .section-heading h2,
-        body.portfolio-page .contact-inner h2 {
-            font-size: clamp(2rem, 4.5vw, 3.35rem);
-            line-height: 1.04;
-            font-weight: 800;
-            margin-bottom: 0.9rem;
-        }
-
-        body.portfolio-page .section-heading p,
-        body.portfolio-page .contact-inner p {
-            max-width: 72ch;
-            font-size: 1.02rem;
-        }
-
-        body.portfolio-page .timeline {
-            display: grid;
-            gap: 1rem;
-        }
-
-        body.portfolio-page .timeline-item {
-            display: grid;
-            grid-template-columns: minmax(140px, 0.28fr) minmax(0, 1fr);
-            gap: clamp(1rem, 4vw, 2.5rem);
-            padding: clamp(1.1rem, 3vw, 1.65rem);
-            border: 1px solid var(--portfolio-line);
-            border-radius: var(--portfolio-radius);
-            background: var(--portfolio-surface);
-        }
-
-        body.portfolio-page .timeline-item-featured {
-            border-color: rgba(37, 99, 235, 0.44);
-            background: #f7fbff;
-        }
-
-        body.portfolio-page .timeline-body h3,
-        body.portfolio-page .project-card h3,
-        body.portfolio-page .credential-list h3,
-        body.portfolio-page .focus-grid h3 {
-            font-size: 1.22rem;
-            font-weight: 800;
-            margin-bottom: 0.55rem;
-        }
-
-        body.portfolio-page .timeline-body p:last-child,
-        body.portfolio-page .project-card p:last-child,
-        body.portfolio-page .credential-list p:last-child,
-        body.portfolio-page .focus-grid p:last-child {
-            margin-bottom: 0;
-        }
-
-        body.portfolio-page .stack-note {
-            color: var(--portfolio-accent-dark);
-            font-weight: 700;
-        }
-
-        body.portfolio-page .inline-link {
-            display: inline-flex;
-            margin-top: 0.35rem;
-            font-weight: 800;
-            text-decoration-thickness: 2px;
-        }
-
-        body.portfolio-page .project-grid,
-        body.portfolio-page .focus-grid,
-        body.portfolio-page .credential-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 1rem;
-        }
-
-        body.portfolio-page .project-card,
-        body.portfolio-page .focus-grid article,
-        body.portfolio-page .credential-list article {
-            padding: clamp(1rem, 3vw, 1.4rem);
-            border: 1px solid var(--portfolio-line);
-            border-radius: var(--portfolio-radius);
-            background: var(--portfolio-surface);
-        }
-
-        body.portfolio-page .project-card {
-            min-height: 210px;
-        }
-
-        body.portfolio-page .project-date {
-            margin-bottom: 0.75rem;
-        }
-
-        body.portfolio-page .split-section {
-            display: grid;
-            grid-template-columns: minmax(0, 0.9fr) minmax(280px, 1.1fr);
-            gap: clamp(2rem, 6vw, 4rem);
-            align-items: start;
-        }
-
-        body.portfolio-page .focus-section {
-            background: #eef6ff !important;
-        }
-
-        body.portfolio-page .contact-section {
-            padding-bottom: clamp(3rem, 6vw, 4.5rem);
-        }
-
-        body.portfolio-page .contact-inner {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) minmax(260px, 0.58fr);
-            gap: clamp(2rem, 6vw, 4rem);
-            align-items: start;
-            border-top: 2px solid var(--portfolio-line);
-            padding-top: clamp(2rem, 5vw, 3rem);
-        }
-
-        body.portfolio-page .contact-links {
-            display: grid;
-            gap: 0.75rem;
-        }
-
-        body.portfolio-page .contact-links a {
-            display: block;
-            min-height: 44px;
-            padding: 0.8rem 0;
-            border-bottom: 1px solid var(--portfolio-line);
-            color: var(--portfolio-ink);
-            font-weight: 800;
-            text-decoration: none;
-        }
-
-        body.portfolio-page .contact-links a:hover {
-            color: var(--portfolio-accent-dark);
-        }
-
-        body.portfolio-page {
-            --signal-x: 50%;
-            --signal-y: 42%;
-            --scroll-progress: 0;
-            --portfolio-bg: #f6f9fc;
-            --portfolio-ink: #07111f;
-            --portfolio-muted: #334155;
-            --portfolio-line: #b8c7d9;
-            --portfolio-accent: #1457ff;
-            --portfolio-accent-dark: #0d3fb8;
-            --portfolio-teal: #087a72;
-            --portfolio-cyan: #18b6d2;
-            --portfolio-night: #08111f;
-        }
-
-        body.portfolio-page .scroll-progress {
-            position: fixed;
-            top: 0;
-            right: 0;
-            left: 0;
-            z-index: 90;
-            height: 4px;
-            pointer-events: none;
-            background: transparent;
-        }
-
-        body.portfolio-page .scroll-progress span {
-            display: block;
-            width: 100%;
-            height: 100%;
-            transform: scaleX(var(--scroll-progress));
-            transform-origin: left center;
-            background: linear-gradient(90deg, var(--portfolio-teal), var(--portfolio-accent), var(--portfolio-night));
-        }
-
-        body.portfolio-page .portfolio-hero {
-            overflow: hidden;
-            isolation: isolate;
-            background:
-                radial-gradient(circle at var(--signal-x) var(--signal-y), rgba(24, 182, 210, 0.18), transparent 34rem),
-                linear-gradient(135deg, #f9fbff 0%, #edf6ff 47%, #f6fffb 100%);
-        }
-
-        body.portfolio-page .portfolio-hero::before {
-            position: absolute;
-            inset: -12% -8%;
-            z-index: -2;
-            content: "";
-            pointer-events: none;
-            opacity: 0.78;
-            background-image:
-                linear-gradient(rgba(20, 87, 255, 0.12) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(20, 87, 255, 0.12) 1px, transparent 1px);
-            background-size: 88px 88px;
-            -webkit-mask-image: radial-gradient(circle at var(--signal-x) var(--signal-y), #000 0 32%, transparent 70%);
-            mask-image: radial-gradient(circle at var(--signal-x) var(--signal-y), #000 0 32%, transparent 70%);
-        }
-
-        body.portfolio-page .portfolio-hero::after {
-            position: absolute;
-            right: clamp(1rem, 7vw, 6rem);
-            bottom: clamp(2rem, 7vw, 6rem);
-            z-index: -1;
-            width: min(42vw, 520px);
-            height: 1px;
-            content: "";
-            background: linear-gradient(90deg, transparent, rgba(8, 122, 114, 0.7), transparent);
-            transform: rotate(-18deg);
-        }
-
-        body.portfolio-page .hero-copy h1 {
-            max-width: 8ch;
-            font-size: clamp(3.65rem, 8.5vw, 5.75rem);
-            line-height: 0.94;
-            letter-spacing: -0.025em;
-        }
-
-        body.portfolio-page .hero-line {
-            display: block;
-        }
-
-        body.portfolio-page .hero-kicker {
-            display: inline-flex;
-            gap: 0.55rem;
-            align-items: center;
-            padding: 0.34rem 0.55rem;
-            border: 1px solid rgba(8, 122, 114, 0.24);
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.76);
-        }
-
-        body.portfolio-page .status-dot {
-            width: 0.62rem;
-            height: 0.62rem;
-            border-radius: 50%;
-            background: var(--portfolio-teal);
-            box-shadow: 0 0 0 5px rgba(8, 122, 114, 0.14);
-        }
-
-        body.portfolio-page .system-strip {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.55rem;
-            margin: 0 0 1.5rem;
-        }
-
-        body.portfolio-page .system-strip span {
-            display: inline-flex;
-            gap: 0.4rem;
-            align-items: center;
-            min-height: 38px;
-            padding: 0.48rem 0.72rem;
-            border: 1px solid rgba(20, 87, 255, 0.18);
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.84);
-            color: var(--portfolio-muted);
-            font-size: 0.92rem;
-            font-weight: 700;
-        }
-
-        body.portfolio-page .system-strip b {
-            color: var(--portfolio-ink);
-        }
-
-        body.portfolio-page .proof-list {
-            padding: 0.9rem;
-            border: 1px solid rgba(184, 199, 217, 0.92);
-            border-radius: var(--portfolio-radius);
-            background: rgba(255, 255, 255, 0.78);
-        }
-
-        body.portfolio-page .hero-visual {
-            align-self: stretch;
-            justify-items: stretch;
-        }
-
-        body.portfolio-page .operator-shell {
-            position: relative;
-            width: min(100%, 440px);
-            margin-inline: auto;
-            padding: 0.78rem;
-            border: 1px solid rgba(7, 17, 31, 0.22);
-            border-radius: 10px;
-            background: var(--portfolio-night);
-            color: #f8fafc;
-            transform: perspective(1100px) rotateY(-4deg) rotateX(2deg);
-            transform-origin: center;
-        }
-
-        body.portfolio-page .operator-shell::before,
-        body.portfolio-page .operator-shell::after {
-            position: absolute;
-            right: 1rem;
-            left: 1rem;
-            height: 1px;
-            content: "";
-            background: linear-gradient(90deg, transparent, rgba(24, 182, 210, 0.72), transparent);
-        }
-
-        body.portfolio-page .operator-shell::before {
-            top: 0.42rem;
-        }
-
-        body.portfolio-page .operator-shell::after {
-            bottom: 0.42rem;
-        }
-
-        body.portfolio-page .operator-topbar {
-            display: flex;
-            justify-content: space-between;
-            gap: 1rem;
-            padding: 0.18rem 0.1rem 0.7rem;
-            color: #bdeffc;
-            font-size: 0.74rem;
-            font-weight: 800;
-        }
-
-        body.portfolio-page .operator-frame {
-            position: relative;
-            overflow: hidden;
-            border-radius: 7px;
-            background: #dbeafe;
-        }
-
-        body.portfolio-page .operator-frame::after {
-            position: absolute;
-            inset: 0;
-            content: "";
-            pointer-events: none;
-            background:
-                linear-gradient(180deg, transparent 0 46%, rgba(24, 182, 210, 0.2) 48%, transparent 51%),
-                linear-gradient(90deg, rgba(8, 17, 31, 0.36), transparent 30% 70%, rgba(8, 17, 31, 0.2));
-            transform: translateY(-95%);
-            animation: operator-scan 5.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
-        }
-
-        body.portfolio-page .operator-frame #personal-img {
-            width: 100%;
-            max-width: none;
-            border: 0;
-            border-radius: 0;
-            filter: saturate(0.93) contrast(1.04);
-        }
-
-        body.portfolio-page .expertise-panel {
-            width: 100%;
-            margin: 0.72rem 0 0;
-            border: 1px solid rgba(157, 235, 220, 0.18);
-            background: rgba(15, 23, 42, 0.92);
-        }
-
-        body.portfolio-page .signal-panel {
-            display: grid;
-            gap: 0.62rem;
-            margin: 0.78rem 0 0;
-        }
-
-        body.portfolio-page .signal-row {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 0.8rem;
-            align-items: center;
-            padding-bottom: 0.58rem;
-            border-bottom: 1px solid rgba(226, 232, 240, 0.14);
-        }
-
-        body.portfolio-page .signal-row:last-child {
-            padding-bottom: 0;
-            border-bottom: 0;
-        }
-
-        body.portfolio-page .signal-label {
-            color: #cbd5e1;
-            font-size: 0.82rem;
-            font-weight: 700;
-        }
-
-        body.portfolio-page .signal-value {
-            color: #f8fafc;
-            font-size: 0.82rem;
-            font-weight: 800;
-        }
-
-        body.portfolio-page .signal-meter {
-            grid-column: 1 / -1;
-            height: 4px;
-            overflow: hidden;
-            border-radius: 999px;
-            background: rgba(226, 232, 240, 0.16);
-        }
-
-        body.portfolio-page .signal-meter span {
-            display: block;
-            height: 100%;
-            border-radius: inherit;
-            background: linear-gradient(90deg, #18b6d2, #9debdc);
-        }
-
-        body.portfolio-page .timeline-item,
-        body.portfolio-page .project-card,
-        body.portfolio-page .focus-grid article,
-        body.portfolio-page .credential-list article {
-            transition: transform 220ms ease, border-color 220ms ease, background-color 220ms ease;
-        }
-
-        body.portfolio-page .timeline-item:hover,
-        body.portfolio-page .project-card:hover {
-            border-color: rgba(20, 87, 255, 0.38);
-            transform: translateY(-3px);
-        }
-
-        @keyframes operator-scan {
-            0% {
-                transform: translateY(-95%);
-            }
-            46%,
-            100% {
-                transform: translateY(95%);
-            }
-        }
-
-        @media (max-width: 991.98px) {
-            body.portfolio-page .portfolio-nav {
-                top: 8px;
-                right: 8px;
-                left: 8px;
-            }
-
-            body.portfolio-page .portfolio-nav .navbar-collapse {
-                padding: 0.75rem 0.25rem 0.35rem;
-            }
-
-            body.portfolio-page .portfolio-nav-actions {
-                margin-top: 0.75rem;
-            }
-
-            body.portfolio-page .hero-inner,
-            body.portfolio-page .split-section,
-            body.portfolio-page .contact-inner {
-                grid-template-columns: 1fr;
-            }
-
-            body.portfolio-page .hero-visual {
-                justify-items: start;
-            }
-
-            body.portfolio-page .proof-list {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 640px) {
-            body.portfolio-page {
-                font-size: 15px;
-            }
-
-            body.portfolio-page .portfolio-container {
-                width: min(100% - 24px, 1120px);
-            }
-
-            body.portfolio-page #section-intro.portfolio-hero {
-                padding-top: 7.25rem;
-            }
-
-            body.portfolio-page .hero-inner {
-                display: block;
-            }
-
-            body.portfolio-page .hero-visual {
-                position: absolute;
-                top: 6.9rem;
-                right: 1.1rem;
-            }
-
-            body.portfolio-page .hero-visual #personal-img {
-                width: 84px;
-                border-radius: 50%;
-            }
-
-            body.portfolio-page .expertise-panel {
-                display: none;
-            }
-
-            body.portfolio-page .hero-copy h1 {
-                max-width: calc(100% - 100px);
-                font-size: clamp(2.85rem, 17vw, 4rem);
-                line-height: 0.98;
-            }
-
-            body.portfolio-page .hero-kicker {
-                max-width: calc(100% - 112px);
-            }
-
-            body.portfolio-page .hero-actions {
-                display: grid;
-                grid-template-columns: 1fr;
-            }
-
-            body.portfolio-page .portfolio-button {
-                width: 100%;
-            }
-
-            body.portfolio-page .timeline-item {
-                grid-template-columns: 1fr;
-            }
-
-            body.portfolio-page .system-strip {
-                gap: 0.45rem;
-            }
-
-            body.portfolio-page .system-strip span {
-                min-height: 34px;
-                font-size: 0.82rem;
-            }
-
-            body.portfolio-page .operator-shell {
-                width: 84px;
-                padding: 0;
-                border: 0;
-                background: transparent;
-                transform: none;
-            }
-
-            body.portfolio-page .operator-shell::before,
-            body.portfolio-page .operator-shell::after,
-            body.portfolio-page .operator-topbar,
-            body.portfolio-page .operator-frame::after,
-            body.portfolio-page .signal-panel {
-                display: none;
-            }
-
-            body.portfolio-page .operator-frame {
-                overflow: visible;
-                border-radius: 50%;
-                background: transparent;
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.001ms !important;
-                animation-iteration-count: 1 !important;
-                scroll-behavior: auto !important;
-                transition-duration: 0.001ms !important;
-            }
-
-            body.portfolio-page .portfolio-hero {
-                background: linear-gradient(135deg, #f9fbff 0%, #edf6ff 47%, #f6fffb 100%);
-            }
-        }
-    </style>
-    <link rel="icon" type="image/x-icon" href="{% static 'images/icon.png' %}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <meta name="google-site-verification" content="KAzHgH3qTwUULTu0rMkZgIK3Uv7u8Md0gH1eyqSc2Pc" />
-    <meta name="description" content="Hussein Ahmad is a full-stack, DevOps, AI and MLOps engineer building ERP platforms, AI search systems, and reliable deployment workflows.">
-    <meta name="keywords" content="Hussein Ahmad, DevOps, AI Developer, MLOps, ERP, RAG, Django, Laravel, LangChain, vector search, Docker, Nginx, Redis, RabbitMQ, Celery, PostgreSQL, MLflow, SVU">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Hussein Ahmad is a full-stack, DevOps, AI, and MLOps engineer building production ERP platforms, AI retrieval systems, and reliable deployment workflows.">
+    <meta name="keywords" content="Hussein Ahmad, full-stack engineer, DevOps, AI engineer, MLOps, ERP, RAG, Django, Laravel, Frappe, ERPNext">
     <meta name="author" content="Hussein Ahmad">
-    <title>Hussein Ahmad | Full-Stack, DevOps, AI & MLOps Engineer</title>
+    <meta name="theme-color" content="#08111f">
+    <meta name="google-site-verification" content="KAzHgH3qTwUULTu0rMkZgIK3Uv7u8Md0gH1eyqSc2Pc">
+    <link rel="canonical" href="https://paradome.pythonanywhere.com/">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/icon.png' %}">
+    <link rel="stylesheet" href="{% static 'css/portfolio.css' %}">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Hussein Ahmad | Full-Stack, DevOps, AI &amp; MLOps Engineer">
+    <meta property="og:description" content="Production engineering across ERP platforms, AI retrieval, automation, and dependable deployment workflows.">
+    <meta property="og:url" content="https://paradome.pythonanywhere.com/">
+    <meta property="og:image" content="https://paradome.pythonanywhere.com/static/images/portfolio-social-preview.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Hussein Ahmad full-stack, DevOps, AI, and MLOps engineering portfolio">
+    <meta property="og:site_name" content="Hussein Ahmad">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Hussein Ahmad | Full-Stack, DevOps, AI &amp; MLOps Engineer">
+    <meta name="twitter:description" content="Production engineering across ERP platforms, AI retrieval, automation, and dependable deployment workflows.">
+    <meta name="twitter:image" content="https://paradome.pythonanywhere.com/static/images/portfolio-social-preview.png">
+
+    <title>Hussein Ahmad | Full-Stack, DevOps, AI &amp; MLOps Engineer</title>
+
+    <script type="application/ld+json" nonce="{{ CSP_NONCE }}">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Person",
+          "@id": "https://paradome.pythonanywhere.com/#hussein-ahmad",
+          "name": "Hussein Ahmad",
+          "url": "https://paradome.pythonanywhere.com/",
+          "image": "https://paradome.pythonanywhere.com/static/images/portfolio-hussein-840.jpg",
+          "jobTitle": "Full-Stack, DevOps, AI and MLOps Engineer",
+          "sameAs": [
+            "https://github.com/husseinahmad7",
+            "https://www.linkedin.com/in/hussein-ahmadx9/"
+          ],
+          "knowsAbout": ["ERP platforms", "DevOps", "MLOps", "retrieval-augmented generation", "Django", "Laravel", "ERPNext"]
+        },
+        {
+          "@type": "CreativeWork",
+          "name": "Dealer Service 360",
+          "url": "https://husseinahmad7.github.io/dealer-service-360/",
+          "creator": {"@id": "https://paradome.pythonanywhere.com/#hussein-ahmad"},
+          "description": "An ERPNext v16 automotive workshop workflow with bilingual approvals and server-owned actions."
+        },
+        {
+          "@type": "CreativeWork",
+          "name": "ForgeEdu",
+          "url": "https://husseinahmad7.github.io/schooms/",
+          "creator": {"@id": "https://paradome.pythonanywhere.com/#hussein-ahmad"},
+          "description": "A multilingual school operations platform with web and mobile delivery."
+        }
+      ]
+    }
+    </script>
+    <script src="{% static 'js/portfolio.js' %}" defer></script>
 </head>
-<body class="portfolio-page" data-bs-spy="scroll" data-bs-target="#navbar-scrolled" data-bs-offset="120" tabindex="0">
+<body class="portfolio-page">
+    <a class="skip-link" href="#portfolio-main">Skip to main content</a>
     <div class="scroll-progress" aria-hidden="true"><span></span></div>
-    <header>
-        <nav id="navbar-scrolled" class="navbar navbar-expand-lg navbar-light fixed-top portfolio-nav" aria-label="Portfolio navigation">
-            <div class="container-fluid">
-                <a class="navbar-brand portfolio-brand" href="#section-intro">Hussein Ahmad</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                    <div class="navbar-nav mx-auto">
-                        <a class="nav-link" aria-current="page" href="#section-intro">Profile</a>
-                        <a class="nav-link" href="#section-exp">Experience</a>
-                        <a class="nav-link" href="#section-projects">Projects</a>
-                        <a class="nav-link" href="#section-edu">Education</a>
-                        <a class="nav-link" href="#section-focus">Focus</a>
-                        <a class="nav-link" href="#section-contact">Contact</a>
-                    </div>
-                    <div class="navbar-text portfolio-nav-actions">
-                        <a class="btn btn-info btn-sm" href="{% url 'posts:index' %}">ParaDome</a>
-                        <a class="btn btn-outline-dark btn-sm" href="{% url 'HusseinAh:feedback' %}">Feedback</a>
-                    </div>
+
+    <header class="site-header">
+        <nav class="portfolio-nav" aria-label="Portfolio navigation">
+            <a class="portfolio-brand" href="#section-intro" aria-label="Hussein Ahmad, back to introduction">
+                <span class="brand-mark" aria-hidden="true">HA</span>
+                <span>Hussein Ahmad</span>
+            </a>
+
+            <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="portfolio-nav-links">
+                <span class="nav-toggle-label">Menu</span>
+                <span class="nav-toggle-icon" aria-hidden="true"><span></span><span></span></span>
+            </button>
+
+            <div class="nav-panel" id="portfolio-nav-links">
+                <div class="nav-links">
+                    <a href="#section-exp" data-nav-target="section-exp">Experience</a>
+                    <a href="#section-projects" data-nav-target="section-projects">Projects</a>
+                    <a href="{% static 'files/Hussein_Ahmad_Resume.pdf' %}" target="_blank" rel="noopener noreferrer">Résumé<span class="visually-hidden"> (opens in a new tab)</span></a>
+                    <a href="#section-contact" data-nav-target="section-contact">Contact</a>
                 </div>
+                <form class="demo-form demo-form-nav" method="post" action="{% url 'users:demo_login' %}">
+                    {% csrf_token %}
+                    <button type="submit">Try demo</button>
+                </form>
             </div>
         </nav>
     </header>
 
-    <main>
-        <section id="section-intro" class="portfolio-hero">
-            <div class="container portfolio-container hero-inner">
+    <main id="portfolio-main">
+        <section id="section-intro" class="portfolio-hero" tabindex="-1">
+            <div class="portfolio-container hero-inner">
                 <div class="hero-copy">
-                    <p class="hero-kicker"><span class="status-dot" aria-hidden="true"></span>Production systems operator</p>
-                    <h1><span class="hero-line">Hussein</span> <span class="hero-line">Ahmad</span></h1>
+                    <h1><span>Hussein</span> <span>Ahmad</span></h1>
                     <p class="hero-role">Full-stack engineer building ERP platforms, AI search systems, and reliable deployment workflows.</p>
                     <p class="hero-summary">I turn complex institutional workflows into deployed products: school operations, finance and reporting, retrieval systems, agentic tooling, and infrastructure that can run in production.</p>
-                    <div class="system-strip" aria-label="Current engineering systems">
-                        <span><b>ERP</b> operations since 2020</span>
-                        <span><b>AI</b> retrieval and extraction</span>
-                        <span><b>DevOps</b> deployable services</span>
+
+                    <div class="system-strip" aria-label="Engineering focus">
+                        <span><strong>ERP</strong> operations since 2020</span>
+                        <span><strong>AI</strong> retrieval and extraction</span>
+                        <span><strong>DevOps</strong> deployable services</span>
                     </div>
+
                     <div class="hero-actions" aria-label="Primary portfolio actions">
                         <a class="portfolio-button portfolio-button-primary" href="mailto:h7ussein.ahmad@gmail.com">Contact me</a>
-                        <a class="portfolio-button" href="{% static 'files/Hussein_Ahmad_Resume.pdf' %}" target="_blank" rel="noopener">Resume</a>
-                        <a class="portfolio-button" href="{% url 'posts:index' %}">View ParaDome</a>
+                        <a class="portfolio-button" href="{% static 'files/Hussein_Ahmad_Resume.pdf' %}" target="_blank" rel="noopener noreferrer">View resume<span class="visually-hidden"> (opens in a new tab)</span></a>
+                        <form class="demo-form" method="post" action="{% url 'users:demo_login' %}">
+                            {% csrf_token %}
+                            <button class="portfolio-button" type="submit">Try ParaDome demo</button>
+                        </form>
                     </div>
+
                     <dl class="proof-list" aria-label="Career proof points">
                         <div>
                             <dt>Jan 2020 - Present</dt>
@@ -955,45 +134,46 @@
                         </div>
                     </dl>
                 </div>
-                <div class="hero-visual" aria-label="Portrait and engineering systems summary">
+
+                <div class="hero-visual" aria-label="Portrait and verified engineering evidence">
                     <div class="operator-shell">
-                        <div class="operator-topbar" aria-hidden="true">
-                            <span>PARADOME / PORTFOLIO SIGNAL</span>
-                            <span>ONLINE</span>
+                        <div class="operator-topbar">
+                            <span>PARADOME / ENGINEERING RECORD</span>
+                            <span>2 FEATURED BUILDS</span>
                         </div>
                         <div class="operator-frame">
-                            <img id="personal-img" src="{% static 'images/m03.jpg'%}" alt="Portrait of Hussein Ahmad" width="420" height="420">
+                            <picture>
+                                <source type="image/avif" srcset="{% static 'images/portfolio-hussein-420.avif' %} 420w, {% static 'images/portfolio-hussein-840.avif' %} 840w" sizes="(max-width: 560px) 84vw, 390px">
+                                <source type="image/webp" srcset="{% static 'images/portfolio-hussein-420.webp' %} 420w, {% static 'images/portfolio-hussein-840.webp' %} 840w" sizes="(max-width: 560px) 84vw, 390px">
+                                <img id="personal-img" src="{% static 'images/portfolio-hussein-840.jpg' %}" srcset="{% static 'images/portfolio-hussein-420.jpg' %} 420w, {% static 'images/portfolio-hussein-840.jpg' %} 840w" sizes="(max-width: 560px) 84vw, 390px" alt="Portrait of Hussein Ahmad" width="840" height="840" fetchpriority="high">
+                            </picture>
                         </div>
                         <div class="expertise-panel">
                             <span>Core work</span>
                             <strong>ERP · RAG · DevOps · MLOps</strong>
                         </div>
-                        <div class="signal-panel" aria-label="Engineering signal summary">
-                            <div class="signal-row">
-                                <span class="signal-label">ERP platform</span>
-                                <span class="signal-value">2020-now</span>
-                                <span class="signal-meter" aria-hidden="true"><span style="width: 100%"></span></span>
+                        <dl class="signal-panel" aria-label="Verified project evidence">
+                            <div>
+                                <dt>ERP operations</dt>
+                                <dd>Since 2020</dd>
                             </div>
-                            <div class="signal-row">
-                                <span class="signal-label">Manual entry reduction</span>
-                                <span class="signal-value">90%</span>
-                                <span class="signal-meter" aria-hidden="true"><span style="width: 90%"></span></span>
+                            <div>
+                                <dt>Dealer workflows</dt>
+                                <dd>16 actions</dd>
                             </div>
-                            <div class="signal-row">
-                                <span class="signal-label">Production focus</span>
-                                <span class="signal-value">Ship-ready</span>
-                                <span class="signal-meter" aria-hidden="true"><span style="width: 82%"></span></span>
+                            <div>
+                                <dt>Automated coverage</dt>
+                                <dd>88 tests</dd>
                             </div>
-                        </div>
+                        </dl>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="section-exp" class="portfolio-section experience-section">
-            <div class="container portfolio-container">
+        <section id="section-exp" class="portfolio-section experience-section" tabindex="-1">
+            <div class="portfolio-container">
                 <div class="section-heading">
-                    <p class="section-label">Production experience</p>
                     <h2>Built systems that carry real operations.</h2>
                     <p>Recent work spans institutional ERP, DevOps pipelines, retrieval-augmented search, product extraction, reporting, and multi-device deployments.</p>
                 </div>
@@ -1037,61 +217,112 @@
                         <div class="timeline-body">
                             <h3>ParaDome / Personal Product</h3>
                             <p>Designed and deployed a social/community platform with posts, domes, messaging, notifications, dynamic interactions, and production hosting.</p>
-                            <a class="inline-link" href="https://paradome.pythonanywhere.com/posts/" target="_blank" rel="noopener">Open ParaDome</a>
+                            <a class="inline-link" href="https://paradome.pythonanywhere.com/posts/" target="_blank" rel="noopener noreferrer">Open ParaDome<span class="visually-hidden"> (opens in a new tab)</span></a>
                         </div>
                     </article>
                 </div>
             </div>
         </section>
 
-        <section id="section-projects" class="portfolio-section projects-section">
-            <div class="container portfolio-container">
+        <section id="section-projects" class="portfolio-section projects-section" tabindex="-1">
+            <div class="portfolio-container">
                 <div class="section-heading">
-                    <p class="section-label">Selected work</p>
                     <h2>Projects with operational depth.</h2>
-                    <p>Each project emphasizes a useful capability rather than a tool list: retrieval, scheduling, service workflows, reporting, automation, and data quality.</p>
+                    <p>Two production-scale systems lead this record. Each case study exposes the workflow, architecture, and verification behind the interface.</p>
                 </div>
 
-                <div class="project-grid">
-                    <article class="project-card">
-                        <p class="project-date">2024</p>
-                        <h3>Booking Platform</h3>
-                        <p>Booking and location-aware service workflows with asynchronous jobs, notifications, API boundaries, and search.</p>
+                <div class="featured-projects">
+                    <article class="featured-project">
+                        <a class="project-visual" href="https://husseinahmad7.github.io/dealer-service-360/" target="_blank" rel="noopener noreferrer" aria-label="Open the Dealer Service 360 case study in a new tab">
+                            <picture>
+                                <source type="image/avif" srcset="{% static 'images/portfolio-dealer-720.avif' %} 720w, {% static 'images/portfolio-dealer-1440.avif' %} 1440w" sizes="(max-width: 760px) calc(100vw - 48px), (max-width: 1160px) 46vw, 520px">
+                                <source type="image/webp" srcset="{% static 'images/portfolio-dealer-720.webp' %} 720w, {% static 'images/portfolio-dealer-1440.webp' %} 1440w" sizes="(max-width: 760px) calc(100vw - 48px), (max-width: 1160px) 46vw, 520px">
+                                <img src="{% static 'images/portfolio-dealer-720.jpg' %}" srcset="{% static 'images/portfolio-dealer-720.jpg' %} 720w, {% static 'images/portfolio-dealer-1440.jpg' %} 1440w" sizes="(max-width: 760px) calc(100vw - 48px), (max-width: 1160px) 46vw, 520px" alt="Dealer Service 360 workshop dashboard showing service visits, approvals, and ERPNext document workflows" width="1440" height="900" loading="lazy" decoding="async">
+                            </picture>
+                        </a>
+                        <div class="featured-project-body">
+                            <h3>Dealer Service 360</h3>
+                            <p class="project-meta">ERPNext v16 · Automotive operations</p>
+                            <p>A workshop workflow that connects service visits, estimates, customer vehicles, bilingual approvals, audit records, and ERPNext documents without shifting authority into the browser.</p>
+                            <ul class="evidence-list" aria-label="Dealer Service 360 evidence">
+                                <li><strong>16</strong> server-owned actions</li>
+                                <li><strong>88</strong> automated tests</li>
+                                <li><strong>2</strong> interface languages</li>
+                            </ul>
+                            <div class="project-links">
+                                <a href="https://husseinahmad7.github.io/dealer-service-360/" target="_blank" rel="noopener noreferrer">Explore case study<span class="visually-hidden"> (opens in a new tab)</span></a>
+                                <a href="https://github.com/husseinahmad7/dealer-service-360/" target="_blank" rel="noopener noreferrer">Inspect source<span class="visually-hidden"> (opens in a new tab)</span></a>
+                            </div>
+                        </div>
                     </article>
-                    <article class="project-card">
-                        <p class="project-date">2024</p>
+
+                    <article class="featured-project">
+                        <a class="project-visual" href="https://husseinahmad7.github.io/schooms/" target="_blank" rel="noopener noreferrer" aria-label="Open the ForgeEdu case study in a new tab">
+                            <picture>
+                                <source type="image/avif" srcset="{% static 'images/portfolio-forgeedu-692.avif' %} 692w, {% static 'images/portfolio-forgeedu-1384.avif' %} 1384w" sizes="(max-width: 760px) calc(100vw - 48px), (max-width: 1160px) 46vw, 520px">
+                                <source type="image/webp" srcset="{% static 'images/portfolio-forgeedu-692.webp' %} 692w, {% static 'images/portfolio-forgeedu-1384.webp' %} 1384w" sizes="(max-width: 760px) calc(100vw - 48px), (max-width: 1160px) 46vw, 520px">
+                                <img src="{% static 'images/portfolio-forgeedu-692.jpg' %}" srcset="{% static 'images/portfolio-forgeedu-692.jpg' %} 692w, {% static 'images/portfolio-forgeedu-1384.jpg' %} 1384w" sizes="(max-width: 760px) calc(100vw - 48px), (max-width: 1160px) 46vw, 520px" alt="ForgeEdu school operations dashboard showing student, teacher, parent, attendance, and timetable information" width="1384" height="790" loading="lazy" decoding="async">
+                            </picture>
+                        </a>
+                        <div class="featured-project-body">
+                            <h3>ForgeEdu</h3>
+                            <p class="project-meta">Laravel 13 · Livewire 4 · React/TypeScript</p>
+                            <p>A configurable school operations platform spanning attendance, exams, finance, transport, communications, and timetabling across multilingual web and mobile experiences.</p>
+                            <ul class="evidence-list" aria-label="ForgeEdu evidence">
+                                <li><strong>500+</strong> PHP test files</li>
+                                <li><strong>RTL</strong> multilingual UI</li>
+                                <li><strong>Web + mobile</strong> delivery</li>
+                            </ul>
+                            <div class="project-links">
+                                <a href="https://husseinahmad7.github.io/schooms/" target="_blank" rel="noopener noreferrer">Explore case study<span class="visually-hidden"> (opens in a new tab)</span></a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="archive-heading">
+                    <h3>Additional builds</h3>
+                    <p>Focused systems across retrieval, data quality, service delivery, feedback, and visualization.</p>
+                </div>
+                <div class="project-archive">
+                    <article>
+                        <time datetime="2024">2024</time>
+                        <h3>Booking Platform</h3>
+                        <p>Location-aware service workflows with asynchronous jobs, notifications, API boundaries, and search.</p>
+                    </article>
+                    <article>
+                        <time datetime="2024">2024</time>
                         <h3>RAG App</h3>
                         <p>Document question-answering and semantic search using local model orchestration and vector retrieval.</p>
                     </article>
-                    <article class="project-card">
-                        <p class="project-date">2025</p>
+                    <article>
+                        <time datetime="2025">2025</time>
                         <h3>Product Extraction Pipeline</h3>
-                        <p>ETL flow for product data classification, validation, human review, and ERP-ready structured output.</p>
+                        <p>Product classification, validation, human review, and ERP-ready structured output.</p>
                     </article>
-                    <article class="project-card">
-                        <p class="project-date">2024</p>
+                    <article>
+                        <time datetime="2024">2024</time>
                         <h3>Ticket Service API</h3>
-                        <p>Service, staff, and worker logic for ticket tracking with notifications and a paired mobile experience.</p>
+                        <p>Ticket tracking, worker assignment, notifications, and a paired mobile experience.</p>
                     </article>
-                    <article class="project-card">
-                        <p class="project-date">2022</p>
+                    <article>
+                        <time datetime="2022">2022</time>
                         <h3>Survey System</h3>
                         <p>Dynamic surveys with analytics, statistics, and reporting for structured feedback collection.</p>
                     </article>
-                    <article class="project-card">
-                        <p class="project-date">2024</p>
+                    <article>
+                        <time datetime="2024">2024</time>
                         <h3>Celestial Mapper</h3>
-                        <p>Real-time astronomical visualization with star-position tracking, path analysis, and pattern recognition.</p>
+                        <p>Real-time astronomical visualization with star tracking, path analysis, and pattern recognition.</p>
                     </article>
                 </div>
             </div>
         </section>
 
-        <section id="section-edu" class="portfolio-section education-section">
-            <div class="container portfolio-container split-section">
+        <section id="section-edu" class="portfolio-section education-section" tabindex="-1">
+            <div class="portfolio-container split-section">
                 <div class="section-heading">
-                    <p class="section-label">Education</p>
-                    <h2>Machine-learning foundation with production engineering practice.</h2>
+                    <h2>Machine-learning foundations, applied in production.</h2>
                     <p>Graduated from Syrian Virtual University in 2025 with a degree in Information Technology Engineering, specializing in Machine Learning.</p>
                 </div>
                 <div class="credential-list">
@@ -1107,10 +338,9 @@
             </div>
         </section>
 
-        <section id="section-focus" class="portfolio-section focus-section">
-            <div class="container portfolio-container">
+        <section id="section-focus" class="portfolio-section focus-section" tabindex="-1">
+            <div class="portfolio-container focus-layout">
                 <div class="section-heading">
-                    <p class="section-label">Current focus</p>
                     <h2>Where the work is moving next.</h2>
                 </div>
                 <div class="focus-grid">
@@ -1130,96 +360,27 @@
             </div>
         </section>
 
-        <section id="section-contact" class="portfolio-section contact-section">
-            <div class="container portfolio-container contact-inner">
+        <section id="section-contact" class="portfolio-section contact-section" tabindex="-1">
+            <div class="portfolio-container contact-inner">
                 <div>
-                    <p class="section-label">Contact</p>
                     <h2>Let’s talk about systems that need to ship.</h2>
                     <p>Available for engineering roles and collaborations around ERP, AI search, DevOps, MLOps, and applied automation.</p>
                 </div>
-                <div class="contact-links">
-                    <a href="mailto:h7ussein.ahmad@gmail.com">h7ussein.ahmad@gmail.com</a>
-                    <a href="tel:+963982489354">+963 982 489 354</a>
-                    <a href="https://www.linkedin.com/in/hussein-ahmadx9/" target="_blank" rel="noopener">LinkedIn</a>
-                    <a href="https://github.com/husseinahmad7" target="_blank" rel="noopener">GitHub</a>
+                <div class="contact-links" aria-label="Contact links">
+                    <a href="mailto:h7ussein.ahmad@gmail.com"><span>Email</span><strong>h7ussein.ahmad@gmail.com</strong></a>
+                    <a href="tel:+963982489354"><span>Phone</span><strong>+963 982 489 354</strong></a>
+                    <a href="https://www.linkedin.com/in/hussein-ahmadx9/" target="_blank" rel="noopener noreferrer"><span>Network</span><strong>LinkedIn<span class="visually-hidden"> (opens in a new tab)</span></strong></a>
+                    <a href="https://github.com/husseinahmad7" target="_blank" rel="noopener noreferrer"><span>Code</span><strong>GitHub<span class="visually-hidden"> (opens in a new tab)</span></strong></a>
                 </div>
             </div>
         </section>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
-    <script>
-        (function () {
-            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            const root = document.documentElement;
-            let ticking = false;
-
-            const updateScrollProgress = () => {
-                const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-                const progress = scrollable > 0 ? window.scrollY / scrollable : 0;
-                root.style.setProperty('--scroll-progress', Math.min(1, Math.max(0, progress)).toFixed(4));
-                ticking = false;
-            };
-
-            const requestProgress = () => {
-                if (!ticking) {
-                    window.requestAnimationFrame(updateScrollProgress);
-                    ticking = true;
-                }
-            };
-
-            updateScrollProgress();
-            window.addEventListener('scroll', requestProgress, { passive: true });
-            window.addEventListener('resize', requestProgress);
-
-            if (!prefersReducedMotion) {
-                const hero = document.querySelector('.portfolio-hero');
-                if (hero) {
-                    hero.addEventListener('pointermove', (event) => {
-                        const rect = hero.getBoundingClientRect();
-                        const x = ((event.clientX - rect.left) / rect.width) * 100;
-                        const y = ((event.clientY - rect.top) / rect.height) * 100;
-                        document.body.style.setProperty('--signal-x', `${Math.min(100, Math.max(0, x)).toFixed(2)}%`);
-                        document.body.style.setProperty('--signal-y', `${Math.min(100, Math.max(0, y)).toFixed(2)}%`);
-                    }, { passive: true });
-                }
-            }
-
-            document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-                anchor.addEventListener('click', (event) => {
-                    const target = document.querySelector(anchor.getAttribute('href'));
-                    if (!target) {
-                        return;
-                    }
-
-                    event.preventDefault();
-                    target.scrollIntoView({
-                        behavior: prefersReducedMotion ? 'auto' : 'smooth',
-                        block: 'start'
-                    });
-
-                    const expandedNav = document.querySelector('.navbar-collapse.show');
-                    if (expandedNav && window.bootstrap) {
-                        window.bootstrap.Collapse.getOrCreateInstance(expandedNav).hide();
-                    }
-                });
-            });
-
-            if (!prefersReducedMotion && 'IntersectionObserver' in window) {
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach((entry) => {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.add('is-visible');
-                            observer.unobserve(entry.target);
-                        }
-                    });
-                }, { threshold: 0.16 });
-
-                document.querySelectorAll('.portfolio-section, .project-card, .timeline-item').forEach((element) => {
-                    observer.observe(element);
-                });
-            }
-        })();
-    </script>
+    <footer class="portfolio-footer">
+        <div class="portfolio-container">
+            <p>Designed and built by Hussein Ahmad.</p>
+            <a href="#section-intro">Back to top</a>
+        </div>
+    </footer>
 </body>
 </html>

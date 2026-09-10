@@ -39,6 +39,13 @@ Login
             <a href="{% url 'password_reset' %}">reset your password</a>
             </fieldset>
         </form>
+        <div class="mt-5">
+            <p class="mb-2">Want to explore safely without creating an account?</p>
+            <form action="{% url 'users:demo_login' %}" method="post">
+                {% csrf_token %}
+                <button class="button is-light is-medium" type="submit">Try demo</button>
+            </form>
+        </div>
     </div>
     </div>
 </section>

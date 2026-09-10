@@ -3,17 +3,12 @@
 import os
 import sys
 
-try:
-    import dotenv
-except ImportError:
-    dotenv = None
-
 
 def main():
     """Run administrative tasks."""
-    if dotenv is not None:
-        dotenv.read_dotenv()
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'paradome.settings')
+    os.environ.setdefault(
+        "DJANGO_SETTINGS_MODULE", "paradome.settings.development"
+    )
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
@@ -25,5 +20,5 @@ def main():
     execute_from_command_line(sys.argv)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

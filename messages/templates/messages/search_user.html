@@ -25,16 +25,14 @@ Search for user
         <div class="media-left">
           <figure class="image is-64x64">
               {% if user.profile.picture %}
-              <img src="{{ user.profile.picture.url }}" alt="{{user.username}}">
-              {% else %}
-            <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
-            {% endif %}
+              <img src="{% url 'users:profile_picture' user.username %}" alt="{{user.username}}">
+              {% endif %}
           </figure>
         </div>
         <div class="media-content">
           <div class="content">
             <p>
-              <strong>{{user.username}}</strong> <span> last login </span><small>{{user.last_login|naturaltime}}</small>
+              <strong>{{user.username}}</strong>
               <br>
               {{user.profile.bio}}
             </p>

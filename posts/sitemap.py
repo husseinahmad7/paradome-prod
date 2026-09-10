@@ -7,7 +7,12 @@ from .models import Post
 
 class PostsSitemap(Sitemap):
     def items(self):
-        return Post.objects.filter(Q(posted_date__lte=timezone.now()), Q(dome__isnull=True) | Q(dome__privacy__exact=1))
+        return Post.objects.filter(
+            Q(posted_date__lte=timezone.now()),
+            Q(dome__isnull=True) | Q(dome__privacy__exact=1),
+        ).exclude(user__groups__name="Demo").exclude(
+            dome__user__groups__name="Demo"
+        ).order_by("pk")
 
     def location(self, obj):
         return reverse('posts:post-detail', kwargs={'pk':obj.pk})

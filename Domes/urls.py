@@ -16,6 +16,7 @@ urlpatterns = [
     path('update/<int:pk>', views.DomeUpdateView.as_view(),name='dome-update'),
     path('delete/<int:pk>', views.DomeDeleteView.as_view(),name='dome-delete'),
     path('<int:pk>/',views.DomeView.as_view(),name='dome-detail'),
+    path('<int:pk>/media/<str:kind>/', views.dome_media, name='dome-media'),
     path('<int:pk>/members',views.DomeMembersView.as_view(),name='dome-members'),
     path('<int:dome_id>/members/<int:user_id>/del',views.MemberRemoveView,name='dome-member-delete'),
     path('<int:pk>/member/<int:user_pk>/option/<int:option>',views.ModeratorRaiseOrDown,name='dome-member-raiseordown'),

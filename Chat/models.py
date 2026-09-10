@@ -15,11 +15,22 @@ class ChatChannel(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["category", "title"],
+                name="chat_channel_unique_title",
+            ),
+        ]
+
 
 class ChatMessage(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    body = models.TextField(max_length=1500, blank=True, null=True)
+    body = models.TextField(max_length=1500)
     date = models.DateTimeField(auto_now_add=True)
     # file = models.FileField(upload_to=user_directory_path, blank=True, null=True)
     channel = models.ForeignKey(ChatChannel, on_delete=models.CASCADE, related_name='chat_msg')
     is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.body[:80]

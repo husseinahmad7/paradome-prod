@@ -1,5 +1,6 @@
 {% extends "HusseinAh/base.html" %}
 {% load static %}
+{% load post_security %}
 {% block title %}
 {{profile.user.username}}
 {% endblock title %}
@@ -8,7 +9,7 @@
         <div class="media">
             <div class="media-left">
                 <figure class="image is-128x128">
-                    <img class="is-rounded" src="{{ profile.picture.url }}" alt="{{ profile.user.username }} image">
+                    <img class="is-rounded" src="{% url 'users:profile_picture' profile.user.username %}" alt="{{ profile.user.username }} image">
                 </figure>
             </div>
             <div class="media-content">
@@ -52,9 +53,9 @@
             <div class="level-item">
             {% if user.is_authenticated and user != profile.user %}
             {%if follow_status == True %}
-                <a class="button is-danger" href="{% url 'posts:follow' profile.user 0 %}">Unfollow</a>
+                <form method="post" action="{% url 'posts:follow' profile.user 0 %}">{% csrf_token %}<button class="button is-danger" type="submit">Unfollow</button></form>
             {% else %}
-                <a class="button is-success" href="{% url 'posts:follow' profile.user 1 %}">Follow</a>
+                <form method="post" action="{% url 'posts:follow' profile.user 1 %}">{% csrf_token %}<button class="button is-success" type="submit">Follow</button></form>
             {% endif %}
             </div>
             <div class="level-item">
@@ -80,7 +81,7 @@
                     <div class="media-left">
                         {% if post.user.profile.picture %}
                         <figure class="image is-48x48 is-1by1">
-                            <img class="is-rounded" src="{{ post.user.profile.picture.url }}" alt="{{ post.user.username }} image">
+                            <img class="is-rounded" src="{% url 'users:profile_picture' post.user.username %}" alt="{{ post.user.username }} image">
                           </figure>
                         {% else %}
                         <figure class="image is-48x48 is-1by1">
@@ -109,16 +110,14 @@
             <div class="card-image">
                 {% if post.picture %}
                 <figure class="image is-4by3">
-                    <img src="{{ post.picture.url }}" alt="{{post.picture.tags.first}}">
+                    <img src="{% url 'posts:post-picture' post.pk %}" alt="{{ post.question_text }}">
                   </figure>
                 {% endif %}
               
             </div>
             <div class="card-content">
               <div class="content">
-                {% autoescape off %}
-                {{ post.content|truncatechars_html:100 }}
-                {% endautoescape %}
+                {{ post.content|safe_rich_text|truncatechars_html:100 }}
                 <br>
                   {%for tag in post.tags.all %}
                 <span class="tag is-info is-light"><a href="{{ tag.get_absolute_url }}">{{tag}}</a></span>
@@ -169,4 +168,10 @@
             </nav>
         {%endif%}
 </main>
+<script src="{% static 'js/htmx.min.js' %}" defer></script>
+<script nonce="{{ CSP_NONCE }}">
+  document.body.addEventListener('htmx:configRequest', (event) => {
+    event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+  });
+</script>
 {% endblock base %}

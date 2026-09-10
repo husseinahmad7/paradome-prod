@@ -17,10 +17,10 @@
             </div>
         </div>
     </div>
-    <button class="modal-close is-large .js-modal-trigger" data-target="modal-js-example" aria-label="close" onclick="
-    var modal = document.querySelector('.modal');
-    modal.classList.toggle('is-active');
-    modal.remove();
-
-  "></button>
+    <button type="button" class="modal-close is-large js-close-message-modal" aria-label="Close"></button>
   </div>
+<script nonce="{{ CSP_NONCE }}">
+document.querySelectorAll(".js-close-message-modal").forEach((button) => {
+  button.addEventListener("click", () => button.closest(".modal")?.remove(), {once: true});
+});
+</script>

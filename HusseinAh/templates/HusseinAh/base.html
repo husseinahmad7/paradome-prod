@@ -51,7 +51,10 @@
                 <a href="{% url 'messages:inbox' %}">{% if unread_count %}<span class="badge">{{unread_count}}</span>{% endif%}inbox</a>
                 <a href="{% url 'notify:notification' %}">{% if notify_count %}<span class="badge">{{notify_count}}</span>{% endif%}notifications</a>
                 <a href="{% url 'posts:user-posts' user.username %}">Profile</a>
-                <a href="{% url 'users:logout'%}">Logout</a>
+                <form method="post" action="{% url 'users:logout' %}">
+                    {% csrf_token %}
+                    <button type="submit">Logout</button>
+                </form>
                 {%else%}
                 <a href="{% url 'users:register'%}">Register</a>
                 <a href="{% url 'users:login'%}">Login</a>
@@ -69,49 +72,6 @@
               </p>
             </div>
           </footer>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-
-    // Get all "navbar-burger" elements
-    const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-
-    // Add a click event on each of them
-    $navbarBurgers.forEach( el => {
-        el.addEventListener('click', () => {
-
-        // Get the target from the "data-target" attribute
-        const target = el.dataset.target;
-        const $target = document.getElementById(target);
-
-        // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-        el.classList.toggle('is-active');
-        $target.classList.toggle('is-active');
-
-        });
-    });
-    
-    // my costum alternative scroll bar
-let removeScrollBar;
-window.onscroll = (e) => {
-    if (document.body.classList.contains("on-scrollbar") === false) {
-        document.body.classList.add("on-scrollbar");
-        
-    } else {
-        if (typeof(removeScrollBar) != 'undefined'){
-            clearTimeout(removeScrollBar);
-        };
-
-     removeScrollBar = setTimeout(
-    ()=>{
-        if (document.body.classList.contains("on-scrollbar") === true) {
-            document.body.classList.remove("on-scrollbar");
-        }
-    },3000
-);
-    }; 
-};
-
-    });
-</script>
+<script src="{% static 'js/base.js' %}" defer></script>
     </body>
 </html>
