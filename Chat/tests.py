@@ -1,6 +1,7 @@
 from unittest.mock import Mock, patch
 
 from django.contrib.auth.models import Group, User
+from django.core.cache import cache
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
@@ -28,6 +29,7 @@ def make_dome(owner, *, title="Chat Dome", privacy=1):
 )
 class ChatSecurityTests(TestCase):
     def setUp(self):
+        cache.clear()
         self.owner = User.objects.create_user("owner", password="x")
         self.member = User.objects.create_user("member", password="x")
         self.outsider = User.objects.create_user("outsider", password="x")
@@ -152,6 +154,53 @@ class ChatSecurityTests(TestCase):
             with self.captureOnCommitCallbacks(execute=True):
                 self.client.post(url, {"body": "same"})
         self.assertEqual(ChatMessage.objects.filter(channel=self.channel).count(), 2)
+
+    def test_blank_non_htmx_message_returns_400_without_creating_a_row(self):
+        self.client.force_login(self.member)
+        response = self.client.post(
+            reverse("chat:chat-channel", args=[self.channel.pk]),
+            {"body": "   "},
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(ChatMessage.objects.filter(channel=self.channel).exists())
+
+    @patch("Chat.views.get_pusher_client")
+    def test_normal_message_send_trims_persists_and_redirects(self, get_client):
+        self.client.force_login(self.member)
+        with self.captureOnCommitCallbacks(execute=True):
+            response = self.client.post(
+                reverse("chat:chat-channel", args=[self.channel.pk]),
+                {"body": "  Normal message  "},
+            )
+        message = ChatMessage.objects.get(channel=self.channel)
+        self.assertEqual(message.body, "Normal message")
+        self.assertRedirects(
+            response,
+            reverse("chat:chat-channel", args=[self.channel.pk]),
+            fetch_redirect_response=False,
+        )
+        get_client.return_value.trigger.assert_called_once()
+
+    def test_duplicate_channel_title_is_rejected_case_insensitively(self):
+        self.client.force_login(self.owner)
+        response = self.client.post(
+            reverse("chat:chatchannel-create", args=[self.category.pk]),
+            {"title": " CHAT ", "topic": "Duplicate"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(ChatChannel.objects.filter(category=self.category).count(), 1)
+
+    def test_message_creation_is_rate_limited_after_forty_posts(self):
+        self.client.force_login(self.member)
+        url = reverse("chat:chat-channel", args=[self.channel.pk])
+        for index in range(40):
+            self.assertEqual(
+                self.client.post(url, {"body": f"message-{index}"}).status_code,
+                302,
+            )
+        response = self.client.post(url, {"body": "one-too-many"})
+        self.assertEqual(response.status_code, 429)
+        self.assertEqual(ChatMessage.objects.filter(channel=self.channel).count(), 40)
 
 
 class DemoChatTests(TestCase):

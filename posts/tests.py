@@ -1,4 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor
+from datetime import timedelta
 from io import BytesIO, StringIO
 from threading import Barrier
 from unittest import skipUnless
@@ -9,8 +10,10 @@ from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
 from django.db import IntegrityError, close_old_connections, connection, transaction
+from django.db.migrations.executor import MigrationExecutor
 from django.test import Client, TestCase, TransactionTestCase
 from django.urls import reverse
+from django.utils import timezone
 from PIL import Image
 
 from Domes.models import Dome
@@ -272,6 +275,208 @@ class DemoAndSocialPolicyTests(TestCase):
         self.assertEqual(
             self.client.post(url, {"title": "one-too-many"}).status_code,
             429,
+        )
+
+
+class FollowAndStreamTests(TestCase):
+    def setUp(self):
+        cache.clear()
+        self.actor = User.objects.create_user("stream-reader", password="x")
+        self.author = User.objects.create_user("stream-author", password="x")
+        self.client.force_login(self.actor)
+
+    def test_follow_rejects_self_invalid_action_and_missing_target(self):
+        self.assertEqual(
+            self.client.post(
+                reverse("posts:follow", args=[self.actor.username, 1])
+            ).status_code,
+            400,
+        )
+        self.assertEqual(
+            self.client.post(
+                reverse("posts:follow", args=[self.author.username, 7])
+            ).status_code,
+            400,
+        )
+        self.assertEqual(
+            self.client.post(
+                reverse("posts:follow", args=["missing-user", 1])
+            ).status_code,
+            404,
+        )
+        self.assertFalse(Follow.objects.exists())
+
+    def test_unfollow_removes_follow_stream_and_notification(self):
+        post = Post.objects.create(
+            user=self.author,
+            question_text="Existing post",
+            content="<p>Body</p>",
+        )
+        follow = Follow.objects.create(follower=self.actor, following=self.author)
+        Stream.objects.create(
+            user=self.actor,
+            following=self.author,
+            post=post,
+            date=post.posted_date,
+        )
+        source_key = f"follow:{follow.pk}"
+        self.assertTrue(Notification.objects.filter(source_key=source_key).exists())
+        response = self.client.post(
+            reverse("posts:follow", args=[self.author.username, 0])
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(
+            Follow.objects.filter(follower=self.actor, following=self.author).exists()
+        )
+        self.assertFalse(
+            Stream.objects.filter(user=self.actor, following=self.author).exists()
+        )
+        self.assertFalse(Notification.objects.filter(source_key=source_key).exists())
+
+    def test_follow_fans_out_existing_and_new_global_posts_only(self):
+        now = timezone.now()
+        existing = [
+            Post.objects.create(
+                user=self.author,
+                question_text=f"Global {index}",
+                content="<p>Body</p>",
+                posted_date=now - timedelta(minutes=index + 1),
+            )
+            for index in range(2)
+        ]
+        Post.objects.create(
+            user=self.author,
+            question_text="Future",
+            content="<p>Body</p>",
+            posted_date=now + timedelta(days=1),
+        )
+        dome = make_dome(self.author, title="Author private Dome")
+        Post.objects.create(
+            user=self.author,
+            dome=dome,
+            question_text="Dome only",
+            content="<p>Body</p>",
+        )
+
+        self.assertEqual(
+            self.client.post(
+                reverse("posts:follow", args=[self.author.username, 1])
+            ).status_code,
+            302,
+        )
+        self.assertSetEqual(
+            set(Stream.objects.filter(user=self.actor).values_list("post_id", flat=True)),
+            {post.pk for post in existing},
+        )
+
+        new_global = Post.objects.create(
+            user=self.author,
+            question_text="New global",
+            content="<p>Body</p>",
+        )
+        Post.objects.create(
+            user=self.author,
+            dome=dome,
+            question_text="New Dome post",
+            content="<p>Body</p>",
+        )
+        self.assertSetEqual(
+            set(Stream.objects.filter(user=self.actor).values_list("post_id", flat=True)),
+            {post.pk for post in existing} | {new_global.pk},
+        )
+
+    def test_stream_view_filters_inaccessible_private_rows(self):
+        Follow.objects.create(follower=self.actor, following=self.author)
+        public_post = Post.objects.create(
+            user=self.author,
+            question_text="Visible",
+            content="<p>Body</p>",
+        )
+        dome = make_dome(self.author, title="Hidden Dome")
+        private_post = Post.objects.create(
+            user=self.author,
+            dome=dome,
+            question_text="Hidden",
+            content="<p>Body</p>",
+        )
+        Stream.objects.create(
+            user=self.actor,
+            following=self.author,
+            post=private_post,
+            date=private_post.posted_date,
+        )
+        response = self.client.get(reverse("posts:stream"))
+        self.assertEqual(response.status_code, 200)
+        self.assertSetEqual(
+            {post.pk for post in response.context["latest_posts_list"]},
+            {public_post.pk},
+        )
+
+
+class SocialCleanupMigrationTests(TransactionTestCase):
+    migrate_from = ("posts", "0009_alter_post_picture")
+    migrate_to = ("posts", "0012_private_post_media")
+
+    def tearDown(self):
+        MigrationExecutor(connection).migrate([self.migrate_to])
+        super().tearDown()
+
+    def test_cleanup_deduplicates_social_rows_and_reconciles_like_counter(self):
+        executor = MigrationExecutor(connection)
+        executor.migrate([self.migrate_from])
+        old_apps = executor.loader.project_state([self.migrate_from]).apps
+        OldUser = old_apps.get_model("auth", "User")
+        OldPost = old_apps.get_model("posts", "Post")
+        OldLike = old_apps.get_model("posts", "Like")
+        OldFollow = old_apps.get_model("posts", "Follow")
+        OldStream = old_apps.get_model("posts", "Stream")
+
+        author = OldUser.objects.create(username="cleanup-author")
+        actor = OldUser.objects.create(username="cleanup-actor")
+        post = OldPost.objects.create(
+            user_id=author.pk,
+            question_text="Cleanup",
+            content="<p>Body</p>",
+            likes=99,
+            posted_date=timezone.now(),
+        )
+        OldLike.objects.create(user_id=actor.pk, post_id=post.pk)
+        OldLike.objects.create(user_id=actor.pk, post_id=post.pk)
+        OldFollow.objects.create(follower_id=actor.pk, following_id=author.pk)
+        OldFollow.objects.create(follower_id=actor.pk, following_id=author.pk)
+        OldFollow.objects.create(follower_id=actor.pk, following_id=actor.pk)
+        OldStream.objects.create(
+            user_id=actor.pk,
+            following_id=author.pk,
+            post_id=post.pk,
+            date=post.posted_date,
+        )
+        OldStream.objects.create(
+            user_id=actor.pk,
+            following_id=author.pk,
+            post_id=post.pk,
+            date=post.posted_date,
+        )
+
+        executor = MigrationExecutor(connection)
+        executor.migrate([self.migrate_to])
+        new_apps = executor.loader.project_state([self.migrate_to]).apps
+        NewPost = new_apps.get_model("posts", "Post")
+        NewLike = new_apps.get_model("posts", "Like")
+        NewFollow = new_apps.get_model("posts", "Follow")
+        NewStream = new_apps.get_model("posts", "Stream")
+        self.assertEqual(NewLike.objects.filter(post_id=post.pk).count(), 1)
+        self.assertEqual(NewPost.objects.get(pk=post.pk).likes, 1)
+        self.assertEqual(
+            NewFollow.objects.filter(follower_id=actor.pk, following_id=author.pk).count(),
+            1,
+        )
+        self.assertFalse(
+            NewFollow.objects.filter(follower_id=actor.pk, following_id=actor.pk).exists()
+        )
+        self.assertEqual(
+            NewStream.objects.filter(user_id=actor.pk, post_id=post.pk).count(),
+            1,
         )
 
 

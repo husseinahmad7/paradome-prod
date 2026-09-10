@@ -1,12 +1,13 @@
 from django.contrib.auth.models import Group, User
 from django.db import connection
 from django.db.migrations.executor import MigrationExecutor
-from django.test import TestCase, TransactionTestCase
+from django.test import RequestFactory, TestCase, TransactionTestCase
 from django.urls import reverse
 
 from posts.models import Comment, Follow, Like, Post
 
 from .models import Notification
+from .views import CountNotifications
 
 
 class NotificationSignalTests(TestCase):
@@ -75,6 +76,30 @@ class NotificationSignalTests(TestCase):
         Follow.objects.create(follower=demo, following=self.author)
         self.assertFalse(Notification.objects.exists())
 
+    def test_follow_signal_creates_once_and_delete_removes_its_notification(self):
+        follow = Follow.objects.create(follower=self.actor, following=self.author)
+        source_key = f"follow:{follow.pk}"
+        self.assertEqual(
+            Notification.objects.filter(
+                source_key=source_key,
+                notification_type=3,
+                sender=self.actor,
+                user=self.author,
+            ).count(),
+            1,
+        )
+        follow.save()
+        self.assertEqual(Notification.objects.filter(source_key=source_key).count(), 1)
+        follow.delete()
+        self.assertFalse(Notification.objects.filter(source_key=source_key).exists())
+
+    def test_real_users_do_not_notify_demo_recipients(self):
+        demo_group = Group.objects.create(name="Demo")
+        demo = User.objects.create_user("demo-recipient")
+        demo.groups.add(demo_group)
+        Follow.objects.create(follower=self.actor, following=demo)
+        self.assertFalse(Notification.objects.filter(user=demo).exists())
+
 
 class NotificationViewTests(TestCase):
     def setUp(self):
@@ -99,6 +124,55 @@ class NotificationViewTests(TestCase):
         self.assertEqual(self.client.get(url).status_code, 405)
         self.assertEqual(self.client.post(url).status_code, 302)
         self.assertFalse(Notification.objects.filter(pk=self.notification.pk).exists())
+
+    def test_list_is_owner_scoped_and_count_only_includes_unseen_rows(self):
+        seen = Notification.objects.create(
+            user=self.user,
+            sender=self.sender,
+            notification_type=3,
+            text_preview="older relationship update",
+            is_seen=True,
+        )
+        other = User.objects.create_user("other", password="x")
+        Notification.objects.create(
+            user=other,
+            sender=self.sender,
+            notification_type=3,
+            text_preview="must stay private",
+        )
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("notify:notification"))
+        self.assertEqual(response.status_code, 200)
+        self.assertSetEqual(
+            {
+                notification.pk
+                for notification in response.context["notifications"]
+            },
+            {seen.pk, self.notification.pk},
+        )
+        self.assertEqual(CountNotifications(response.wsgi_request)["notify_count"], 1)
+        self.notification.is_seen = True
+        self.notification.save(update_fields=["is_seen"])
+        self.assertEqual(CountNotifications(response.wsgi_request)["notify_count"], 0)
+
+    def test_demo_notification_list_is_forbidden_and_count_is_zero(self):
+        demo_group = Group.objects.create(name="Demo")
+        demo = User.objects.create_user("demo-viewer")
+        demo.groups.add(demo_group)
+        Notification.objects.create(
+            user=demo,
+            sender=self.sender,
+            notification_type=3,
+            text_preview="legacy row",
+        )
+        self.client.force_login(demo)
+        self.assertEqual(
+            self.client.get(reverse("notify:notification")).status_code,
+            403,
+        )
+        request = RequestFactory().get("/notifications/")
+        request.user = demo
+        self.assertEqual(CountNotifications(request)["notify_count"], 0)
 
 
 class NotificationSourceMigrationTests(TransactionTestCase):
