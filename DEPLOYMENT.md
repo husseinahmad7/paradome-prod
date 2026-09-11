@@ -13,13 +13,15 @@ PythonAnywhere layout is:
 ```text
 /home/<account>/apps/paradome/
 ├── current -> releases/<release-id>
-├── releases/<release-id>/
+├── releases/
+│   └── <release-id>/
+│       ├── app/
+│       └── venv/
 └── shared/
     ├── backups/<backup-id>/
     ├── legacy_media/
     └── private_media/
 /home/<account>/.config/paradome.env
-/home/<account>/.virtualenvs/paradome/
 ```
 
 `PRIVATE_MEDIA_ROOT` must name `shared/private_media` (or another absolute,
@@ -39,7 +41,9 @@ timestamped backup set containing:
 
 Verify that the dump can be listed/restored and that both media archives can be
 read before proceeding. Keep the previous release and the complete matching
-backup set until the rollback window closes.
+backup set until the rollback window closes. Retain the previous release
+directory in full, including its release-specific `venv/`, for the same
+period. Never reuse a virtual environment between release IDs.
 
 Deploy only after the repository-history rewrite and full-history secret scan
 have passed. Rotate every credential that has appeared in Git; removing it from
@@ -95,28 +99,33 @@ than relying on an interactive shell's ambient state:
 ```sh
 PARADOME_ENV_FILE="/home/<account>/.config/paradome.env" \
 DJANGO_SETTINGS_MODULE="paradome.settings.production" \
-"/home/<account>/.virtualenvs/paradome/bin/python" manage.py COMMAND
+"/home/<account>/apps/paradome/current/venv/bin/python" \
+"/home/<account>/apps/paradome/current/app/manage.py" COMMAND
 ```
 
 The examples below abbreviate the environment-and-interpreter portion as
-`PRODUCTION_PREFIX` and then show `manage.py`; replace the abbreviation with
-the first three lines above when executing a command. It is documentation
-notation, not a shell variable to define.
+`PRODUCTION_PREFIX`; replace the abbreviation with all four lines above when
+executing a command. It is documentation notation, not a shell variable to
+define.
 
 ## Fresh release procedure
 
 1. Create the verified backup set above and record the deployed commit ID.
-2. Clone the rewritten repository into a new `releases/<release-id>` directory.
-   Never pull rewritten history into an existing server clone.
-3. Create a fresh Python 3.12 virtual environment and install
-   `requirements-production.txt` with the environment's Python.
-4. From the new release root, run:
+2. Create a new `releases/<release-id>/` directory and clone the rewritten
+   repository into its `app/` child. Never pull rewritten history into an
+   existing server clone.
+3. Create a fresh Python 3.12 virtual environment at
+   `releases/<release-id>/venv/` and install the adjacent
+   `app/requirements-production.txt` with that environment's Python.
+4. Before cutover, substitute the new release's explicit `app/` and `venv/`
+   paths for `current/app/` and `current/venv/` in `PRODUCTION_PREFIX`, then
+   run:
 
    ```sh
-   PRODUCTION_PREFIX manage.py check --deploy
-   PRODUCTION_PREFIX manage.py makemigrations --check --dry-run
-   PRODUCTION_PREFIX manage.py sanitize_rich_text --dry-run
-   PRODUCTION_PREFIX manage.py migrate_private_media --dry-run \
+   PRODUCTION_PREFIX check --deploy
+   PRODUCTION_PREFIX makemigrations --check --dry-run
+   PRODUCTION_PREFIX sanitize_rich_text --dry-run
+   PRODUCTION_PREFIX migrate_private_media --dry-run \
        --source-root "/home/<account>/apps/paradome/shared/legacy_media"
    ```
 
@@ -126,15 +135,15 @@ notation, not a shell variable to define.
 5. With the site in maintenance mode and the backup timestamp recorded, run:
 
    ```sh
-   PRODUCTION_PREFIX manage.py migrate --noinput
-   PRODUCTION_PREFIX manage.py createcachetable
-   PRODUCTION_PREFIX manage.py sanitize_rich_text --apply
-   PRODUCTION_PREFIX manage.py migrate_private_media --apply \
+   PRODUCTION_PREFIX migrate --noinput
+   PRODUCTION_PREFIX createcachetable
+   PRODUCTION_PREFIX sanitize_rich_text --apply
+   PRODUCTION_PREFIX migrate_private_media --apply \
        --source-root "/home/<account>/apps/paradome/shared/legacy_media"
-   PRODUCTION_PREFIX manage.py migrate_private_media --dry-run \
+   PRODUCTION_PREFIX migrate_private_media --dry-run \
        --source-root "/home/<account>/apps/paradome/shared/legacy_media"
-   PRODUCTION_PREFIX manage.py collectstatic --clear --noinput
-   PRODUCTION_PREFIX manage.py reset_demo_sandbox
+   PRODUCTION_PREFIX collectstatic --clear --noinput
+   PRODUCTION_PREFIX reset_demo_sandbox
    ```
 
    The final media dry run must report zero files to copy, all referenced files
@@ -142,8 +151,11 @@ notation, not a shell variable to define.
    destination file hashes. `migrate_private_media` copies only: it never
    removes or mutates the source tree, and a missing reference aborts before
    the first copy. Retain the source tree through the rollback window.
-6. Atomically repoint `current` to the new release, update the Web tab and WSGI
-   configuration, reload, and verify `/health/`.
+6. Atomically repoint the single `current` symlink to the new release
+   directory. Because that directory contains both `app/` and `venv/`, code
+   and dependencies move together. Keep the Web tab and WSGI configuration on
+   the stable `current/app/` and `current/venv/` paths, reload, and verify
+   `/health/`.
 7. Smoke-test the portfolio, authentication, private-Dome authorization,
    protected media, private chat, and demo restrictions before ending
    maintenance mode.
@@ -157,7 +169,7 @@ the application and must set production configuration explicitly:
 import os
 import sys
 
-release_root = "/home/<account>/apps/paradome/current"
+release_root = "/home/<account>/apps/paradome/current/app"
 if release_root not in sys.path:
     sys.path.insert(0, release_root)
 
@@ -167,9 +179,10 @@ os.environ["DJANGO_SETTINGS_MODULE"] = "paradome.settings.production"
 from paradome.wsgi import application
 ```
 
-Point the virtualenv setting at the fresh Python 3.12 environment. Configure
-only `/static/` to the current release's `static_files` directory. Remove every
-legacy `/media/` Web-tab mapping before exposing the new release, and never map
+Point the virtualenv setting at
+`/home/<account>/apps/paradome/current/venv`. Configure only `/static/` to
+`/home/<account>/apps/paradome/current/app/static_files`. Remove every legacy
+`/media/` Web-tab mapping before exposing the new release, and never map
 `PRIVATE_MEDIA_ROOT`. User uploads are delivered only by object-authorized
 Django routes.
 
@@ -180,10 +193,11 @@ non-blocking host lock so overlapping resets cannot run:
 
 ```sh
 /usr/bin/flock -n "/home/<account>/apps/paradome/shared/demo-reset.lock" \
-  /bin/sh -c 'cd "/home/<account>/apps/paradome/current" && \
+  /bin/sh -c 'cd "/home/<account>/apps/paradome/current/app" && \
   PARADOME_ENV_FILE="/home/<account>/.config/paradome.env" \
   DJANGO_SETTINGS_MODULE="paradome.settings.production" \
-  "/home/<account>/.virtualenvs/paradome/bin/python" manage.py reset_demo_sandbox'
+  "/home/<account>/apps/paradome/current/venv/bin/python" \
+  "/home/<account>/apps/paradome/current/app/manage.py" reset_demo_sandbox'
 ```
 
 The command is idempotent. Alert on any non-zero exit, including failure to
@@ -199,9 +213,11 @@ unless that exact path has been rehearsed and documented.
 
 To roll back, stop traffic, restore the matching pre-release MySQL dump and
 both media snapshots, restore the previous WSGI/Web-tab/task configuration,
-repoint `current` and the virtualenv to the previous release, reload, and repeat
-the smoke tests. The copy-only legacy source is retained, but it does not
-replace the requirement to restore the matched snapshot set.
+atomically repoint `current` to the retained previous release directory, reload,
+and repeat the smoke tests. That one symlink restores the matched code and
+release-specific virtualenv together. Do not delete either previous artifact
+until the rollback window closes. The copy-only legacy source is retained, but
+it does not replace the requirement to restore the matched snapshot set.
 
 ## Docker deployment
 
