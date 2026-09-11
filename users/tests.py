@@ -427,12 +427,77 @@ class AuthenticationRateLimitTests(TestCase):
             REMOTE_ADDR="203.0.113.4",
         )
         self.assertEqual(response.status_code, 429)
+        self.assertGreaterEqual(int(response.headers["Retry-After"]), 1)
+        self.assertLessEqual(int(response.headers["Retry-After"]), 300)
+
+    def test_login_rotating_accounts_cannot_bypass_ip_limit(self):
+        url = reverse("users:login")
+        for attempt in range(8):
+            response = self.client.post(
+                url,
+                {"username": f"rotated-{attempt}", "password": "wrong"},
+                REMOTE_ADDR="203.0.113.40",
+            )
+            self.assertNotEqual(response.status_code, 429)
+
+        response = self.client.post(
+            url,
+            {"username": "rotated-final", "password": "wrong"},
+            REMOTE_ADDR="203.0.113.40",
+        )
+        self.assertEqual(response.status_code, 429)
+
+    def test_login_repeated_normalized_account_is_limited_across_ips(self):
+        url = reverse("users:login")
+        variants = ("RepeatedAccount", " repeatedaccount ")
+        for attempt in range(8):
+            response = self.client.post(
+                url,
+                {"username": variants[attempt % 2], "password": "wrong"},
+                REMOTE_ADDR=f"203.0.113.{50 + attempt}",
+            )
+            self.assertNotEqual(response.status_code, 429)
+
+        response = self.client.post(
+            url,
+            {"username": "REPEATEDACCOUNT", "password": "wrong"},
+            REMOTE_ADDR="203.0.113.99",
+        )
+        self.assertEqual(response.status_code, 429)
+
+    def test_login_gets_are_never_rate_limited(self):
+        url = reverse("users:login")
+        for _ in range(20):
+            self.assertEqual(
+                self.client.get(url, REMOTE_ADDR="203.0.113.4").status_code,
+                200,
+            )
 
     def test_registration_is_rate_limited_after_five_posts(self):
         url = reverse("users:register")
-        for _ in range(5):
-            self.assertEqual(self.client.post(url, {}).status_code, 200)
-        self.assertEqual(self.client.post(url, {}).status_code, 429)
+        for attempt in range(5):
+            self.assertEqual(
+                self.client.post(
+                    url,
+                    {"username": f"rotated-{attempt}"},
+                    REMOTE_ADDR="203.0.113.5",
+                ).status_code,
+                200,
+            )
+        response = self.client.post(
+            url,
+            {"username": "rotated-final"},
+            REMOTE_ADDR="203.0.113.5",
+        )
+        self.assertEqual(response.status_code, 429)
+
+    def test_registration_gets_are_never_rate_limited(self):
+        url = reverse("users:register")
+        for _ in range(10):
+            self.assertEqual(
+                self.client.get(url, REMOTE_ADDR="203.0.113.5").status_code,
+                200,
+            )
 
     def test_password_reset_is_rate_limited_after_five_posts(self):
         url = reverse("password_reset")

@@ -24,6 +24,7 @@ class RateLimitedLoginView(AnonymousWriteRateLimitMixin, auth_views.LoginView):
     rate_limit_scope = "login"
     rate_limit_count = 8
     rate_limit_window_seconds = 300
+    rate_limit_identity_modes = ("ip", "account")
 
 
 class RateLimitedPasswordResetView(

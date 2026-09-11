@@ -2,19 +2,53 @@
 
 import hashlib
 import time
+import unicodedata
 from functools import wraps
 
 from django.core.cache import cache
 from django.http import HttpResponse
 
 
-def _client_identity(request):
-    """Use server-derived address plus account name without trusting proxy headers."""
+def _hashed_identity(kind, value):
+    """Return a namespaced, privacy-safe cache identity."""
 
-    address = request.META.get("REMOTE_ADDR", "unknown")
-    username = request.POST.get("username", "") if request.method == "POST" else ""
-    raw = f"{address}:{username.casefold()}"
-    return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:32]
+    raw = f"{kind}:{value}"
+    digest = hashlib.sha256(raw.encode("utf-8")).hexdigest()[:32]
+    return f"{kind}-{digest}"
+
+
+def _client_ip_identity(request):
+    """Use only the server-derived address; never trust client proxy headers."""
+
+    return _hashed_identity("ip", str(request.META.get("REMOTE_ADDR", "unknown")))
+
+
+def _submitted_account_identity(request):
+    """Normalize and hash a submitted account name without checking existence."""
+
+    submitted = request.POST.get("username", "")
+    normalized = unicodedata.normalize("NFKC", str(submitted)).strip().casefold()
+    if not normalized:
+        return None
+    return _hashed_identity("account", normalized)
+
+
+def _rate_limit_identities(request, identity_modes):
+    user = getattr(request, "user", None)
+    if getattr(user, "is_authenticated", False):
+        return (f"user-{user.pk}",)
+
+    identities = []
+    for mode in identity_modes:
+        if mode == "ip":
+            identity = _client_ip_identity(request)
+        elif mode == "account":
+            identity = _submitted_account_identity(request)
+        else:
+            raise ValueError(f"Unsupported rate-limit identity mode: {mode}")
+        if identity and identity not in identities:
+            identities.append(identity)
+    return tuple(identities)
 
 
 def _rate_limit_response(
@@ -24,6 +58,7 @@ def _rate_limit_response(
     window_seconds,
     *,
     authenticated_only=False,
+    identity_modes=("ip",),
 ):
     if request.method in {"GET", "HEAD", "OPTIONS"}:
         return None
@@ -32,23 +67,21 @@ def _rate_limit_response(
     if authenticated_only and not getattr(user, "is_authenticated", False):
         return None
 
-    identity = (
-        f"user-{user.pk}"
-        if getattr(user, "is_authenticated", False)
-        else f"client-{_client_identity(request)}"
-    )
     bucket = int(time.time() // window_seconds)
-    key = f"rate:{scope}:{identity}:{bucket}"
-    if cache.add(key, 1, timeout=window_seconds + 1):
-        count = 1
-    else:
-        try:
-            count = cache.incr(key)
-        except ValueError:
-            cache.set(key, 1, timeout=window_seconds + 1)
+    exceeded = False
+    for identity in _rate_limit_identities(request, identity_modes):
+        key = f"rate:{scope}:{identity}:{bucket}"
+        if cache.add(key, 1, timeout=window_seconds + 1):
             count = 1
+        else:
+            try:
+                count = cache.incr(key)
+            except ValueError:
+                cache.set(key, 1, timeout=window_seconds + 1)
+                count = 1
+        exceeded = exceeded or count > limit
 
-    if count <= limit:
+    if not exceeded:
         return None
 
     retry_after = window_seconds - (int(time.time()) % window_seconds)
@@ -58,7 +91,14 @@ def _rate_limit_response(
     return response
 
 
-def rate_limit(scope, limit=10, window_seconds=60, *, authenticated_only=False):
+def rate_limit(
+    scope,
+    limit=10,
+    window_seconds=60,
+    *,
+    authenticated_only=False,
+    identity_modes=("ip",),
+):
     def decorator(view):
         @wraps(view)
         def wrapped(request, *args, **kwargs):
@@ -68,6 +108,7 @@ def rate_limit(scope, limit=10, window_seconds=60, *, authenticated_only=False):
                 limit=limit,
                 window_seconds=window_seconds,
                 authenticated_only=authenticated_only,
+                identity_modes=identity_modes,
             )
             return limited or view(request, *args, **kwargs)
 
@@ -107,6 +148,7 @@ class AnonymousWriteRateLimitMixin:
     rate_limit_scope = "authentication"
     rate_limit_count = 10
     rate_limit_window_seconds = 300
+    rate_limit_identity_modes = ("ip",)
 
     def dispatch(self, request, *args, **kwargs):
         limited = _rate_limit_response(
@@ -114,6 +156,7 @@ class AnonymousWriteRateLimitMixin:
             self.rate_limit_scope,
             limit=self.rate_limit_count,
             window_seconds=self.rate_limit_window_seconds,
+            identity_modes=self.rate_limit_identity_modes,
         )
         if limited is not None:
             return limited
