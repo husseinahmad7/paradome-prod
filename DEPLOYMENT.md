@@ -186,23 +186,44 @@ Point the virtualenv setting at
 `PRIVATE_MEDIA_ROOT`. User uploads are delivered only by object-authorized
 Django routes.
 
-## Locked demo reset at 00:00 UTC
+## Locked daily maintenance at 00:00 UTC
 
-Configure one PythonAnywhere daily task for exactly `00:00 UTC`. Use a
-non-blocking host lock so overlapping resets cannot run:
+Configure one PythonAnywhere daily task for exactly `00:00 UTC`. It cleans
+expired rate-limit buckets and resets the demo sandbox under one non-blocking
+host lock:
 
 ```sh
-/usr/bin/flock -n "/home/<account>/apps/paradome/shared/demo-reset.lock" \
-  /bin/sh -c 'cd "/home/<account>/apps/paradome/current/app" && \
+/usr/bin/flock -n "/home/<account>/apps/paradome/shared/daily-maintenance.lock" \
+  /bin/sh -c 'cd "/home/<account>/apps/paradome/current/app" || exit 1; \
+  cleanup_status=0; \
   PARADOME_ENV_FILE="/home/<account>/.config/paradome.env" \
   DJANGO_SETTINGS_MODULE="paradome.settings.production" \
   "/home/<account>/apps/paradome/current/venv/bin/python" \
-  "/home/<account>/apps/paradome/current/app/manage.py" reset_demo_sandbox'
+  "/home/<account>/apps/paradome/current/app/manage.py" \
+  cleanup_rate_limit_buckets --grace-seconds 86400 \
+  --batch-size 1000 --max-batches 100 || cleanup_status=$?; \
+  reset_status=0; \
+  PARADOME_ENV_FILE="/home/<account>/.config/paradome.env" \
+  DJANGO_SETTINGS_MODULE="paradome.settings.production" \
+  "/home/<account>/apps/paradome/current/venv/bin/python" \
+  "/home/<account>/apps/paradome/current/app/manage.py" \
+  reset_demo_sandbox || reset_status=$?; \
+  test "$cleanup_status" -eq 0 && test "$reset_status" -eq 0'
 ```
 
-The command is idempotent. Alert on any non-zero exit, including failure to
-acquire the lock; do not launch a concurrent retry. Restrict the shared
-directory so only the application account can create or replace the lock file.
+`cleanup_rate_limit_buckets` uses the indexed `expires_at` column and deletes
+only rows whose expiration is strictly older than the configured grace period.
+Its default grace is 24 hours, its minimum accepted grace is one hour, and each
+run is capped at 100 batches of 1,000 rows unless the options above are changed.
+It exits non-zero if the cap is reached while eligible rows remain; rerun it
+under the same lock rather than removing the grace period or raising the batch
+size above the command's validated maximum.
+
+Both commands are idempotent. The shell records the cleanup result, always
+runs the demo reset even if cleanup fails, then exits non-zero if either command
+failed. Alert on any non-zero exit, including failure to acquire the lock; do
+not launch a concurrent retry. Restrict the shared directory so only the
+application account can create or replace the lock file.
 
 ## Rollback is snapshot-based
 
