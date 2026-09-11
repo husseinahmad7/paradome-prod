@@ -654,8 +654,8 @@ button:focus-visible,
     color: var(--portfolio-muted);
 }
 
-.stack-note {
-    color: var(--portfolio-accent-dark) !important;
+.timeline-body .stack-note {
+    color: var(--portfolio-accent-dark);
     font-weight: 700;
 }
 
