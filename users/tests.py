@@ -10,6 +10,7 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import FileSystemStorage
 from django.core.management import call_command
 from django.core.management.base import CommandError
+from django.db import connection
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from PIL import Image
@@ -91,7 +92,9 @@ class ProtectedImageResponseTests(TestCase):
             self.assertTrue(
                 response.headers["Content-Disposition"].endswith('.jpg"')
             )
-            response.close()
+            self.assertEqual(b"".join(response.streaming_content), self.jpeg_bytes)
+            self.assertTrue(response.closed)
+            self.assertFalse(connection.closed_in_transaction)
 
 
 class UploadValidatorBoundaryTests(TestCase):
