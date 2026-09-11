@@ -18,6 +18,7 @@ from .models import RateLimitBucket
 
 logger = logging.getLogger(__name__)
 _SUBJECT_DOMAIN = b"paradome.rate-limit.subject.v1\x00"
+_IDENTITY_MODE_ORDER = ("ip", "account")
 
 
 def _subject_hash(scope, window_seconds, kind, value):
@@ -53,25 +54,50 @@ def _submitted_account_identity(request, scope, window_seconds):
     return _subject_hash(scope, window_seconds, "account", normalized)
 
 
-def _rate_limit_identities(request, scope, window_seconds, identity_modes):
+def _rate_limit_identities(
+    request,
+    scope,
+    window_seconds,
+    identity_modes=None,
+    *,
+    authenticated_only=False,
+):
     user = getattr(request, "user", None)
-    if getattr(user, "is_authenticated", False):
+    is_authenticated = getattr(user, "is_authenticated", False)
+
+    if authenticated_only:
+        if not is_authenticated:
+            return ()
         return (_subject_hash(scope, window_seconds, "user", user.pk),)
 
+    if identity_modes is None:
+        if is_authenticated:
+            return (_subject_hash(scope, window_seconds, "user", user.pk),)
+        identity_modes = ("ip",)
+
+    requested_modes = tuple(identity_modes)
+    unsupported_modes = [
+        mode for mode in requested_modes if mode not in _IDENTITY_MODE_ORDER
+    ]
+    if unsupported_modes:
+        raise ValueError(
+            f"Unsupported rate-limit identity mode: {unsupported_modes[0]}"
+        )
+
     identities = []
-    for mode in identity_modes:
+    for mode in _IDENTITY_MODE_ORDER:
+        if mode not in requested_modes:
+            continue
         if mode == "ip":
             identity = _client_ip_identity(request, scope, window_seconds)
-        elif mode == "account":
-            identity = _submitted_account_identity(request, scope, window_seconds)
         else:
-            raise ValueError(f"Unsupported rate-limit identity mode: {mode}")
+            identity = _submitted_account_identity(request, scope, window_seconds)
         if identity and identity not in identities:
             identities.append(identity)
     return tuple(identities)
 
 
-def _increment_rate_limit_bucket(subject_hash, window_start):
+def _increment_rate_limit_bucket(subject_hash, window_start, expires_at):
     """Atomically create or increment one fixed-window bucket."""
 
     for attempt in range(2):
@@ -96,14 +122,11 @@ def _increment_rate_limit_bucket(subject_hash, window_start):
                     bucket = RateLimitBucket.objects.create(
                         subject_hash=subject_hash,
                         window_start=window_start,
+                        expires_at=expires_at,
                         count=1,
                     )
                     count = 1
 
-                RateLimitBucket.objects.filter(
-                    subject_hash=subject_hash,
-                    window_start__lt=window_start,
-                ).exclude(pk=bucket.pk).delete()
                 return count
         except IntegrityError:
             if attempt:
@@ -126,7 +149,7 @@ def _rate_limit_response(
     window_seconds,
     *,
     authenticated_only=False,
-    identity_modes=("ip",),
+    identity_modes=None,
 ):
     if request.method in {"GET", "HEAD", "OPTIONS"}:
         return None
@@ -137,24 +160,28 @@ def _rate_limit_response(
 
     now = int(time())
     window_start = now - (now % window_seconds)
-    retry_after = window_start + window_seconds - now
-    exceeded = False
+    expires_at = window_start + window_seconds
+    retry_after = expires_at - now
     for subject_hash in _rate_limit_identities(
         request,
         scope,
         window_seconds,
         identity_modes,
+        authenticated_only=authenticated_only,
     ):
         try:
-            count = _increment_rate_limit_bucket(subject_hash, window_start)
+            count = _increment_rate_limit_bucket(
+                subject_hash,
+                window_start,
+                expires_at,
+            )
         except DatabaseError:
             logger.exception("Rate-limit counter failure for scope %s", scope)
             return _too_many_requests(retry_after)
-        exceeded = exceeded or count > limit
+        if count > limit:
+            return _too_many_requests(retry_after)
 
-    if not exceeded:
-        return None
-    return _too_many_requests(retry_after)
+    return None
 
 
 def rate_limit(
@@ -163,7 +190,7 @@ def rate_limit(
     window_seconds=60,
     *,
     authenticated_only=False,
-    identity_modes=("ip",),
+    identity_modes=None,
 ):
     def decorator(view):
         @wraps(view)

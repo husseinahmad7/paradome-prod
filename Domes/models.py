@@ -112,6 +112,7 @@ class RateLimitBucket(models.Model):
 
     subject_hash = models.CharField(max_length=64)
     window_start = models.PositiveBigIntegerField()
+    expires_at = models.PositiveBigIntegerField(db_index=True)
     count = models.PositiveIntegerField(default=1)
 
     class Meta:
