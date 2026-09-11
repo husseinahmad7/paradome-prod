@@ -1,16 +1,14 @@
-asgiref==3.5.2
-crispy-bulma==0.8.0
-Django==4.1
-django-ckeditor==6.5.0
-django-crispy-forms==1.14.0
-django-debug-toolbar==3.5.0
-django-filter==22.1
-django-js-asset==2.0.0
-djangorestframework==3.13.1
-Pillow==9.2.0
-psycopg2==2.9.3
-pytz==2022.2.1
-sqlparse==0.4.2
-tzdata==2022.2
-django-dotenv
-pusher
+# Cross-platform application dependencies. Production-only server/database
+# packages live in requirements-production.txt so local SQLite setup works on Windows.
+Django==5.2.17
+crispy-bulma==0.12.0
+django-crispy-forms==2.7
+django-filter==26.1
+django-prose-editor[sanitize]==0.26.0
+nh3==0.3.7
+Pillow==12.3.0
+pusher==3.3.4
+django-csp==4.0
+django-ratelimit==4.1.0
+WhiteNoise==6.12.0
+python-dotenv==1.2.3

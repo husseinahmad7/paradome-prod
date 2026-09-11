@@ -1,11 +1,10 @@
+{% load post_security %}
 <div class="modal is-active">
-    <div class="modal-background" onclick="var modl = this.closest('.modal');
-    closeModal(modl);"></div>
+    <div class="modal-background js-close-replies" role="button" tabindex="0" aria-label="Close replies"></div>
     <div class="modal-card">
       <header class="modal-card-head">
         <p class="modal-card-title">Replies</p>
-        <button class="delete" aria-label="close" onclick="var modl = this.closest('.modal');
-        closeModal(modl);"></button>
+        <button type="button" class="delete js-close-replies" aria-label="Close replies"></button>
       </header>
       <section class="modal-card-body" id="comment{{comment_id}}">
 
@@ -17,7 +16,7 @@
       <div class="media-left">
         {% if comment.user.profile.picture %}
         <figure class="image is-48x48 is-1by1">
-            <img src="{{ comment.user.profile.picture.url }}" alt="{{ comment.user.profile.username }}">
+            <img src="{% url 'users:profile_picture' comment.user.username %}" alt="{{ comment.user.username }}">
           </figure>
           {% else %}
             <figure class="image is-48x48 is-1by1">
@@ -28,11 +27,11 @@
       <div class="media-content">
         <div class="content">
           <p>
-            <strong>{{comment.user}}</strong>  <small>{{comment.commented}}</small>{% if comment.user == user or user in dome_owner or user in dome_mods %}
-            <button hx-delete="{% url 'posts:comment-delete' comment.pk %}" hx-target="closest .box" hx-swap="outerHTML swap:1s" hx-confirm="Are you sure you wish to remove this Member?" class="delete" aria-label="delete"></button>
+            <strong>{{comment.user}}</strong>  <small>{{comment.commented}}</small>{% if comment.user == user or can_moderate_comments %}
+            <button type="button" hx-post="{% url 'posts:comment-delete' comment.pk %}" hx-target="closest .box" hx-swap="outerHTML" hx-confirm="Delete this reply?" class="delete" aria-label="Delete reply"></button>
                   {%endif%}
             <br>
-            {{comment.comment}}
+            {{ comment.comment|safe_rich_text }}
           </p>
         </div>
       </div>
@@ -77,8 +76,21 @@
             </div>
         </form>
         {% endif %}
-        <button id="Cancel" class="button" onclick="var modl = this.closest('.modal');
-          closeModal(modl);">Cancel</button>
+        <button type="button" class="button js-close-replies">Cancel</button>
       </footer>
     </div>
   </div>
+<script nonce="{{ CSP_NONCE }}">
+document.querySelectorAll(".js-close-replies").forEach((control) => {
+  if (control.dataset.closeBound) return;
+  control.dataset.closeBound = "true";
+  const close = () => control.closest(".modal")?.remove();
+  control.addEventListener("click", close);
+  control.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      close();
+    }
+  });
+});
+</script>

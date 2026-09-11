@@ -7,13 +7,16 @@
 <main>
 {% for notification in notifications %}
 <div class="notification is-info">
-    <a class="delete" href="{% url 'notify:del' notification.pk %}"></a>
+    <form method="post" action="{% url 'notify:del' notification.pk %}">
+        {% csrf_token %}
+        <button class="delete" type="submit" aria-label="Delete notification"></button>
+    </form>
     <div class="box">
         <article class="media">
           <div class="media-left">
             <figure class="image is-64x64">
                 {% if notification.sender.profile.picture %}
-                <img class="is-rounded" src="{{ notification.sender.profile.picture.url }}" alt="{{notification.sender.username}}">
+                <img class="is-rounded" src="{% url 'users:profile_picture' notification.sender.username %}" alt="{{notification.sender.username}}">
                 {% else %}
               <img class="is-rounded" src="https://bulma.io/images/placeholders/96x96.png" alt="Image">
               {% endif %}

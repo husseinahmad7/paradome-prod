@@ -1,160 +1,229 @@
-from django.http import HttpResponseRedirect, HttpResponse
-from django.http.response import Http404
-from django.urls import reverse
-from django.views import generic
-from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
-from .models import ChatChannel, ChatMessage
-from .forms import ChatMessageCreation,ChatChannelCreation
-from Domes.models import Category,Dome
-# streming
-# import time
-# from django.http import StreamingHttpResponse
+import logging
+import re
+
 import pusher
-from django.template.loader import render_to_string
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.exceptions import ImproperlyConfigured, PermissionDenied
+from django.db import transaction
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect
+from django.template.response import TemplateResponse
+from django.views import generic
+from django.views.decorators.http import require_GET, require_POST
+
+from Domes.access import can_manage_dome, can_participate_in_chat, is_demo_user
+from Domes.models import Category
+from Domes.ratelimits import UserWriteRateLimitMixin, user_write_rate_limit
+
+from .forms import ChatChannelCreation, ChatMessageCreation
+from .models import ChatChannel, ChatMessage
 
 
-pusher_client = pusher.Pusher(
-  app_id="REMOVED_FROM_HISTORY",
-  key="REMOVED_FROM_HISTORY",
-  secret="REMOVED_FROM_HISTORY",
-  cluster="REMOVED_FROM_HISTORY",
-  ssl=True
-)
+logger = logging.getLogger(__name__)
+PRIVATE_CHANNEL_RE = re.compile(r"^private-chat-(?P<channel_id>[1-9][0-9]*)$")
 
 
-class ChatMessageList(LoginRequiredMixin, generic.ListView,generic.edit.FormMixin):
-    template_name = 'Chat/chat_messages.html'
+def get_pusher_client():
+    values = {
+        "app_id": getattr(settings, "PUSHER_APP_ID", ""),
+        "key": getattr(settings, "PUSHER_KEY", ""),
+        "secret": getattr(settings, "PUSHER_SECRET", ""),
+        "cluster": getattr(settings, "PUSHER_CLUSTER", ""),
+    }
+    if not all(values.values()):
+        raise ImproperlyConfigured("Pusher server credentials are not configured.")
+    return pusher.Pusher(**values, ssl=True)
+
+
+def _channel_for_user(user, pk):
+    channel = get_object_or_404(
+        ChatChannel.objects.select_related("category", "category__Dome", "category__Dome__user"),
+        pk=pk,
+    )
+    if not can_participate_in_chat(user, channel.category.Dome):
+        raise PermissionDenied
+    return channel
+
+
+def _publish_message(message):
+    try:
+        get_pusher_client().trigger(
+            f"private-chat-{message.channel_id}",
+            "message-created",
+            {"message_id": message.pk, "channel_id": message.channel_id},
+        )
+    except Exception:
+        # Persistence is authoritative; a transient realtime outage must not
+        # lose the message or expose credentials in the response.
+        logger.warning("Unable to publish chat message %s", message.pk)
+
+
+class ChatMessageList(
+    UserWriteRateLimitMixin,
+    LoginRequiredMixin,
+    generic.edit.FormMixin,
+    generic.ListView,
+):
+    template_name = "Chat/chat_messages.html"
     model = ChatMessage
-    context_object_name = 'messages'
-    paginate = 10
+    context_object_name = "messages"
+    paginate_by = 50
     form_class = ChatMessageCreation
+    rate_limit_scope = "chat-message"
+    rate_limit_count = 40
 
-    def get_channel_obj(self, pk):
-        try:
-            return ChatChannel.objects.get(pk=pk)
-        except ChatChannel.DoesNotExist:
-            raise Http404
+    def get_channel(self):
+        if not hasattr(self, "channel"):
+            self.channel = _channel_for_user(self.request.user, self.kwargs["pk"])
+        return self.channel
+
+    def get_queryset(self):
+        return (
+            ChatMessage.objects.filter(channel=self.get_channel())
+            .select_related("user")
+            .order_by("date")
+        )
+
     def get_context_data(self, **kwargs):
-        context = super(ChatMessageList,self).get_context_data(**kwargs)
-        channel = self.get_channel_obj(self.kwargs.get('pk'))
-        messages = ChatMessage.objects.filter(channel=channel).order_by('date')
-        # form = self.get_form()
-        channel_id = channel.id
-        category = channel.category
-        dome = Dome.objects.get(pk=category.Dome.id)
-        moderators = dome.moderators.all()
-        dome_owner = dome.user
-        context['dome_owner'] = dome_owner
-        context['channel_id'] = channel_id
-        context['messages'] = messages
-        context['moderators'] = moderators
-        # context['form']= form
+        context = super().get_context_data(**kwargs)
+        channel = self.get_channel()
+        dome = channel.category.Dome
+        context.update(
+            {
+                "channel_id": channel.pk,
+                "private_channel_name": f"private-chat-{channel.pk}",
+                "pusher_key": getattr(settings, "PUSHER_KEY", ""),
+                "pusher_cluster": getattr(settings, "PUSHER_CLUSTER", ""),
+                "can_manage_chat": can_manage_dome(self.request.user, dome),
+            }
+        )
         return context
 
     def post(self, request, *args, **kwargs):
-        form = ChatMessageCreation(self.request.POST, self.request.FILES)
-        if form.is_valid():
-            body = form.cleaned_data.get('body')
-            # file = form.cleaned_data.get('file')
-            sender = self.request.user
-            channel= self.get_channel_obj(self.kwargs.get('pk'))
-            channel_id = channel.id
+        channel = self.get_channel()
+        form = self.get_form()
+        if not form.is_valid():
+            self.object_list = self.get_queryset()
+            return self.render_to_response(
+                self.get_context_data(form=form), status=400
+            )
+        with transaction.atomic():
+            message = ChatMessage.objects.create(
+                user=request.user,
+                body=form.cleaned_data["body"],
+                channel=channel,
+            )
+            transaction.on_commit(lambda: _publish_message(message))
+        if request.headers.get("HX-Request") == "true":
+            return HttpResponse(status=204)
+        return redirect("chat:chat-channel", pk=channel.pk)
 
-            m, created = ChatMessage.objects.get_or_create(user=sender, body=body, channel=channel)
-            if created:
-                m.save()
-                html = render_to_string('Chat/requested_msgs.html',{'object':m})
-                pusher_client.trigger(f'{channel_id}', 'my-event', html)
-            if 'HX-Request' in self.request.headers.keys() and self.request.headers.get('HX-Request') == 'true':
-                return HttpResponse(status=204)
-            return HttpResponseRedirect(reverse('chat:chat-channel',args=[channel.id]))
 
-class ChatChannelCreateView(LoginRequiredMixin, generic.DetailView, generic.edit.FormMixin):
-    model = Category
-    template_name = 'Chat/chatchannel_form.html'
+class ChatChannelCreateView(
+    UserWriteRateLimitMixin,
+    LoginRequiredMixin,
+    UserPassesTestMixin,
+    generic.FormView,
+):
+    template_name = "Chat/chatchannel_form.html"
     form_class = ChatChannelCreation
-    def post(self, *args, **kwargs):
-         form = ChatChannelCreation(self.request.POST)
-         if form.is_valid():
-             chtchnl_category = self.get_object()
-             title = form.cleaned_data['title']
-             topic = form.cleaned_data['topic']
-             chatchannel = ChatChannel(title=title,topic=topic,category= chtchnl_category)
-             chatchannel.save()
-             return HttpResponseRedirect(reverse('domes:dome-detail', args=[chtchnl_category.Dome.id]))
+    rate_limit_scope = "chat-channel-create"
+    rate_limit_count = 10
 
-class ChatMessageDeleteView(LoginRequiredMixin, generic.DeleteView, UserPassesTestMixin):
-    model = ChatMessage
-    # success_url = ''
+    def get_category(self):
+        if not hasattr(self, "category"):
+            self.category = get_object_or_404(
+                Category.objects.select_related("Dome"), pk=self.kwargs["pk"]
+            )
+        return self.category
 
     def test_func(self):
-        message = self.get_object()
-        dome = message.channel.category.dome
-        mods = dome.moderators
-        owner = dome.user
-        if self.request.user == message.user or self.request.user == owner or self.request.user in mods:
-            return True
-        return False
+        return can_manage_dome(self.request.user, self.get_category().Dome)
 
-    def get_success_url(self) -> str:
-        return reverse('chat:msg-deleted')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["object"] = self.get_category()
+        return context
 
-def msgDeleted(request):
-    return HttpResponse('<article class="message"><div class="message-body">Message has been deleted</div></article>')
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["category"] = self.get_category()
+        return kwargs
 
-# @login_required
-# def stream(request, chat_pk):
-#     def event_stream():
-#         id = 1    
-#         while True:
-#             channel = ChatChannel.objects.get(pk=chat_pk)
-#             msgs = ChatMessage.objects.filter(channel=channel, is_read=False)
-                
-#             if msgs.exists():
-#                     for msg in msgs:
-#                         yield f'event:new_msg\ndata:\nid:{id}\n\n'
-#                         id = id +1
-#             time.sleep(3)
+    def form_valid(self, form):
+        channel = form.save(commit=False)
+        channel.category = self.get_category()
+        channel.save()
+        return redirect("domes:dome-detail", pk=channel.category.Dome_id)
 
-# class getNewMsgsView(LoginRequiredMixin, generic.DetailView):
-#     template_name = 'Chat/requested_msgs.html'
-#     context_object_name = 'object'
 
-#     def get_channel_obj(self, pk):
-#         try:
-#             return ChatChannel.objects.get(pk=pk)
-#         except ChatChannel.DoesNotExist:
-#             raise Http404
-#     def get_object(self, *args, **kwargs):
-#         channel = self.get_channel_obj(self.kwargs.get('chat_pk'))
-#         msg = ChatMessage.objects.filter(channel=channel, is_read=False).earliest('date')
-#         return msg
+@login_required
+@require_POST
+@user_write_rate_limit("chat-delete", limit=30)
+def delete_message(request, pk):
+    message = get_object_or_404(
+        ChatMessage.objects.select_related(
+            "channel", "channel__category", "channel__category__Dome"
+        ),
+        pk=pk,
+    )
+    dome = message.channel.category.Dome
+    if not can_participate_in_chat(request.user, dome):
+        raise PermissionDenied
+    can_delete = message.user_id == request.user.pk or (
+        not is_demo_user(request.user) and can_manage_dome(request.user, dome)
+    )
+    if not can_delete:
+        raise PermissionDenied
+    message.delete()
+    return HttpResponse("")
 
-#     def get(self,request, *args, **kwargs):
-#         obj = self.get_object()
-#         channel = self.get_channel_obj(self.kwargs.get('chat_pk'))
-#         category = channel.category
-#         dome = Dome.objects.get(pk=category.Dome.id)
-#         moderators = dome.moderators.all()
-#         dome_owner = dome.user
-#         context = {}
-#         context['dome_owner'] = dome_owner
-#         context['moderators'] = moderators
-#         time.sleep(1)
 
-#         obj.is_read = True
-#         obj.save()
-#         context['object'] = obj
+@login_required
+@require_POST
+@user_write_rate_limit("pusher-auth", limit=120)
+def pusher_auth(request):
+    channel_name = request.POST.get("channel_name", "")
+    socket_id = request.POST.get("socket_id", "")
+    match = PRIVATE_CHANNEL_RE.fullmatch(channel_name)
+    if not match or not socket_id:
+        return HttpResponse("Invalid channel authorization request", status=400)
+    _channel_for_user(request.user, int(match.group("channel_id")))
+    try:
+        authorization = get_pusher_client().authenticate(
+            channel=channel_name, socket_id=socket_id
+        )
+    except ValueError:
+        return HttpResponse("Invalid channel authorization request", status=400)
+    except ImproperlyConfigured:
+        return HttpResponse("Realtime messaging is unavailable", status=503)
+    return JsonResponse(authorization)
 
-#         return self.render_to_response(context)
 
-    # def get_context_data(self, **kwargs):
-    #     context = super(getNewMsgsView,self).get_context_data(**kwargs)
-    #     channel = self.get_channel_obj(self.kwargs.get('pk'))
-    #     category = channel.category
-    #     dome = Dome.objects.get(pk=category.Dome.id)
-    #     moderators = dome.moderators.all()
-    #     dome_owner = dome.user
-    #     context['dome_owner'] = dome_owner
-    #     context['moderators'] = moderators
-    #     return context
+@login_required
+@require_GET
+def message_fragment(request, channel_pk, pk):
+    message = get_object_or_404(
+        ChatMessage.objects.select_related(
+            "user", "channel", "channel__category", "channel__category__Dome"
+        ),
+        pk=pk,
+        channel_id=channel_pk,
+    )
+    dome = message.channel.category.Dome
+    if not can_participate_in_chat(request.user, dome):
+        raise PermissionDenied
+    return TemplateResponse(
+        request,
+        "Chat/requested_msgs.html",
+        {
+            "object": message,
+            "can_delete": message.user_id == request.user.pk
+            or (
+                not is_demo_user(request.user)
+                and can_manage_dome(request.user, dome)
+            ),
+        },
+    )

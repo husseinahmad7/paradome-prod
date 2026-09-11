@@ -12,6 +12,18 @@ class DomeCreation(forms.ModelForm):
         fields=['icon','banner','title','description','privacy']
 
 class CategoryCreation(forms.ModelForm):
+    def __init__(self, *args, dome=None, **kwargs):
+        self.dome = dome
+        super().__init__(*args, **kwargs)
+
     class Meta:
         model = Category
         fields = ['title']
+
+    def clean_title(self):
+        title = self.cleaned_data["title"].strip()
+        if self.dome and Category.objects.filter(
+            Dome=self.dome, title__iexact=title
+        ).exists():
+            raise forms.ValidationError("This Dome already has a category with that title.")
+        return title

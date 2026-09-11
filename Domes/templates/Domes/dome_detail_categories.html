@@ -1,4 +1,4 @@
-{% if user.is_authenticated and object.user == user %}
+{% if can_manage %}
 <a class="button is-secondary" href="{% url 'domes:category-create' object.pk %}">create category</a>
 {% endif %}
 {% if object.categories.all %}
@@ -10,14 +10,14 @@
     <p class="menu-label has-text-light has-background-dark">
         {{category.title}}
     </p>
-    <a class="button is-light" href="{% url 'chat:chatchannel-create' category.id %}">add chat channel</a>
+    {% if can_manage %}<a class="button is-light" href="{% url 'chat:chatchannel-create' category.id %}">add chat channel</a>{% endif %}
     <ul class="menu-list">
     {%for chat in category.chat_chnls.all %}
         <div class="block {% ifchanged %}
         {% cycle 'has-background-info-light' 'has-background-link-light'%}
         {% endifchanged %}">
             <li>
-                <a hx-get="{% url 'chat:chat-channel' chat.id %}" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML">{{chat.title}}</a>
+                {% if can_chat %}<a hx-get="{% url 'chat:chat-channel' chat.id %}" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML">{{chat.title}}</a>{% else %}<span>{{ chat.title }}</span>{% endif %}
                 <ul>
                     <li class="subtitle is-6">{{chat.topic}}</li>
                 </ul>

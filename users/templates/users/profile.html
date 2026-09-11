@@ -6,7 +6,7 @@ Edit Profile
 
 {% block base %}
 <div class="container">
-    <img src="{{ user.profile.picture.url }}">
+    <img src="{% url 'users:profile_picture' user.username %}" alt="{{ user.username }}">
     <h1>welcome , {{request.user.username}}</h1>
 
     {% load crispy_forms_tags %}

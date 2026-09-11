@@ -1,12 +1,18 @@
-version: '3.4'
-
 services:
-  paradome:
-    image: paradome
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    command: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 manage.py runserver 0.0.0.0:8000 --nothreading --noreload"]
+  web:
+    build: .
+    environment:
+      DJANGO_SETTINGS_MODULE: paradome.settings.development
+      DJANGO_DEBUG: "1"
+      PARADOME_SKIP_STARTUP_TASKS: "1"
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
     ports:
-      - 8000:8000
-      - 5678:5678
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - development_media:/app/media
+      - development_private_media:/app/private_media
+
+volumes:
+  development_media:
+  development_private_media:

@@ -7,7 +7,11 @@ from .models import Dome
 
 class DomesSitemap(Sitemap):
     def items(self):
-        return Dome.objects.filter(privacy=1)
+        return (
+            Dome.objects.filter(privacy=1)
+            .exclude(user__groups__name="Demo")
+            .order_by("pk")
+        )
 
     def location(self, obj):
         return reverse('domes:dome-detail', kwargs={'pk':obj.pk})

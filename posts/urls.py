@@ -13,6 +13,7 @@ app_name = 'posts'
 urlpatterns = [
     path('', views.PostsList.as_view(), name='index'),
     path('<int:pk>/', views.PostView.as_view(), name='post-detail'),
+    path('<int:pk>/picture/', views.post_picture, name='post-picture'),
     path('new/', views.PostCreateView.as_view(), name='post-create'),
     path('<int:pk>/update', views.PostUpdateView.as_view(), name='post-update'),
     path('<int:pk>/delete', views.PostDeleteView.as_view(), name='post-delete'),
