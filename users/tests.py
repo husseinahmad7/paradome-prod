@@ -1,4 +1,5 @@
 from io import BytesIO, StringIO
+from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
@@ -8,6 +9,7 @@ from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import FileSystemStorage
 from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from PIL import Image
@@ -113,53 +115,186 @@ class UploadValidatorBoundaryTests(TestCase):
 
 
 class PrivateMediaMigrationTests(TestCase):
-    def test_dry_run_apply_rerun_and_missing_file_are_safe(self):
-        owner = User.objects.create_user("media-owner", password="x")
-        existing_name = "shared/existing.jpg"
-        missing_name = "posts/missing.jpg"
-        Profile.objects.filter(user=owner).update(picture=existing_name)
-        Dome.objects.create(
-            user=owner,
+    def setUp(self):
+        self.owner = User.objects.create_user("media-owner", password="x")
+        Profile.objects.filter(user=self.owner).update(picture="")
+        self.dome = Dome.objects.create(
+            user=self.owner,
             title="Media",
             description="Migration coverage",
             privacy=1,
-            icon=existing_name,
+            icon=None,
             banner=None,
         )
-        Post.objects.create(
-            user=owner,
-            question_text="Missing media",
+        self.post = Post.objects.create(
+            user=self.owner,
+            question_text="Media migration",
             content="<p>Body</p>",
-            picture=missing_name,
+            picture=None,
         )
 
-        with TemporaryDirectory() as legacy_root, TemporaryDirectory() as private_root:
-            legacy = FileSystemStorage(location=legacy_root, base_url=None)
+    def set_references(self, *, profile="", icon=None, banner=None, post=None):
+        Profile.objects.filter(user=self.owner).update(picture=profile)
+        Dome.objects.filter(pk=self.dome.pk).update(icon=icon, banner=banner)
+        Post.objects.filter(pk=self.post.pk).update(picture=post)
+
+    def run_migration(self, flag, *, media_root, private_root, source_root=None):
+        stdout, stderr = StringIO(), StringIO()
+        arguments = [flag]
+        if source_root is not None:
+            arguments.extend(["--source-root", str(source_root)])
+        with self.settings(
+            MEDIA_ROOT=media_root,
+            PRIVATE_MEDIA_ROOT=private_root,
+        ):
+            call_command(
+                "migrate_private_media",
+                *arguments,
+                stdout=stdout,
+                stderr=stderr,
+            )
+        return stdout.getvalue(), stderr.getvalue()
+
+    def test_external_source_dry_run_apply_bytes_retention_and_rerun(self):
+        name = "shared/existing.jpg"
+        payload = b"legacy image bytes\x00\xff"
+        self.set_references(profile=name, icon=name, post=name)
+
+        with (
+            TemporaryDirectory() as configured_media_root,
+            TemporaryDirectory() as source_root,
+            TemporaryDirectory() as private_root,
+        ):
+            legacy = FileSystemStorage(location=source_root, base_url=None)
             private = FileSystemStorage(location=private_root, base_url=None)
-            legacy.save(existing_name, ContentFile(b"legacy image bytes"))
+            legacy.save(name, ContentFile(payload))
 
-            def run_migration(flag):
-                stdout, stderr = StringIO(), StringIO()
-                with self.settings(MEDIA_ROOT=legacy_root), patch(
-                    "users.management.commands.migrate_private_media.private_media_storage",
-                    private,
-                ):
-                    call_command("migrate_private_media", flag, stdout=stdout, stderr=stderr)
-                return stdout.getvalue(), stderr.getvalue()
+            dry_stdout, dry_stderr = self.run_migration(
+                "--dry-run",
+                media_root=configured_media_root,
+                private_root=private_root,
+                source_root=source_root,
+            )
+            self.assertIn("would copy 1; already private 0; missing 0", dry_stdout)
+            self.assertEqual(dry_stderr, "")
+            self.assertFalse(private.exists(name))
 
-            dry_stdout, dry_stderr = run_migration("--dry-run")
-            self.assertIn("would copy 1; already private 0; missing 1", dry_stdout)
-            self.assertIn(missing_name, dry_stderr)
-            self.assertFalse(private.exists(existing_name))
+            apply_stdout, apply_stderr = self.run_migration(
+                "--apply",
+                media_root=configured_media_root,
+                private_root=private_root,
+                source_root=source_root,
+            )
+            self.assertIn("copied 1; already private 0; missing 0", apply_stdout)
+            self.assertEqual(apply_stderr, "")
+            with private.open(name, "rb") as copied:
+                self.assertEqual(copied.read(), payload)
+            with legacy.open(name, "rb") as original:
+                self.assertEqual(original.read(), payload)
 
-            apply_stdout, apply_stderr = run_migration("--apply")
-            self.assertIn("copied 1; already private 0; missing 1", apply_stdout)
-            self.assertIn(missing_name, apply_stderr)
-            self.assertTrue(private.exists(existing_name))
-            self.assertTrue(legacy.exists(existing_name))
+            rerun_stdout, rerun_stderr = self.run_migration(
+                "--apply",
+                media_root=configured_media_root,
+                private_root=private_root,
+                source_root=source_root,
+            )
+            self.assertIn("copied 0; already private 1; missing 0", rerun_stdout)
+            self.assertEqual(rerun_stderr, "")
 
-            rerun_stdout, _ = run_migration("--apply")
-            self.assertIn("copied 0; already private 1; missing 1", rerun_stdout)
+    def test_source_root_defaults_to_media_root(self):
+        name = "posts/from-default.jpg"
+        payload = b"default source bytes"
+        self.set_references(post=name)
+
+        with TemporaryDirectory() as media_root, TemporaryDirectory() as private_root:
+            legacy = FileSystemStorage(location=media_root, base_url=None)
+            private = FileSystemStorage(location=private_root, base_url=None)
+            legacy.save(name, ContentFile(payload))
+
+            stdout, stderr = self.run_migration(
+                "--apply",
+                media_root=media_root,
+                private_root=private_root,
+            )
+
+            self.assertIn("copied 1; already private 0; missing 0", stdout)
+            self.assertEqual(stderr, "")
+            with private.open(name, "rb") as copied:
+                self.assertEqual(copied.read(), payload)
+
+    def test_source_root_must_be_absolute(self):
+        with TemporaryDirectory() as media_root, TemporaryDirectory() as private_root:
+            with self.assertRaisesMessage(CommandError, "must be an absolute path"):
+                self.run_migration(
+                    "--dry-run",
+                    media_root=media_root,
+                    private_root=private_root,
+                    source_root="relative-media",
+                )
+
+    def test_source_root_must_exist(self):
+        with TemporaryDirectory() as parent, TemporaryDirectory() as private_root:
+            missing_root = Path(parent) / "missing"
+            with self.assertRaisesMessage(CommandError, "does not exist"):
+                self.run_migration(
+                    "--dry-run",
+                    media_root=parent,
+                    private_root=private_root,
+                    source_root=missing_root,
+                )
+
+    def test_source_root_must_be_a_directory(self):
+        with TemporaryDirectory() as parent, TemporaryDirectory() as private_root:
+            source_file = Path(parent) / "legacy-media.txt"
+            source_file.write_bytes(b"not a directory")
+            with self.assertRaisesMessage(CommandError, "is not a directory"):
+                self.run_migration(
+                    "--dry-run",
+                    media_root=parent,
+                    private_root=private_root,
+                    source_root=source_file,
+                )
+
+    def test_source_root_must_not_equal_private_root(self):
+        with TemporaryDirectory() as shared_root:
+            with self.assertRaisesMessage(CommandError, "must be different"):
+                self.run_migration(
+                    "--dry-run",
+                    media_root=shared_root,
+                    private_root=shared_root,
+                    source_root=shared_root,
+                )
+
+    def test_missing_reference_aborts_before_any_copy(self):
+        present_name = "posts/present.jpg"
+        missing_name = "domes/missing.jpg"
+        payload = b"must not be copied"
+        self.set_references(profile=present_name, icon=missing_name)
+
+        with TemporaryDirectory() as source_root, TemporaryDirectory() as private_root:
+            legacy = FileSystemStorage(location=source_root, base_url=None)
+            private = FileSystemStorage(location=private_root, base_url=None)
+            legacy.save(present_name, ContentFile(payload))
+            stderr = StringIO()
+
+            with self.settings(
+                MEDIA_ROOT=source_root,
+                PRIVATE_MEDIA_ROOT=private_root,
+            ), self.assertRaisesMessage(CommandError, "aborted before copying"):
+                call_command(
+                    "migrate_private_media",
+                    "--apply",
+                    "--source-root",
+                    source_root,
+                    stdout=StringIO(),
+                    stderr=stderr,
+                )
+
+            self.assertIn(missing_name, stderr.getvalue())
+            self.assertFalse(private.exists(present_name))
+            self.assertFalse(private.exists(missing_name))
+            with legacy.open(present_name, "rb") as original:
+                self.assertEqual(original.read(), payload)
 
 
 @override_settings(
