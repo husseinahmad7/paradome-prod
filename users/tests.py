@@ -201,6 +201,114 @@ class PrivateMediaMigrationTests(TestCase):
             self.assertIn("copied 0; already private 1; missing 0", rerun_stdout)
             self.assertEqual(rerun_stderr, "")
 
+    def test_mismatched_destination_is_reported_replaced_and_idempotent(self):
+        name = "shared/mismatched.jpg"
+        source_payload = b"authoritative legacy bytes"
+        stale_payload = b"stale private bytes"
+        self.set_references(profile=name)
+
+        with TemporaryDirectory() as source_root, TemporaryDirectory() as private_root:
+            legacy = FileSystemStorage(location=source_root, base_url=None)
+            private = FileSystemStorage(location=private_root, base_url=None)
+            legacy.save(name, ContentFile(source_payload))
+            private.save(name, ContentFile(stale_payload))
+
+            dry_stdout, _ = self.run_migration(
+                "--dry-run",
+                media_root=source_root,
+                private_root=private_root,
+                source_root=source_root,
+            )
+            self.assertIn("would replace 1", dry_stdout)
+            with private.open(name, "rb") as destination:
+                self.assertEqual(destination.read(), stale_payload)
+
+            apply_stdout, _ = self.run_migration(
+                "--apply",
+                media_root=source_root,
+                private_root=private_root,
+                source_root=source_root,
+            )
+            self.assertIn("replaced 1", apply_stdout)
+            with private.open(name, "rb") as destination:
+                self.assertEqual(destination.read(), source_payload)
+            with legacy.open(name, "rb") as source:
+                self.assertEqual(source.read(), source_payload)
+
+            rerun_stdout, _ = self.run_migration(
+                "--apply",
+                media_root=source_root,
+                private_root=private_root,
+                source_root=source_root,
+            )
+            self.assertIn("copied 0; already private 1; missing 0", rerun_stdout)
+            self.assertIn("replaced 0", rerun_stdout)
+
+    def test_interrupted_replacement_write_keeps_old_destination_and_cleans_temp(self):
+        name = "shared/write-failure.jpg"
+        source_payload = b"new source"
+        stale_payload = b"old destination"
+        self.set_references(profile=name)
+
+        with TemporaryDirectory() as source_root, TemporaryDirectory() as private_root:
+            legacy = FileSystemStorage(location=source_root, base_url=None)
+            private = FileSystemStorage(location=private_root, base_url=None)
+            legacy.save(name, ContentFile(source_payload))
+            private.save(name, ContentFile(stale_payload))
+
+            def interrupted_copy(source, destination):
+                destination.write(source.read(3))
+                raise OSError("simulated interrupted write")
+
+            with patch(
+                "users.management.commands.migrate_private_media._copy_chunks",
+                side_effect=interrupted_copy,
+            ), self.assertRaisesMessage(CommandError, "atomically replace"):
+                self.run_migration(
+                    "--apply",
+                    media_root=source_root,
+                    private_root=private_root,
+                    source_root=source_root,
+                )
+
+            with private.open(name, "rb") as destination:
+                self.assertEqual(destination.read(), stale_payload)
+            destination_parent = Path(private.path(name)).parent
+            self.assertEqual(list(destination_parent.glob(".write-failure.jpg.*.tmp")), [])
+
+    @patch(
+        "users.management.commands.migrate_private_media.os.replace",
+        side_effect=OSError("simulated interrupted replace"),
+    )
+    def test_interrupted_atomic_replace_keeps_old_destination_and_cleans_temp(
+        self, _replace
+    ):
+        name = "shared/replace-failure.jpg"
+        source_payload = b"new source"
+        stale_payload = b"old destination"
+        self.set_references(profile=name)
+
+        with TemporaryDirectory() as source_root, TemporaryDirectory() as private_root:
+            legacy = FileSystemStorage(location=source_root, base_url=None)
+            private = FileSystemStorage(location=private_root, base_url=None)
+            legacy.save(name, ContentFile(source_payload))
+            private.save(name, ContentFile(stale_payload))
+
+            with self.assertRaisesMessage(CommandError, "atomically replace"):
+                self.run_migration(
+                    "--apply",
+                    media_root=source_root,
+                    private_root=private_root,
+                    source_root=source_root,
+                )
+
+            with private.open(name, "rb") as destination:
+                self.assertEqual(destination.read(), stale_payload)
+            destination_parent = Path(private.path(name)).parent
+            self.assertEqual(
+                list(destination_parent.glob(".replace-failure.jpg.*.tmp")), []
+            )
+
     def test_source_root_defaults_to_media_root(self):
         name = "posts/from-default.jpg"
         payload = b"default source bytes"
@@ -267,14 +375,23 @@ class PrivateMediaMigrationTests(TestCase):
 
     def test_missing_reference_aborts_before_any_copy(self):
         present_name = "posts/present.jpg"
+        replacement_name = "profile_pics/stale.jpg"
         missing_name = "domes/missing.jpg"
         payload = b"must not be copied"
-        self.set_references(profile=present_name, icon=missing_name)
+        replacement_payload = b"authoritative replacement"
+        stale_payload = b"must remain on abort"
+        self.set_references(
+            profile=present_name,
+            icon=missing_name,
+            banner=replacement_name,
+        )
 
         with TemporaryDirectory() as source_root, TemporaryDirectory() as private_root:
             legacy = FileSystemStorage(location=source_root, base_url=None)
             private = FileSystemStorage(location=private_root, base_url=None)
             legacy.save(present_name, ContentFile(payload))
+            legacy.save(replacement_name, ContentFile(replacement_payload))
+            private.save(replacement_name, ContentFile(stale_payload))
             stderr = StringIO()
 
             with self.settings(
@@ -293,6 +410,8 @@ class PrivateMediaMigrationTests(TestCase):
             self.assertIn(missing_name, stderr.getvalue())
             self.assertFalse(private.exists(present_name))
             self.assertFalse(private.exists(missing_name))
+            with private.open(replacement_name, "rb") as destination:
+                self.assertEqual(destination.read(), stale_payload)
             with legacy.open(present_name, "rb") as original:
                 self.assertEqual(original.read(), payload)
 

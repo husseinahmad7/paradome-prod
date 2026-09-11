@@ -1,3 +1,7 @@
+import hashlib
+import hmac
+import os
+import tempfile
 from pathlib import Path
 
 from django.conf import settings
@@ -8,6 +12,62 @@ from django.core.management.base import BaseCommand, CommandError
 from Domes.models import Dome
 from posts.models import Post
 from users.models import Profile
+
+
+CHUNK_SIZE = 1024 * 1024
+
+
+def _content_fingerprint(storage, name):
+    digest = hashlib.sha256()
+    size = 0
+    with storage.open(name, "rb") as handle:
+        while True:
+            chunk = handle.read(CHUNK_SIZE)
+            if not chunk:
+                break
+            size += len(chunk)
+            digest.update(chunk)
+    return size, digest.digest()
+
+
+def _storage_contents_match(source, destination, name):
+    source_size, source_digest = _content_fingerprint(source, name)
+    destination_size, destination_digest = _content_fingerprint(destination, name)
+    return source_size == destination_size and hmac.compare_digest(
+        source_digest, destination_digest
+    )
+
+
+def _copy_chunks(source, destination):
+    while True:
+        chunk = source.read(CHUNK_SIZE)
+        if not chunk:
+            break
+        destination.write(chunk)
+
+
+def _replace_atomically(source_storage, destination_storage, name):
+    destination_path = Path(destination_storage.path(name))
+    destination_path.parent.mkdir(parents=True, exist_ok=True)
+    descriptor, temporary_name = tempfile.mkstemp(
+        prefix=f".{destination_path.name}.",
+        suffix=".tmp",
+        dir=destination_path.parent,
+    )
+    temporary_path = Path(temporary_name)
+    try:
+        with os.fdopen(descriptor, "wb") as destination:
+            descriptor = None
+            with source_storage.open(name, "rb") as source:
+                _copy_chunks(source, destination)
+            destination.flush()
+            os.fsync(destination.fileno())
+        os.replace(temporary_path, destination_path)
+    except Exception:
+        if descriptor is not None:
+            os.close(descriptor)
+        temporary_path.unlink(missing_ok=True)
+        raise
 
 
 class Command(BaseCommand):
@@ -53,16 +113,19 @@ class Command(BaseCommand):
         )
 
         pending = []
+        replacements = []
         already_private = 0
         missing = []
         for name in sorted(names):
-            if private.exists(name):
-                already_private += 1
-                continue
             if not legacy.exists(name):
                 missing.append(name)
                 continue
-            pending.append(name)
+            if not private.exists(name):
+                pending.append(name)
+            elif _storage_contents_match(legacy, private, name):
+                already_private += 1
+            else:
+                replacements.append(name)
 
         if missing:
             for name in missing:
@@ -84,8 +147,21 @@ class Command(BaseCommand):
                     )
             copied += 1
 
+        replaced = 0
+        for name in replacements:
+            if options["apply"]:
+                try:
+                    _replace_atomically(legacy, private, name)
+                except OSError as error:
+                    raise CommandError(
+                        f"Could not atomically replace private upload {name}: {error}"
+                    ) from error
+            replaced += 1
+
         verb = "copied" if options["apply"] else "would copy"
+        replacement_verb = "replaced" if options["apply"] else "would replace"
         self.stdout.write(
             f"{verb} {copied}; already private {already_private}; missing 0. "
+            f"{replacement_verb} {replaced}. "
             "Legacy files were not deleted."
         )
