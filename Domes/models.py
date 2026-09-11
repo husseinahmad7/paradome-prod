@@ -107,6 +107,26 @@ class Category(models.Model):
         ]
 
 
+class RateLimitBucket(models.Model):
+    """A privacy-safe counter for one subject and fixed time window."""
+
+    subject_hash = models.CharField(max_length=64)
+    window_start = models.PositiveBigIntegerField()
+    count = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["subject_hash", "window_start"],
+                name="domes_ratelimit_subject_window_unique",
+            ),
+            models.CheckConstraint(
+                condition=Q(count__gte=1),
+                name="domes_ratelimit_count_positive",
+            ),
+        ]
+
+
 # class DomeMembership(models.Model):
 #     class Access(models.IntegerChoices):
 #         MEMBER = 1            # Can view and create and move only own items

@@ -1,54 +1,122 @@
-"""Cache-backed rate limiting for authentication and content writes."""
+"""Database-backed rate limiting for authentication and content writes."""
 
 import hashlib
-import time
+import hmac
+import json
+import logging
 import unicodedata
 from functools import wraps
+from time import time
 
-from django.core.cache import cache
+from django.conf import settings
+from django.db import DatabaseError, IntegrityError, transaction
+from django.db.models import F
 from django.http import HttpResponse
 
-
-def _hashed_identity(kind, value):
-    """Return a namespaced, privacy-safe cache identity."""
-
-    raw = f"{kind}:{value}"
-    digest = hashlib.sha256(raw.encode("utf-8")).hexdigest()[:32]
-    return f"{kind}-{digest}"
+from .models import RateLimitBucket
 
 
-def _client_ip_identity(request):
+logger = logging.getLogger(__name__)
+_SUBJECT_DOMAIN = b"paradome.rate-limit.subject.v1\x00"
+
+
+def _subject_hash(scope, window_seconds, kind, value):
+    """Return a domain-separated HMAC without persisting raw identifiers."""
+
+    payload = json.dumps(
+        [str(scope), int(window_seconds), str(kind), str(value)],
+        ensure_ascii=False,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    key = str(settings.SECRET_KEY).encode("utf-8")
+    return hmac.new(key, _SUBJECT_DOMAIN + payload, hashlib.sha256).hexdigest()
+
+
+def _client_ip_identity(request, scope, window_seconds):
     """Use only the server-derived address; never trust client proxy headers."""
 
-    return _hashed_identity("ip", str(request.META.get("REMOTE_ADDR", "unknown")))
+    return _subject_hash(
+        scope,
+        window_seconds,
+        "ip",
+        str(request.META.get("REMOTE_ADDR", "unknown")),
+    )
 
 
-def _submitted_account_identity(request):
+def _submitted_account_identity(request, scope, window_seconds):
     """Normalize and hash a submitted account name without checking existence."""
 
     submitted = request.POST.get("username", "")
     normalized = unicodedata.normalize("NFKC", str(submitted)).strip().casefold()
     if not normalized:
         return None
-    return _hashed_identity("account", normalized)
+    return _subject_hash(scope, window_seconds, "account", normalized)
 
 
-def _rate_limit_identities(request, identity_modes):
+def _rate_limit_identities(request, scope, window_seconds, identity_modes):
     user = getattr(request, "user", None)
     if getattr(user, "is_authenticated", False):
-        return (f"user-{user.pk}",)
+        return (_subject_hash(scope, window_seconds, "user", user.pk),)
 
     identities = []
     for mode in identity_modes:
         if mode == "ip":
-            identity = _client_ip_identity(request)
+            identity = _client_ip_identity(request, scope, window_seconds)
         elif mode == "account":
-            identity = _submitted_account_identity(request)
+            identity = _submitted_account_identity(request, scope, window_seconds)
         else:
             raise ValueError(f"Unsupported rate-limit identity mode: {mode}")
         if identity and identity not in identities:
             identities.append(identity)
     return tuple(identities)
+
+
+def _increment_rate_limit_bucket(subject_hash, window_start):
+    """Atomically create or increment one fixed-window bucket."""
+
+    for attempt in range(2):
+        try:
+            with transaction.atomic():
+                updated = RateLimitBucket.objects.filter(
+                    subject_hash=subject_hash,
+                    window_start=window_start,
+                ).update(count=F("count") + 1)
+
+                if updated:
+                    bucket = (
+                        RateLimitBucket.objects.select_for_update()
+                        .only("count")
+                        .get(
+                            subject_hash=subject_hash,
+                            window_start=window_start,
+                        )
+                    )
+                    count = bucket.count
+                else:
+                    bucket = RateLimitBucket.objects.create(
+                        subject_hash=subject_hash,
+                        window_start=window_start,
+                        count=1,
+                    )
+                    count = 1
+
+                RateLimitBucket.objects.filter(
+                    subject_hash=subject_hash,
+                    window_start__lt=window_start,
+                ).exclude(pk=bucket.pk).delete()
+                return count
+        except IntegrityError:
+            if attempt:
+                raise
+
+    raise RuntimeError("Unreachable rate-limit counter state")
+
+
+def _too_many_requests(retry_after):
+    response = HttpResponse("Too many requests", status=429)
+    response.headers["Retry-After"] = str(retry_after)
+    response.headers["Cache-Control"] = "no-store"
+    return response
 
 
 def _rate_limit_response(
@@ -67,28 +135,26 @@ def _rate_limit_response(
     if authenticated_only and not getattr(user, "is_authenticated", False):
         return None
 
-    bucket = int(time.time() // window_seconds)
+    now = int(time())
+    window_start = now - (now % window_seconds)
+    retry_after = window_start + window_seconds - now
     exceeded = False
-    for identity in _rate_limit_identities(request, identity_modes):
-        key = f"rate:{scope}:{identity}:{bucket}"
-        if cache.add(key, 1, timeout=window_seconds + 1):
-            count = 1
-        else:
-            try:
-                count = cache.incr(key)
-            except ValueError:
-                cache.set(key, 1, timeout=window_seconds + 1)
-                count = 1
+    for subject_hash in _rate_limit_identities(
+        request,
+        scope,
+        window_seconds,
+        identity_modes,
+    ):
+        try:
+            count = _increment_rate_limit_bucket(subject_hash, window_start)
+        except DatabaseError:
+            logger.exception("Rate-limit counter failure for scope %s", scope)
+            return _too_many_requests(retry_after)
         exceeded = exceeded or count > limit
 
     if not exceeded:
         return None
-
-    retry_after = window_seconds - (int(time.time()) % window_seconds)
-    response = HttpResponse("Too many requests", status=429)
-    response.headers["Retry-After"] = str(retry_after)
-    response.headers["Cache-Control"] = "no-store"
-    return response
+    return _too_many_requests(retry_after)
 
 
 def rate_limit(
