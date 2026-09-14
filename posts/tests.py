@@ -230,6 +230,34 @@ class DemoAndSocialPolicyTests(TestCase):
             403,
         )
 
+    def test_demo_post_form_hides_and_rejects_uploads(self):
+        self.client.force_login(self.demo)
+        url = reverse("posts:domepost-create", args=[self.demo_dome.pk])
+        response = self.client.get(url)
+        self.assertNotContains(response, 'name="picture"')
+
+        upload = SimpleUploadedFile(
+            "demo.txt",
+            b"not allowed",
+            content_type="text/plain",
+        )
+        response = self.client.post(
+            url,
+            {
+                "question_text": "Upload attempt",
+                "content": "<p>No file should be stored.</p>",
+                "picture": upload,
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Demo accounts cannot upload files.")
+        self.assertFalse(
+            Post.objects.filter(
+                dome=self.demo_dome,
+                question_text="Upload attempt",
+            ).exists()
+        )
+
     def test_demo_cannot_edit_or_moderate_posts(self):
         self.client.force_login(self.demo)
         self.assertEqual(
