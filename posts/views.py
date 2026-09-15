@@ -13,7 +13,9 @@ from django.views import generic
 from django.views.decorators.http import require_POST
 
 from Domes.access import can_access_dome, can_create_dome_content, is_demo_user
+from Domes.htmx import HtmxTemplateResponseMixin
 from Domes.models import Dome
+from Domes.presentation import dome_shell_context
 from Domes.ratelimits import UserWriteRateLimitMixin, user_write_rate_limit
 from Domes.storage import open_validated_image, safe_image_filename
 from users.models import Profile
@@ -424,9 +426,10 @@ class TagCreationView(
         return not is_demo_user(self.request.user)
 
 
-class HtmxDomePostsView(generic.ListView):
+class HtmxDomePostsView(HtmxTemplateResponseMixin, generic.ListView):
     model = Post
-    template_name = "Domes/dome_detail_posts.html"
+    partial_template_name = "Domes/dome_detail_posts.html"
+    page_template_name = "Domes/dome_posts_page.html"
     paginate_by = 5
 
     def get_dome(self):
@@ -449,7 +452,7 @@ class HtmxDomePostsView(generic.ListView):
         page_posts = context.get("page_obj", context["object_list"])
         context.update(
             {
-                "object": page_posts,
+                "posts": page_posts,
                 "filter": self.filter,
                 "dome_id": self.get_dome().pk,
                 "likedset": _liked_post_ids(self.request.user, page_posts),
@@ -458,6 +461,13 @@ class HtmxDomePostsView(generic.ListView):
                     and can_create_dome_content(self.request.user, self.get_dome())
                 ),
             }
+        )
+        context.update(
+            dome_shell_context(
+                self.request.user,
+                self.get_dome(),
+                active_section="posts",
+            )
         )
         return context
 

@@ -235,6 +235,8 @@ class DemoAndSocialPolicyTests(TestCase):
         url = reverse("posts:domepost-create", args=[self.demo_dome.pk])
         response = self.client.get(url)
         self.assertNotContains(response, 'name="picture"')
+        self.assertNotContains(response, "Create a tag")
+        self.assertContains(response, "Guest mode is text only")
 
         upload = SimpleUploadedFile(
             "demo.txt",
@@ -257,6 +259,39 @@ class DemoAndSocialPolicyTests(TestCase):
                 question_text="Upload attempt",
             ).exists()
         )
+
+    def test_dome_posts_route_supports_native_and_htmx_navigation(self):
+        self.client.force_login(self.demo)
+        url = reverse("posts:htmxdomeposts", args=[self.demo_dome.pk])
+
+        page = self.client.get(url)
+        self.assertEqual(page.status_code, 200)
+        self.assertContains(page, 'class="dome-shell"')
+        self.assertContains(page, "Dome posts")
+        self.assertContains(page, "Demo post")
+        self.assertEqual(page.context["active_section"], "posts")
+        self.assertIn("HX-Request", page.headers.get("Vary", ""))
+
+        fragment = self.client.get(url, HTTP_HX_REQUEST="true")
+        self.assertEqual(fragment.status_code, 200)
+        self.assertContains(fragment, "Dome posts")
+        self.assertContains(fragment, "Demo post")
+        self.assertNotContains(fragment, 'class="dome-shell"')
+
+    def test_reply_dialog_fragment_has_no_csp_blocked_inline_script(self):
+        comment = Comment.objects.create(
+            user=self.demo,
+            post=self.demo_post,
+            comment="Parent reply",
+        )
+        self.client.force_login(self.demo)
+        response = self.client.get(
+            reverse("posts:comment-replies", args=[comment.pk]),
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'role="dialog"')
+        self.assertNotContains(response, "<script")
 
     def test_demo_cannot_edit_or_moderate_posts(self):
         self.client.force_login(self.demo)

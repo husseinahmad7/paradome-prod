@@ -14,7 +14,9 @@ from django.views import generic
 from django.views.decorators.http import require_GET, require_POST
 
 from Domes.access import can_manage_dome, can_participate_in_chat, is_demo_user
+from Domes.htmx import HtmxTemplateResponseMixin
 from Domes.models import Category
+from Domes.presentation import dome_shell_context
 from Domes.ratelimits import UserWriteRateLimitMixin, user_write_rate_limit
 
 from .forms import ChatChannelCreation, ChatMessageCreation
@@ -61,14 +63,16 @@ def _publish_message(message):
 
 
 class ChatMessageList(
+    HtmxTemplateResponseMixin,
     UserWriteRateLimitMixin,
     LoginRequiredMixin,
     generic.edit.FormMixin,
     generic.ListView,
 ):
-    template_name = "Chat/chat_messages.html"
+    partial_template_name = "Chat/chat_messages.html"
+    page_template_name = "Chat/chat_channel_page.html"
     model = ChatMessage
-    context_object_name = "messages"
+    context_object_name = "chat_messages"
     paginate_by = 50
     form_class = ChatMessageCreation
     rate_limit_scope = "chat-message"
@@ -83,7 +87,7 @@ class ChatMessageList(
         return (
             ChatMessage.objects.filter(channel=self.get_channel())
             .select_related("user")
-            .order_by("date")
+            .order_by("-date", "-pk")
         )
 
     def get_context_data(self, **kwargs):
@@ -93,11 +97,20 @@ class ChatMessageList(
         context.update(
             {
                 "channel_id": channel.pk,
+                "channel": channel,
                 "private_channel_name": f"private-chat-{channel.pk}",
                 "pusher_key": getattr(settings, "PUSHER_KEY", ""),
                 "pusher_cluster": getattr(settings, "PUSHER_CLUSTER", ""),
                 "can_manage_chat": can_manage_dome(self.request.user, dome),
             }
+        )
+        context.update(
+            dome_shell_context(
+                self.request.user,
+                dome,
+                active_section="chat",
+                active_channel_id=channel.pk,
+            )
         )
         return context
 
@@ -117,7 +130,12 @@ class ChatMessageList(
             )
             transaction.on_commit(lambda: _publish_message(message))
         if request.headers.get("HX-Request") == "true":
-            return HttpResponse(status=204)
+            return TemplateResponse(
+                request,
+                "Chat/requested_msgs.html",
+                {"object": message, "can_delete": True},
+                status=201,
+            )
         return redirect("chat:chat-channel", pk=channel.pk)
 
 

@@ -1,5 +1,11 @@
-{% if liked %}
-<a hx-post="{% url 'posts:like' pk %}" hx-target="#like{{pk}}" hx-swap="innerHtml" class="button is-link">{{likes}} like{{likes|pluralize}}</a>
-{% else %}
-<a hx-post="{% url 'posts:like' pk %}" hx-target="#like{{pk}}" hx-swap="innerHtml">{{likes}} like{{likes|pluralize}}</a>
-{% endif %}
+<button
+  class="reaction-button"
+  type="button"
+  hx-post="{% url 'posts:like' pk %}"
+  hx-target="#like{{ pk }}"
+  hx-swap="innerHTML"
+  aria-pressed="{% if liked %}true{% else %}false{% endif %}"
+  aria-label="{% if liked %}Remove reaction from{% else %}React to{% endif %} this post"
+>
+  {{ likes }} reaction{{ likes|pluralize }}
+</button>

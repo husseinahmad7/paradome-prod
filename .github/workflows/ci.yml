@@ -56,7 +56,6 @@ jobs:
       PUSHER_CLUSTER: eu
       DEMO_ACCOUNT_ENABLED: "true"
       DEMO_USERNAME: paradome-demo
-      DEMO_DOME_SLUG: demo
       PRIVATE_MEDIA_ROOT: /tmp/paradome-private-media
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4

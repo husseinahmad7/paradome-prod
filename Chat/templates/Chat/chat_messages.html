@@ -1,97 +1,66 @@
-{% load humanize %}
-{% load static %}
-{{ channel_id|json_script:"chat-channel-id" }}
-{{ private_channel_name|json_script:"chat-private-channel" }}
-{{ pusher_key|json_script:"chat-pusher-key" }}
-{{ pusher_cluster|json_script:"chat-pusher-cluster" }}
-
-<div id="messages" aria-live="polite">
-{% for message in messages %}
-  <div class="box fade-me-out is-size-7" id="message-{{ message.pk }}">
-    <article class="media">
-      <div class="media-left">
-        {% if message.user.profile.picture %}
-          <figure class="image is-48x48 is-1by1">
-            <img class="is-rounded" src="{% url 'users:profile_picture' message.user.username %}" alt="{{ message.user.username }}">
-          </figure>
-        {% endif %}
-      </div>
-      <div class="media-content">
-        <div class="content">
-          <strong>{{ message.user.username }}</strong>
-          <small>{{ message.date|naturaltime }}</small>
-          <pre>{{ message.body }}</pre>
-        </div>
-      </div>
-      {% if message.user == user or can_manage_chat %}
-        <div class="media-right">
-          <button
-            type="button"
-            hx-post="{% url 'chat:msg-delete' message.pk %}"
-            hx-target="closest .box"
-            hx-swap="outerHTML"
-            hx-confirm="Delete this message?"
-            class="delete"
-            aria-label="Delete message"
-          ></button>
-        </div>
-      {% endif %}
-    </article>
-  </div>
-{% empty %}
-  <p id="empty-chat">No messages yet.</p>
-{% endfor %}
-</div>
-
-<fieldset class="field">
-  <form id="send-message" action="{% url 'chat:chat-channel' channel_id %}" method="post">
-    {% csrf_token %}
-    {{ form.errors }}
-    {{ form }}
-    <div class="control">
-      <button id="submit-btn" class="button is-primary" type="submit" hx-post="{% url 'chat:chat-channel' channel_id %}">Send</button>
+<section
+  class="chat-panel"
+  aria-labelledby="chat-title-{{ channel_id }}"
+  data-channel-id="{{ channel_id }}"
+  data-private-channel="{{ private_channel_name }}"
+  data-pusher-key="{{ pusher_key }}"
+  data-pusher-cluster="{{ pusher_cluster }}"
+  data-auth-url="{% url 'chat:pusher-auth' %}"
+  data-fragment-url="{% url 'chat:message-fragment' channel_id 0 %}"
+>
+  <header class="chat-header">
+    <div>
+      <h2 id="chat-title-{{ channel_id }}">#{{ channel.title }}</h2>
+      {% if channel.topic %}<p>{{ channel.topic }}</p>{% endif %}
     </div>
+    <span class="realtime-status" id="chat-status-{{ channel_id }}" role="status">Saved messages</span>
+  </header>
+
+  <div class="chat-log" id="messages-{{ channel_id }}" role="log" aria-live="polite" aria-relevant="additions">
+    <div class="chat-history-batch">
+      {% if page_obj.has_next %}
+      <div class="chat-history-control">
+        <a
+          class="button secondary-action is-small"
+          href="?page={{ page_obj.next_page_number }}"
+          hx-get="{% url 'chat:chat-channel' channel_id %}?page={{ page_obj.next_page_number }}"
+          hx-target="#messages-{{ channel_id }}"
+          hx-select=".chat-history-batch"
+          hx-swap="afterbegin"
+        >Load earlier messages</a>
+      </div>
+      {% endif %}
+      {% for message in chat_messages reversed %}
+        {% if message.user == user or can_manage_chat %}
+          {% include "Chat/_message.html" with can_delete=True %}
+        {% else %}
+          {% include "Chat/_message.html" with can_delete=False %}
+        {% endif %}
+      {% empty %}
+      <div class="empty-state" id="empty-chat"><div><h3>No messages yet</h3><p>Start with a short, fictional note.</p></div></div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <form
+    class="chat-composer"
+    id="send-message-{{ channel_id }}"
+    action="{% url 'chat:chat-channel' channel_id %}"
+    method="post"
+    hx-post="{% url 'chat:chat-channel' channel_id %}"
+    hx-target="#messages-{{ channel_id }}"
+    hx-swap="beforeend"
+  >
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="form-error-summary" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+    {% for error in form.body.errors %}<p class="form-error-summary" role="alert">{{ error }}</p>{% endfor %}
+    <div class="chat-composer-row">
+      <div class="field">
+        <label class="label" for="{{ form.body.id_for_label }}">{{ form.body.label }}</label>
+        <div class="control">{{ form.body }}</div>
+      </div>
+      <button class="button primary-action" type="submit">Send message</button>
+    </div>
+    <p class="chat-hint" id="chat-message-hint">250 characters maximum.{% if is_demo_session %} Shared demo messages reset daily; never include personal information.{% endif %}</p>
   </form>
-</fieldset>
-
-<script nonce="{{ CSP_NONCE }}">
-(() => {
-  const startChat = () => {
-    const key = JSON.parse(document.getElementById("chat-pusher-key").textContent);
-    const cluster = JSON.parse(document.getElementById("chat-pusher-cluster").textContent);
-    const channelName = JSON.parse(document.getElementById("chat-private-channel").textContent);
-    const channelId = Number(JSON.parse(document.getElementById("chat-channel-id").textContent));
-    const csrfInput = document.querySelector("#send-message input[name=csrfmiddlewaretoken]");
-    if (!key || !cluster || !csrfInput || typeof Pusher === "undefined") return;
-
-    const pusher = new Pusher(key, {
-      cluster,
-      authEndpoint: "{% url 'chat:pusher-auth' %}",
-      auth: {headers: {"X-CSRFToken": csrfInput.value}}
-    });
-    const channel = pusher.subscribe(channelName);
-    channel.bind("message-created", (data) => {
-      const messageId = Number(data && data.message_id);
-      if (!Number.isSafeInteger(messageId) || Number(data.channel_id) !== channelId) return;
-      if (document.getElementById(`message-${messageId}`)) return;
-      const fragmentUrl = "{% url 'chat:message-fragment' channel_id 0 %}".replace("/0/", `/${messageId}/`);
-      htmx.ajax("GET", fragmentUrl, {target: "#messages", swap: "beforeend"});
-      const empty = document.getElementById("empty-chat");
-      if (empty) empty.remove();
-    });
-
-    const form = document.getElementById("send-message");
-    const button = document.getElementById("submit-btn");
-    form.addEventListener("htmx:beforeRequest", () => button.classList.add("is-loading"));
-    form.addEventListener("htmx:afterRequest", (event) => {
-      button.classList.remove("is-loading");
-      if (event.detail.successful) form.reset();
-    });
-  };
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", startChat, {once: true});
-  } else {
-    startChat();
-  }
-})();
-</script>
+</section>

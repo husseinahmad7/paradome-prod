@@ -1,68 +1,131 @@
-<div class="dropdown is-hoverable">
-    <div class="dropdown-trigger">
-      <button class="button" aria-haspopup="true" aria-controls="dropdown-menu4">
-        <span>Filter members</span>
-      </button>
+{% load crispy_forms_tags %}
+<section class="members-panel" aria-labelledby="members-title">
+  <header class="panel-toolbar">
+    <div>
+      <h2 id="members-title">People in this Dome</h2>
+      <p>{% if is_demo_session %}The demo identity is isolated from real ParaDome accounts.{% else %}Owners, moderators, and members of this focused space.{% endif %}</p>
     </div>
-    <div class="dropdown-menu" id="dropdown-menu4" role="menu">
-      <div class="dropdown-content">
-        <div class="dropdown-item">
-          <fieldset>
-            <legend>filter</legend>
-            <form hx-target="#main-content" hx-swap="innerHTML" hx-get="{% url 'domes:dome-members' dome_pk %}">
-              {%load crispy_forms_tags%}
-              {{ filter.form|crispy }}
-              <input class="button is-secondary" type="submit" value="filter">
-            </form>
+  </header>
 
-          </fieldset>
-        </div>
+  <form
+    class="member-filter"
+    method="get"
+    action="{% url 'domes:dome-members' dome_pk %}"
+    hx-get="{% url 'domes:dome-members' dome_pk %}"
+    hx-target="#main-content"
+    hx-swap="innerHTML"
+    hx-push-url="true"
+  >
+    <div class="member-filter-fields">{{ filter.form|crispy }}</div>
+    <div class="member-filter-actions">
+      <button class="button secondary-action" type="submit">Apply filter</button>
+      {% if request.GET %}
+      <a class="button is-ghost" href="{% url 'domes:dome-members' dome_pk %}" hx-get="{% url 'domes:dome-members' dome_pk %}" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true">Clear</a>
+      {% endif %}
+    </div>
+  </form>
+
+  <section class="people-section" aria-labelledby="owner-title">
+    <header class="people-section-header">
+      <div>
+        <span class="eyebrow">Stewardship</span>
+        <h3 id="owner-title">Dome owner</h3>
       </div>
-    </div>
-</div>
-<aside class="menu">
-    <p class="menu-label">
-      Dome Owner
-    </p>
-    <ul class="menu-list">
-        <li><a class="is-link" href="{% url 'posts:user-posts' dome_owner.username %}">{{dome_owner.username}}</a></li>
+      <span class="role-badge">Owner</span>
+    </header>
+    <ul class="people-list">
+      <li class="person-card">
+        <div class="person-avatar" aria-hidden="true">{{ dome_owner.username|slice:":1" }}</div>
+        <div class="person-copy">
+          <a href="{% url 'posts:user-posts' dome_owner.username %}">@{{ dome_owner.username }}</a>
+          <span>Created and stewards this Dome</span>
+        </div>
+      </li>
     </ul>
-    {% if mods %}
-<p class="menu-label">
-    Administration
-</p>
-<ul class="menu-list">
-{% for mod in mods %}
-<li id="mod" class="fade-me-out">
-    {% if can_administer %}
-    <button type="button" hx-post="{% url 'domes:dome-member-delete' dome_id=dome_pk user_id=mod.pk %}" hx-target="closest #mod" hx-swap="outerHTML" hx-confirm="Remove this moderator?" class="delete" aria-label="Remove moderator"></button>
-    <button type="button" hx-post="{% url 'domes:dome-member-raiseordown' pk=dome_pk user_pk=mod.pk option=0 %}" hx-target="closest #mod" hx-swap="outerHTML" hx-confirm="Downgrade this moderator?" class="button is-warning">Downgrade</button>
-    {%endif%}
-    <a class="is-link is-pulled-left" href="{% url 'posts:user-posts' mod.username %}">{{mod.username}}</a>
-</li>  
-{%endfor%}
-</ul>
-{% endif %}
+  </section>
 
-{% if members %}
-<p class="menu-label">
-      Members
-</p>
-<ul class="menu-list" id="members">
-{% for member in members %}
-    <li id="memb" class="fade-me-out">
+  {% if mods %}
+  <section class="people-section" aria-labelledby="moderators-title">
+    <header class="people-section-header">
+      <div>
+        <span class="eyebrow">Administration</span>
+        <h3 id="moderators-title">Moderators</h3>
+      </div>
+      <span class="role-badge">{{ mods|length }}</span>
+    </header>
+    <ul class="people-list">
+      {% for mod in mods %}
+      <li id="moderator-{{ mod.pk }}" class="person-card fade-me-out">
+        <div class="person-avatar" aria-hidden="true">{{ mod.username|slice:":1" }}</div>
+        <div class="person-copy">
+          <a href="{% url 'posts:user-posts' mod.username %}">@{{ mod.username }}</a>
+          <span>Can manage members, categories, and channels</span>
+        </div>
+        {% if can_administer %}
+        <div class="person-actions">
+          <form method="post" action="{% url 'domes:dome-member-raiseordown' pk=dome_pk user_pk=mod.pk option=0 %}" hx-post="{% url 'domes:dome-member-raiseordown' pk=dome_pk user_pk=mod.pk option=0 %}" hx-target="closest .person-card" hx-swap="outerHTML" hx-confirm="Move this moderator back to the member role?">
+            {% csrf_token %}
+            <button class="button secondary-action is-small" type="submit">Make member</button>
+          </form>
+          <form method="post" action="{% url 'domes:dome-member-delete' dome_id=dome_pk user_id=mod.pk %}" hx-post="{% url 'domes:dome-member-delete' dome_id=dome_pk user_id=mod.pk %}" hx-target="closest .person-card" hx-swap="outerHTML" hx-confirm="Remove this moderator from the Dome?">
+            {% csrf_token %}
+            <button class="button is-danger is-light is-small" type="submit">Remove</button>
+          </form>
+        </div>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+
+  <section class="people-section" aria-labelledby="member-list-title">
+    <header class="people-section-header">
+      <div>
+        <span class="eyebrow">Community</span>
+        <h3 id="member-list-title">Members</h3>
+      </div>
+      <span class="role-badge">{{ page_obj.paginator.count }}</span>
+    </header>
+    {% if members %}
+    <ul class="people-list" id="members">
+      {% for member in members %}
+      <li id="member-{{ member.pk }}" class="person-card fade-me-out">
+        <div class="person-avatar" aria-hidden="true">{{ member.username|slice:":1" }}</div>
+        <div class="person-copy">
+          <a href="{% url 'posts:user-posts' member.username %}">@{{ member.username }}</a>
+          <span>Participates in posts and Dome chat</span>
+        </div>
         {% if can_manage %}
-            <button type="button" hx-post="{% url 'domes:dome-member-delete' dome_id=dome_pk user_id=member.pk %}" hx-target="closest #memb" hx-swap="outerHTML" hx-confirm="Remove this member?" class="delete" aria-label="Remove member"></button>
-            {% if can_administer %}<button type="button" hx-post="{% url 'domes:dome-member-raiseordown' pk=dome_pk user_pk=member.pk option=1 %}" hx-target="closest #memb" hx-swap="outerHTML" hx-confirm="Promote this member?" class="button is-info">Raise</button>{% endif %}
-        {%endif%}
-        <a class="is-link is-pulled-left" href="{% url 'posts:user-posts' member.username %}">{{member.username}}</a>
-    </li>
-{% endfor %}
-</ul>
-{% endif %}
-{% if is_paginated %}
-    {% if page_obj.has_next %}
-    <div hx-get="{% url 'domes:dome-members' dome_pk %}?page={{ page_obj.next_page_number }}" hx-trigger="revealed" hx-swap="beforeend" hx-target="#main-content" hx-select="#members"></div>
+        <div class="person-actions">
+          {% if can_administer %}
+          <form method="post" action="{% url 'domes:dome-member-raiseordown' pk=dome_pk user_pk=member.pk option=1 %}" hx-post="{% url 'domes:dome-member-raiseordown' pk=dome_pk user_pk=member.pk option=1 %}" hx-target="closest .person-card" hx-swap="outerHTML" hx-confirm="Promote this member to moderator?">
+            {% csrf_token %}
+            <button class="button secondary-action is-small" type="submit">Make moderator</button>
+          </form>
+          {% endif %}
+          <form method="post" action="{% url 'domes:dome-member-delete' dome_id=dome_pk user_id=member.pk %}" hx-post="{% url 'domes:dome-member-delete' dome_id=dome_pk user_id=member.pk %}" hx-target="closest .person-card" hx-swap="outerHTML" hx-confirm="Remove this member from the Dome?">
+            {% csrf_token %}
+            <button class="button is-danger is-light is-small" type="submit">Remove</button>
+          </form>
+        </div>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <div class="empty-state"><div><h3>No members match</h3><p>Clear the filter to see everyone in this Dome.</p></div></div>
     {% endif %}
-{%endif%}
-</aside>
+  </section>
+
+  {% if is_paginated %}
+  <nav class="pagination" aria-label="Member pages">
+    {% if page_obj.has_previous %}
+    <a class="pagination-previous" href="?page={{ page_obj.previous_page_number }}" hx-get="{% url 'domes:dome-members' dome_pk %}?page={{ page_obj.previous_page_number }}" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true">Previous members</a>
+    {% endif %}
+    {% if page_obj.has_next %}
+    <a class="pagination-next" href="?page={{ page_obj.next_page_number }}" hx-get="{% url 'domes:dome-members' dome_pk %}?page={{ page_obj.next_page_number }}" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true">More members</a>
+    {% endif %}
+  </nav>
+  {% endif %}
+</section>

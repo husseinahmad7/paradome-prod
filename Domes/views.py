@@ -20,7 +20,9 @@ from .access import (
 )
 from .filters import DomeFilter, MembersFilter
 from .forms import CategoryCreation, DomeCreation
+from .htmx import HtmxTemplateResponseMixin
 from .models import Category, Dome
+from .presentation import dome_shell_context
 from .ratelimits import UserWriteRateLimitMixin, user_write_rate_limit
 from .storage import open_validated_image, safe_image_filename
 
@@ -102,19 +104,7 @@ class DomeView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update(
-            {
-                "can_administer": can_administer_dome(self.request.user, self.object),
-                "can_manage": can_manage_dome(self.request.user, self.object),
-                "can_chat": can_participate_in_chat(self.request.user, self.object),
-                "can_direct_message": (
-                    self.request.user.is_authenticated
-                    and not is_demo_user(self.request.user)
-                    and not is_demo_owned_dome(self.object)
-                    and self.request.user != self.object.user
-                ),
-            }
-        )
+        context.update(dome_shell_context(self.request.user, self.object))
         return context
 
 
@@ -206,8 +196,13 @@ class DomeInvitationView(
         return context
 
 
-class DomeMembersView(LoginRequiredMixin, generic.ListView):
-    template_name = "Domes/members_list.html"
+class DomeMembersView(
+    HtmxTemplateResponseMixin,
+    LoginRequiredMixin,
+    generic.ListView,
+):
+    partial_template_name = "Domes/members_list.html"
+    page_template_name = "Domes/dome_members_page.html"
     context_object_name = "members"
     paginate_by = 20
 
@@ -233,9 +228,14 @@ class DomeMembersView(LoginRequiredMixin, generic.ListView):
                 "mods": dome.moderators.all(),
                 "dome_owner": dome.user,
                 "dome_pk": dome.pk,
-                "can_administer": can_administer_dome(self.request.user, dome),
-                "can_manage": can_manage_dome(self.request.user, dome),
             }
+        )
+        context.update(
+            dome_shell_context(
+                self.request.user,
+                dome,
+                active_section="members",
+            )
         )
         return context
 
@@ -275,7 +275,9 @@ def MemberRemoveView(request, dome_id, user_id):
         if dome.moderators.filter(pk=removed.pk).exists():
             raise PermissionDenied
         dome.members.remove(removed)
-    return HttpResponse("")
+    if request.headers.get("HX-Request") == "true":
+        return HttpResponse("")
+    return redirect("domes:dome-members", pk=dome.pk)
 
 
 @login_required
@@ -294,7 +296,9 @@ def ModeratorRaiseOrDown(request, pk, user_pk, option):
         dome.moderators.add(selected_user)
     else:
         return HttpResponse("Invalid role transition", status=400)
-    return HttpResponse("")
+    if request.headers.get("HX-Request") == "true":
+        return HttpResponse("")
+    return redirect("domes:dome-members", pk=dome.pk)
 
 
 def dome_media(request, pk, kind):

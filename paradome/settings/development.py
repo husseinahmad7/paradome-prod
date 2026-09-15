@@ -21,7 +21,6 @@ CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS")  # noqa: F405
 PUBLIC_SITE_URL = os.environ.get("PUBLIC_SITE_URL") or "http://localhost:8000"
 DEMO_ACCOUNT_ENABLED = env_bool("DEMO_ACCOUNT_ENABLED", False)  # noqa: F405
 DEMO_USERNAME = os.environ.get("DEMO_USERNAME") or DEMO_USERNAME  # noqa: F405
-DEMO_DOME_SLUG = os.environ.get("DEMO_DOME_SLUG") or DEMO_DOME_SLUG  # noqa: F405
 DEFAULT_FROM_EMAIL = (  # noqa: F405
     os.environ.get("DEFAULT_FROM_EMAIL") or DEFAULT_FROM_EMAIL
 )

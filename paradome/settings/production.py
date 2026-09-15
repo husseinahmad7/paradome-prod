@@ -79,7 +79,6 @@ PUSHER_SSL = True
 
 DEMO_ACCOUNT_ENABLED = required_env_bool("DEMO_ACCOUNT_ENABLED")  # noqa: F405
 DEMO_USERNAME = required_env("DEMO_USERNAME")  # noqa: F405
-DEMO_DOME_SLUG = required_env("DEMO_DOME_SLUG")  # noqa: F405
 _private_media_path = Path(required_env("PRIVATE_MEDIA_ROOT"))  # noqa: F405
 if not _private_media_path.is_absolute():
     raise RuntimeError("PRIVATE_MEDIA_ROOT must be an absolute path")

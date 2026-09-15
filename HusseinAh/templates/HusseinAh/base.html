@@ -1,77 +1,47 @@
-<!DOCTYPE html>
+{% load static %}
+<!doctype html>
 <html lang="en" class="has-navbar-fixed-top">
-    <head>
-        <title>{% block title %}{% endblock %}</title>
-        {% load static %}
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" type="text/css" href="{% static 'style-addones.css' %}">
-        <link rel="stylesheet" type="text/css" href="{% static 'normalize.css' %}">
-        <link rel="icon" type="image/x-icon" href="{% static 'images/icon.png' %}">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
-        <meta name="google-site-verification" content="KAzHgH3qTwUULTu0rMkZgIK3Uv7u8Md0gH1eyqSc2Pc" />
-        <meta name="description" content="A machine learning specialist and full stack developer.">
-    <meta name="keywords" content="hussein, ahmad, programming, svu, syrian, Virtual,university,machine, earning, python, django, htmx, flutter, api, postgresql, deep learning,LLM">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0b1730">
+    <title>{% block title %}ParaDome{% endblock %}</title>
+    <meta name="description" content="ParaDome is a focused social workspace for posts, discussion, and realtime community chat.">
     <meta name="author" content="Hussein Ahmad">
-        {% block head %}{%endblock head%}
-    </head>
-    <body>
-        <header>
-            {% include 'HusseinAh/navbar.html' %}
-        {% comment %} <div class="wrapper">
-            <input type="checkbox" id="menu-bar">
-            <label for="menu-bar">menu</label>
-            <div class="top-corner">
-                logo
-            </div>
-            <nav class="navigation">
-                <ul>
-                    <li class="home-meta"><a href="{% url 'posts:index' %}">Posts</a></li>
-                    {% if user.is_anonymous %}
-                    <li class="project-meta"><a href="">projects +</a>
-                        <ul>
-                            <li><a href="">my portfolio</a></li>
-                            <li><a href="">paradome</a>
-                                <ul>
-                                    <li><span>public posts</span></li>
-                                    <li><span>follow others</span></li>
-                                    <li><span>messages</span></li>
-                                </ul>
-                            </li>
-                            <li><a href="{% url 'api' %}">API</a></li>
-                        </ul>
-                    </li>
-                    {% endif %}
-                    <li class="about-meta"><a href="{% url 'HusseinAh:home' %}#about">about</a></li>
-                    <li class="contact-meta"><a href="{% url 'HusseinAh:home' %}#contact">contact</a></li>
-                </ul>
-            </nav>
-            <div class="right-column">
-                {% if user.is_authenticated %}
-                <a href="{% url 'posts:stream' %}">Followed Posts</a>
-                <a href="{% url 'messages:inbox' %}">{% if unread_count %}<span class="badge">{{unread_count}}</span>{% endif%}inbox</a>
-                <a href="{% url 'notify:notification' %}">{% if notify_count %}<span class="badge">{{notify_count}}</span>{% endif%}notifications</a>
-                <a href="{% url 'posts:user-posts' user.username %}">Profile</a>
-                <form method="post" action="{% url 'users:logout' %}">
-                    {% csrf_token %}
-                    <button type="submit">Logout</button>
-                </form>
-                {%else%}
-                <a href="{% url 'users:register'%}">Register</a>
-                <a href="{% url 'users:login'%}">Login</a>
-                {%endif%}
-            </div>
-        </div> {% endcomment %}
-
+    <meta name="google-site-verification" content="KAzHgH3qTwUULTu0rMkZgIK3Uv7u8Md0gH1eyqSc2Pc">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/icon.png' %}">
+    <link rel="stylesheet" href="{% static 'normalize.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="{% static 'style-addones.css' %}">
+    <link rel="stylesheet" href="{% static 'css/paradome-app.css' %}">
+    {% block head %}{% endblock head %}
+</head>
+<body class="paradome-app{% if is_demo_session %} is-demo-session{% endif %}">
+    <a class="app-skip-link" href="#page-content">Skip to main content</a>
+    <header class="app-header">
+        {% include 'HusseinAh/navbar.html' %}
     </header>
-        {% block base%}
-        {% endblock %}
-        <footer class="footer">
-            <div class="content has-text-centered">
-              <p>
-                2022 © <strong>ParaDome</strong> by <b>Hussein Ahmad</b>
-              </p>
-            </div>
-          </footer>
-<script src="{% static 'js/base.js' %}" defer></script>
-    </body>
+
+    {% if messages %}
+    <div class="app-flashes app-container" aria-label="Status messages">
+        {% for message in messages %}
+        <div class="app-flash{% if message.tags %} is-{{ message.tags }}{% endif %}" role="{% if message.tags == 'error' %}alert{% else %}status{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div id="page-content" tabindex="-1">
+        {% block base %}{% endblock %}
+    </div>
+
+    <footer class="app-footer">
+        <div class="app-container app-footer-inner">
+            <p><strong>ParaDome</strong> · a social product experiment by Hussein Ahmad</p>
+            <p>{% now "Y" %} · Built with Django, HTMX, and private realtime channels</p>
+        </div>
+    </footer>
+    <script src="{% static 'js/base.js' %}" defer></script>
+</body>
 </html>

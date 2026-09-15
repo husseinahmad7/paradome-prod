@@ -91,13 +91,84 @@ class ChatSecurityTests(TestCase):
                 {"body": "Hello <script>not html</script>"},
                 HTTP_HX_REQUEST="true",
             )
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.status_code, 201)
+        self.assertContains(
+            response,
+            "Hello &lt;script&gt;not html&lt;/script&gt;",
+            status_code=201,
+        )
         message = ChatMessage.objects.get(channel=self.channel)
         pusher_client.trigger.assert_called_once_with(
             f"private-chat-{self.channel.pk}",
             "message-created",
             {"message_id": message.pk, "channel_id": self.channel.pk},
         )
+
+    @patch("Chat.views.get_pusher_client")
+    def test_htmx_send_returns_saved_fragment_when_realtime_publish_fails(
+        self, get_client
+    ):
+        get_client.return_value.trigger.side_effect = RuntimeError("realtime down")
+        self.client.force_login(self.member)
+        with self.captureOnCommitCallbacks(execute=True):
+            response = self.client.post(
+                reverse("chat:chat-channel", args=[self.channel.pk]),
+                {"body": "Saved despite outage"},
+                HTTP_HX_REQUEST="true",
+            )
+        message = ChatMessage.objects.get(channel=self.channel)
+        self.assertEqual(response.status_code, 201)
+        self.assertContains(response, "Saved despite outage", status_code=201)
+        self.assertContains(
+            response,
+            f'id="message-{message.pk}"',
+            status_code=201,
+        )
+
+    def test_first_chat_page_contains_newest_fifty_and_links_to_older_messages(self):
+        for index in range(55):
+            ChatMessage.objects.create(
+                user=self.member,
+                channel=self.channel,
+                body=f"message-{index:02d}",
+            )
+        self.client.force_login(self.member)
+        url = reverse("chat:chat-channel", args=[self.channel.pk])
+        response = self.client.get(url)
+        self.assertContains(response, "message-54")
+        self.assertContains(response, "message-05")
+        self.assertNotContains(response, "message-04")
+        self.assertContains(response, "Load earlier messages")
+        self.assertLess(
+            response.content.index(b"message-05"),
+            response.content.index(b"message-54"),
+        )
+
+        older = self.client.get(url, {"page": 2})
+        self.assertContains(older, "message-00")
+        self.assertContains(older, "message-04")
+        self.assertNotContains(older, "message-05")
+        self.assertNotContains(older, "Load earlier messages")
+
+    def test_channel_route_supports_native_and_htmx_navigation(self):
+        self.client.force_login(self.member)
+        url = reverse("chat:chat-channel", args=[self.channel.pk])
+
+        page = self.client.get(url)
+        self.assertEqual(page.status_code, 200)
+        self.assertContains(page, 'class="dome-shell"')
+        self.assertContains(page, f'href="{url}"')
+        self.assertContains(page, 'aria-current="page"')
+        self.assertEqual(page.context["active_section"], "chat")
+        self.assertEqual(page.context["active_channel_id"], self.channel.pk)
+        self.assertIn("HX-Request", page.headers.get("Vary", ""))
+
+        fragment = self.client.get(url, HTTP_HX_REQUEST="true")
+        self.assertEqual(fragment.status_code, 200)
+        self.assertContains(fragment, 'class="chat-panel"')
+        self.assertNotContains(fragment, 'class="dome-shell"')
+        self.assertNotContains(fragment, "hx-on::")
+        self.assertNotContains(fragment, "new Pusher")
 
     def test_authorized_fragment_escapes_body_and_rejects_outsider(self):
         message = ChatMessage.objects.create(

@@ -1,52 +1,69 @@
 {% extends "HusseinAh/base.html" %}
-{% load static %}
-{% block title %}
-Login
-{% endblock title %}
+{% load crispy_forms_tags %}
+{% block title %}Sign in · ParaDome{% endblock title %}
 
 {% block base %}
+<main class="auth-page">
+  <section class="auth-shell" aria-labelledby="signin-title">
+    <div class="auth-intro">
+      <div>
+        <p class="sandbox-badge">Social workspace prototype</p>
+        <h1>Ideas belong in a room with context.</h1>
+        <p class="auth-intro-copy">ParaDome keeps focused posts, discussion, and realtime chat together inside permission-aware spaces.</p>
+      </div>
+      <ul class="auth-proof-list" aria-label="Product safeguards">
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 20 7v5c0 5-3.4 8-8 9-4.6-1-8-4-8-9V7l8-4Z"></path><path d="m9 12 2 2 4-4"></path></svg>
+          <span>Object-scoped access for private Domes and media</span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H8l-4 4V5Z"></path><path d="M8 9h8M8 12h5"></path></svg>
+          <span>Text posts, replies, reactions, and private realtime chat</span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.7"></path><path d="M4 4v5h5"></path></svg>
+          <span>A resettable guest path for exploring without an account</span>
+        </li>
+      </ul>
+    </div>
 
-{% if message %}
-<section class="hero is-warning">
-    <div class="hero-body">
-      <p class="title">
-        Warning:
-      </p>
-      <p class="subtitle">
-        {{ message }}
-      </p>
+    <div class="auth-form-panel">
+      <h2 id="signin-title">Welcome back</h2>
+      <p>Sign in to continue to your Domes, or enter the shared guest sandbox below.</p>
+
+      {% if message %}
+      <div class="form-error-summary" role="alert">
+        <strong>Sign-in notice</strong>
+        <p>{{ message }}</p>
+      </div>
+      {% endif %}
+
+      <form class="auth-form" action="{% url 'users:login' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+        {% if form.non_field_errors %}
+        <div class="form-error-summary" role="alert">{{ form.non_field_errors }}</div>
+        {% endif %}
+        {{ form|crispy }}
+        <button id="submit-btn" class="button auth-submit is-fullwidth" type="submit">Sign in</button>
+        <a class="auth-secondary-link" href="{% url 'password_reset' %}">Forgot your password?</a>
+      </form>
+
+      <section class="demo-entry" aria-labelledby="demo-title">
+        <h3 id="demo-title">Explore as a guest</h3>
+        <p>Try the core collaboration loop without creating an account.</p>
+        <ul aria-label="Available demo actions">
+          <li>Write posts</li>
+          <li>Reply and react</li>
+          <li>Use realtime chat</li>
+        </ul>
+        <p class="demo-warning"><strong>Shared guest sandbox.</strong> Other visitors may see demo content. Do not enter personal information. Text only; resets daily at 00:00 UTC; session expires after 30 minutes.</p>
+        <form action="{% url 'users:demo_login' %}" method="post">
+          {% csrf_token %}
+          <button class="button demo-submit" type="submit">Try the live demo</button>
+        </form>
+      </section>
     </div>
   </section>
-{% endif %}
-
-
-<section class="hero is-link is-fullheight-with-navbar">
-    <div class="hero-body" style="justify-content: space-around">
-        <div class="has-text-centered">
-        {% load crispy_forms_tags %}
-        <form action="{% url 'users:login' %}" method="POST">
-            <fieldset>
-                <legend>Login</legend>
-            {% csrf_token %}
-            <table>
-                <input type="hidden" name="next" value="{{ next }}">
-            {{ form|crispy }}
-
-            <div class="control">
-                <button id="submit-btn" class="button is-primary" type="submit">Login</button>
-            </div>
-            </table>
-            <a href="{% url 'password_reset' %}">reset your password</a>
-            </fieldset>
-        </form>
-        <div class="mt-5">
-            <p class="mb-2">Want to explore safely without creating an account?</p>
-            <form action="{% url 'users:demo_login' %}" method="post">
-                {% csrf_token %}
-                <button class="button is-light is-medium" type="submit">Try demo</button>
-            </form>
-        </div>
-    </div>
-    </div>
-</section>
+</main>
 {% endblock %}

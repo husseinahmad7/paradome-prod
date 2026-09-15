@@ -105,6 +105,7 @@ TEMPLATES = [{
             "django.contrib.auth.context_processors.auth",
             "django.contrib.messages.context_processors.messages",
             "csp.context_processors.nonce",
+            "users.context_processors.demo_session",
             "messages.views.check_directs",
             "notify.views.CountNotifications",
         ],
@@ -176,7 +177,6 @@ PUSHER_CLUSTER = ""
 PUSHER_SSL = True
 DEMO_ACCOUNT_ENABLED = False
 DEMO_USERNAME = "paradome-demo"
-DEMO_DOME_SLUG = "demo"
 
 CACHES = {"default": {
     "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
