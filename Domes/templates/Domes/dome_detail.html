@@ -1,146 +1,92 @@
 {% extends "HusseinAh/base.html" %}
 {% load static %}
-{% block title %}
-{{dome.title}}
-{% endblock title %}
+{% block title %}{{ dome.title }} · ParaDome{% endblock title %}
 {% block head %}
 <script src="https://js.pusher.com/7.2/pusher.min.js" defer></script>
-{%endblock head%}
-{% block base%}
-<main>
+{% endblock head %}
 
-  <div class="columns is-mobile">
-    <div class="columns column is-hidden-mobile">
-    <div class="column">
-      <div id="dropdown-domes" class="dropdown">
-        <div class="dropdown-trigger">
-          <button id="domesbtn" class="button" aria-haspopup="true" aria-controls="dropdown-menu3">
-            <span>Domes</span>
-          </button>
-        </div>
-        <div class="dropdown-menu" id="dropdown-menu3" role="menu">
-          <div class="dropdown-content" hx-get="{%url 'domes:user-domes' %}" hx-trigger="intersect once" hx-swap="innerHTML" style="overflow-y: scroll;max-height:70vh">
-          </div>
-        </div>
-      </div>
-      <aside class="menu">
-        <p class="menu-label has-background-info-light">
-          General
-        </p>
-        <ul class="menu-list">
-          <li>
-            <a hx-get="{% url 'domes:dome-info' dome.id %}" hx-target="#main-content" hx-swap="innerHTML">Info</a>
-          </li>
-          <li><a hx-get="{% url 'posts:htmxdomeposts' dome.id %}" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML">Posts</a></li>
-          <li><a hx-get="{% url 'domes:dome-members' dome.id %}" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML">Members</a></li>
-          <hr class="navbar-divider">
-          {% if can_direct_message %}<a href="{% url 'messages:directs' dome.user %}">
-            Report an issue
-          </a>{% endif %}
-        </ul>
-        <p class="menu-label has-background-info-light">
-          Upcomming Features
-        </p>
-        <ul class="menu-list">
-          <li><a>Bookify</a></li>
-          <li><a>Events</a></li>
-          <li>
-            <a>Manage Your Team</a>
-            <ul>
-              <li><a>Tasks</a></li>
-              <li><a>Polls</a></li>
-              <li><a>Invitations</a></li>
-            </ul>
-          </li>
-          <li><a>Statics</a></li>
-          <li><a>rules</a></li>
-        </ul>
-      </aside>
-    </div>
-    <div class="column">
-      {% include 'Domes/dome_detail_categories.html' %}
-    </div>
-
+{% block base %}
+{% if is_demo_session %}
+<aside class="demo-disclosure" aria-label="Guest sandbox notice">
+  <div class="app-container demo-disclosure-inner">
+    <span class="sandbox-badge">Shared guest sandbox</span>
+    <p><strong>Keep it fictional.</strong> Other visitors may see what you write. Text only; content resets daily at 00:00 UTC and this session expires after 30 minutes.</p>
   </div>
+</aside>
+{% endif %}
 
-    <div class="column is-8-tablet is-centered">
-      <div class="container" id="main-content">
-        {% include 'Domes/dome_info.html'%}
+<main class="dome-page">
+  <div class="dome-shell">
+    <aside class="dome-rail" aria-label="{{ dome.title }} navigation">
+      <div class="dome-rail-title">
+        <a href="{% url 'domes:dome-detail' dome.pk %}">{{ dome.title }}</a>
       </div>
-    </div>
 
+      <p class="dome-section-label">Workspace</p>
+      <nav class="dome-nav" aria-label="Dome sections">
+        <a class="dome-nav-link" href="{% url 'domes:dome-detail' dome.pk %}" hx-get="{% url 'domes:dome-info' dome.pk %}" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="{% url 'domes:dome-detail' dome.pk %}"{% if active_section == "overview" %} aria-current="page"{% endif %}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"></path></svg>
+          <span>Overview</span>
+        </a>
+        <a class="dome-nav-link" href="{% url 'posts:htmxdomeposts' dome.pk %}" hx-get="{% url 'posts:htmxdomeposts' dome.pk %}" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true"{% if active_section == "posts" %} aria-current="page"{% endif %}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"></path></svg>
+          <span>Posts</span>
+        </a>
+        <a class="dome-nav-link" href="{% url 'domes:dome-members' dome.pk %}" hx-get="{% url 'domes:dome-members' dome.pk %}" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true"{% if active_section == "members" %} aria-current="page"{% endif %}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M9.5 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM17 11a3 3 0 0 0 0-6M21 20v-2a4 4 0 0 0-3-3.87"></path></svg>
+          <span>Members</span>
+        </a>
+      </nav>
 
+      <p class="dome-section-label">Chat channels</p>
+      {% include "Domes/dome_detail_categories.html" %}
+
+      <details class="dome-switcher">
+        <summary>Switch Dome</summary>
+        <div class="dropdown-content" hx-get="{% url 'domes:user-domes' %}" hx-trigger="intersect once" hx-swap="innerHTML">
+          <p class="dropdown-item">Loading your Domes…</p>
+        </div>
+      </details>
+
+      {% if can_direct_message %}
+      <a class="dome-nav-link" href="{% url 'messages:directs' dome.user %}">Report an issue</a>
+      {% endif %}
+    </aside>
+
+    <section class="dome-workspace" aria-labelledby="dome-title">
+      <header class="dome-workspace-header">
+        <div>
+          <h1 id="dome-title">{{ dome.title }}</h1>
+          <p>{% if is_demo_session %}A guided, text-only tour of ParaDome’s core loop.{% else %}Posts, members, and discussion in one focused space.{% endif %}</p>
+        </div>
+        {% if is_demo_session %}<span class="sandbox-badge">Resets 00:00 UTC</span>{% endif %}
+      </header>
+
+      <div class="mobile-dome-nav">
+        <nav class="mobile-dome-tabs" aria-label="Dome sections">
+          <a class="dome-nav-link" href="{% url 'domes:dome-detail' dome.pk %}" hx-get="{% url 'domes:dome-info' dome.pk %}" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="{% url 'domes:dome-detail' dome.pk %}"{% if active_section == "overview" %} aria-current="page"{% endif %}>Overview</a>
+          <a class="dome-nav-link" href="{% url 'posts:htmxdomeposts' dome.pk %}" hx-get="{% url 'posts:htmxdomeposts' dome.pk %}" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true"{% if active_section == "posts" %} aria-current="page"{% endif %}>Posts</a>
+          <a class="dome-nav-link" href="{% url 'domes:dome-members' dome.pk %}" hx-get="{% url 'domes:dome-members' dome.pk %}" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true"{% if active_section == "members" %} aria-current="page"{% endif %}>Members</a>
+        </nav>
+        <details class="mobile-channel-drawer">
+          <summary>Chat channels</summary>
+          {% include "Domes/dome_detail_categories.html" %}
+        </details>
+      </div>
+
+      <div class="content-panel" id="main-content" tabindex="-1">
+        {% block dome_content %}
+          {% include "Domes/dome_info.html" %}
+        {% endblock dome_content %}
+      </div>
+    </section>
   </div>
-{% comment %} mobile bottom navbar {% endcomment %}
-  <nav class="navbar is-fixed-bottom is-hidden-tablet" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-      <nav class="level is-mobile">
-        {% if dome.icon %}
-        <div class="level-item has-text-centered">
-          <div>
-              <figure class="image is-32x32 is-1by1">
-                  <img class="is-rounded" src="{% url 'domes:dome-media' dome.pk 'icon' %}" alt="{{dome.title}}">
-                </figure>
-            </div>
-        </div>
-        {% endif %}
-        <div class="level-item has-text-centered">
-          <div>
-            <a class="navbar-item" hx-get="{% url 'domes:dome-info' dome.id %}" hx-target="#main-content" hx-swap="innerHTML">
-              info
-            </a>
-          </div>
-        </div>
-    </nav>
-          <li class="navbar-item">
-            <a hx-get="{% url 'posts:htmxdomeposts' dome.id %}" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML">Posts</a>
-          </li>
-          <li class="navbar-item">
-            <a hx-get="{% url 'domes:dome-members' dome.id %}" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML">Members</a>
-          </li>
-      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-      </a>
-    </div>
+</main>
 
-    <div id="navbarBasicExample" class="navbar-menu" >
-      <div class="navbar-start">
-        <div style="overflow-y: auto; height: 50vh" class="on-scrollbar">
-      {% include 'Domes/dome_detail_categories.html' %}
-        </div>
-       <hr class="navbar-divider">
-        <div class="navbar-item has-dropdown is-hoverable on-scrollbar" style="overflow-y: auto; height: 20vh">
-          <a class="navbar-link">
-            Joined Domes
-          </a>
-
-          <div class="navbar-dropdown">
-            <div class="dropdown-content" hx-get="{%url 'domes:user-domes' %}" hx-trigger="intersect once" hx-swap="innerHTML" style="overflow-y: scroll;max-height:70vh">
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="navbar-end">
-        {% if can_direct_message %}<a class="navbar-item" href="{% url 'messages:directs' dome.user %}">
-          Report an issue
-        </a>{% endif %}
-      </div>
-    </div>
-  </nav>
-        </main>
-    <script src="{% static 'js/htmx.min.js' %}" defer></script>
-    <script nonce="{{ CSP_NONCE }}">
-      document.body.addEventListener('htmx:configRequest', (event) => {
-        event.detail.headers['X-CSRFToken'] = '{{csrf_token}}';
-      });
-      domeBtn = document.querySelector('#domesbtn');
-      domesDropdown = document.querySelector('#dropdown-domes');
-      domeBtn.addEventListener('click', ()=>{
-        domesDropdown.classList.toggle('is-active')
-      })
-    </script>
-  {%endblock base%}
+<script src="{% static 'js/htmx.min.js' %}" defer></script>
+<script nonce="{{ CSP_NONCE }}">
+  document.body.addEventListener("htmx:configRequest", (event) => {
+    event.detail.headers["X-CSRFToken"] = "{{ csrf_token }}";
+  });
+</script>
+{% endblock base %}

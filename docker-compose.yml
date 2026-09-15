@@ -49,7 +49,6 @@ services:
       PUSHER_CLUSTER: ${PUSHER_CLUSTER:?Set PUSHER_CLUSTER in .env}
       DEMO_ACCOUNT_ENABLED: ${DEMO_ACCOUNT_ENABLED:-true}
       DEMO_USERNAME: ${DEMO_USERNAME:-paradome-demo}
-      DEMO_DOME_SLUG: ${DEMO_DOME_SLUG:-demo}
       PRIVATE_MEDIA_ROOT: /app/private_media
     ports:
       - "8000:8000"

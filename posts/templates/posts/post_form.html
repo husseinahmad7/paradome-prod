@@ -1,25 +1,37 @@
-{% extends 'HusseinAh/base.html' %}
-{% block title%}
-Post  factory
-{%endblock%}
+{% extends "HusseinAh/base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}{% if object %}Write in {{ object.title }}{% else %}Write a post{% endif %} · ParaDome{% endblock %}
+
 {% block base %}
+<main class="composer-page">
+  <section class="composer-shell" aria-labelledby="composer-title">
+    <header class="composer-header">
+      <p class="sandbox-badge">{% if object %}{{ object.title }}{% else %}New post{% endif %}</p>
+      <h1 id="composer-title">Write a post</h1>
+      <p>Give the discussion a clear title, then add the context people need to respond.</p>
+    </header>
 
-<div class="container">
-    {% load crispy_forms_tags %}
-<form method="POST" enctype="multipart/form-data">
-    <fieldset>
-        <legend>What to publish</legend>
-    {% csrf_token %}
-    <table>
-        {{form.media}}
-    {{ form|crispy }}
-    <a class="is-link is-light" target="_blank" rel="noopener noreferrer" id="add_id_tags" href="{% url 'posts:tag-create'%}" title="Add another Tag">
-        add tag
-    </a>
+    {% if is_demo_session %}
+    <p class="composer-note"><strong>Guest mode is text only.</strong> Use fictional content and no personal information; other demo visitors may see this post until the 00:00 UTC reset.</p>
+    {% endif %}
 
-    <tr><td><input class="button is-secondary" type="submit" value="Done"></td></tr>
-    </table>
-</fieldset>
-</form>
-</div>
+    <form method="post"{% if not is_demo_session %} enctype="multipart/form-data"{% endif %}>
+      {% csrf_token %}
+      {{ form.media }}
+      {% if form.non_field_errors %}<div class="form-error-summary" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+      {{ form|crispy }}
+      <div class="composer-actions">
+        <button class="button primary-action" type="submit">Publish post</button>
+        {% if object %}
+        <a class="button secondary-action" href="{% url 'domes:dome-detail' object.pk %}">Cancel</a>
+        {% else %}
+        <a class="button secondary-action" href="{% url 'posts:index' %}">Cancel</a>
+        {% endif %}
+        {% if not is_demo_session %}
+        <a class="button is-ghost" target="_blank" rel="noopener noreferrer" id="add_id_tags" href="{% url 'posts:tag-create' %}">Create a tag</a>
+        {% endif %}
+      </div>
+    </form>
+  </section>
+</main>
 {% endblock %}

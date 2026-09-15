@@ -1,72 +1,60 @@
-<nav class="navbar is-fixed-top">
-  <div class="navbar-brand">
-    <span class="navbar-item glow is-unselectable">
-      ParaDome
-    </span>
-    <div role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMobile">
-      <span aria-hidden="true"></span>
-    <span aria-hidden="true"></span>
-    <span aria-hidden="true"></span>
-    </div>
-  </div>
-
-  <div id="navbarMobile" class="navbar-menu">
-    <div class="navbar-start">
-      <li class="navbar-item home-meta"><a href="{% url 'posts:index' %}">Posts</a></li>
-
-      {% if user.is_authenticated %}
-          <a class="navbar-item is-relative" href="{% url 'messages:inbox' %}">{% if unread_count %}<span title="Badge top right" class="badge is-top-left">{{unread_count}}</span>{% endif%}inbox</a>
-          <a class="navbar-item is-relative" href="{% url 'notify:notification' %}">{% if notify_count %}<span title="Badge top right" class="badge is-top-left">{{notify_count}}</span>{% endif%}notifications</a>
-          
-      {% endif %}
-      <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-item" href="{% url 'domes:explore' %}">
-              Explore
-          </a>
-        <div class="navbar-dropdown is-boxed">
-          <a class="navbar-item" href="{% url 'domes:explore' %}">
-            Explore Spaces
-          </a>
-        {% if user.is_authenticated %}
-          <a class="navbar-item" href="{% url 'posts:stream' %}">
-              Followed Users Posts
-          </a>
-          <a class="navbar-item" href="{% url 'posts:user-favorites' user.username %}">
-            Saved Posts
-        </a>
-        <a class="navbar-item" href="{% url 'posts:user-posts' user.username %}">
-          Profile
+<nav class="navbar is-fixed-top app-navbar" aria-label="Primary navigation">
+  <div class="app-nav-inner">
+    <div class="navbar-brand app-navbar-brand">
+      <a class="navbar-item app-brand" href="{% if user.is_authenticated %}{% url 'users:index' %}{% else %}{% url 'HusseinAh:home' %}{% endif %}" aria-label="ParaDome home">
+        <svg class="app-brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M16 3 27 9.5v13L16 29 5 22.5v-13L16 3Z"></path>
+          <path d="M11 21V11h6.2a4 4 0 0 1 0 8H14"></path>
+        </svg>
+        <span>ParaDome</span>
       </a>
-        {%endif%}
-        </div>
-      </div>
+      {% if is_demo_session %}
+      <span class="demo-mode-badge">Guest sandbox</span>
+      {% endif %}
+      <button type="button" class="navbar-burger app-menu-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="navbarMobile" data-target="navbarMobile">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
     </div>
 
-    <div class="navbar-end">
-      <div class="navbar-item">
-        <div class="field is-grouped">
+    <div id="navbarMobile" class="navbar-menu app-navbar-menu">
+      <div class="navbar-start app-nav-links">
+        {% if is_demo_session %}
+          <a class="navbar-item{% if request.resolver_match.namespace == 'domes' %} is-active{% endif %}" href="{% url 'users:index' %}"{% if request.resolver_match.namespace == 'domes' %} aria-current="page"{% endif %}>Sandbox</a>
+          <a class="navbar-item{% if request.resolver_match.namespace == 'posts' %} is-active{% endif %}" href="{% url 'posts:index' %}"{% if request.resolver_match.namespace == 'posts' %} aria-current="page"{% endif %}>Demo posts</a>
+        {% else %}
+          <a class="navbar-item{% if request.resolver_match.namespace == 'posts' and request.resolver_match.url_name == 'index' %} is-active{% endif %}" href="{% url 'posts:index' %}">Posts</a>
+          <a class="navbar-item{% if request.resolver_match.namespace == 'domes' %} is-active{% endif %}" href="{% url 'domes:explore' %}">Explore Domes</a>
           {% if user.is_authenticated %}
-              <form class="control" method="post" action="{% url 'users:logout' %}">
-                {% csrf_token %}
-                <button class="button" type="submit">Logout</button>
-              </form>
-          {%else%}
-          <p class="control">
-              <a class="button" href="{% url 'users:register'%}">
-              <span>
-                Sign up
-              </span>
-            </a>
-          </p>
-          <p class="control">
-              <a class="button is-primary" href="{% url 'users:login'%}?next={{request.path}}">
-              <span>
-                  Login
-              </span>
-            </a>
-          </p>
-          {%endif%}
-        </div>
+          <a class="navbar-item" href="{% url 'posts:stream' %}">Following</a>
+          <a class="navbar-item" href="{% url 'posts:user-favorites' user.username %}">Saved</a>
+          {% endif %}
+        {% endif %}
+      </div>
+
+      <div class="navbar-end app-nav-actions">
+        <a class="navbar-item app-portfolio-link" href="{% url 'HusseinAh:home' %}">Portfolio</a>
+        {% if user.is_authenticated %}
+          {% if not is_demo_session %}
+          <a class="navbar-item is-relative" href="{% url 'messages:inbox' %}">
+            Inbox
+            {% if unread_count %}<span class="app-count-badge" aria-label="{{ unread_count }} unread">{{ unread_count }}</span>{% endif %}
+          </a>
+          <a class="navbar-item is-relative" href="{% url 'notify:notification' %}">
+            Notifications
+            {% if notify_count %}<span class="app-count-badge" aria-label="{{ notify_count }} unread">{{ notify_count }}</span>{% endif %}
+          </a>
+          <a class="navbar-item" href="{% url 'posts:user-posts' user.username %}">Profile</a>
+          {% endif %}
+          <form class="app-logout-form" method="post" action="{% url 'users:logout' %}">
+            {% csrf_token %}
+            <button class="button app-nav-button" type="submit">{% if is_demo_session %}Exit demo{% else %}Log out{% endif %}</button>
+          </form>
+        {% else %}
+          <a class="navbar-item" href="{% url 'users:register' %}">Create account</a>
+          <a class="button app-nav-button is-primary" href="{% url 'users:login' %}?next={{ request.path|urlencode }}">Sign in</a>
+        {% endif %}
       </div>
     </div>
   </div>

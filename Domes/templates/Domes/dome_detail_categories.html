@@ -1,34 +1,35 @@
 {% if can_manage %}
-<a class="button is-secondary" href="{% url 'domes:category-create' object.pk %}">create category</a>
+<a class="button secondary-action is-fullwidth mb-3" href="{% url 'domes:category-create' object.pk %}">Create category</a>
 {% endif %}
-{% if object.categories.all %}
-{% comment %} <div class="content is-small"> {% endcomment %}
-<aside class="menu">
 
+{% if object.categories.all %}
 {% for category in object.categories.all %}
-{% comment %} <div class="box"> {% endcomment %}
-    <p class="menu-label has-text-light has-background-dark">
-        {{category.title}}
-    </p>
-    {% if can_manage %}<a class="button is-light" href="{% url 'chat:chatchannel-create' category.id %}">add chat channel</a>{% endif %}
-    <ul class="menu-list">
-    {%for chat in category.chat_chnls.all %}
-        <div class="block {% ifchanged %}
-        {% cycle 'has-background-info-light' 'has-background-link-light'%}
-        {% endifchanged %}">
-            <li>
-                {% if can_chat %}<a hx-get="{% url 'chat:chat-channel' chat.id %}" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML">{{chat.title}}</a>{% else %}<span>{{ chat.title }}</span>{% endif %}
-                <ul>
-                    <li class="subtitle is-6">{{chat.topic}}</li>
-                </ul>
-            </li>
-            <div></div>
-        </div>
-    {%endfor%}
-    </ul>
-{% comment %} </div> {% endcomment %}
+<section aria-label="{{ category.title }}">
+  <p class="dome-section-label">{{ category.title }}</p>
+  {% if can_manage %}
+  <a class="button is-small secondary-action mb-2" href="{% url 'chat:chatchannel-create' category.pk %}">Add channel</a>
+  {% endif %}
+  <ul class="channel-list">
+    {% for chat in category.chat_chnls.all %}
+    <li>
+      {% if can_chat %}
+      <a class="channel-link" href="{% url 'chat:chat-channel' chat.pk %}" hx-get="{% url 'chat:chat-channel' chat.pk %}" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true"{% if active_channel_id == chat.pk %} aria-current="page"{% endif %}>
+        <span class="channel-symbol" aria-hidden="true">#</span>
+        <span class="channel-copy"><strong>{{ chat.title }}</strong>{% if chat.topic %}<small>{{ chat.topic }}</small>{% endif %}</span>
+      </a>
+      {% else %}
+      <span class="channel-link">
+        <span class="channel-symbol" aria-hidden="true">#</span>
+        <span class="channel-copy"><strong>{{ chat.title }}</strong>{% if chat.topic %}<small>{{ chat.topic }}</small>{% endif %}</span>
+      </span>
+      {% endif %}
+    </li>
+    {% empty %}
+    <li><span class="channel-copy"><small>No channels in this category yet.</small></span></li>
+    {% endfor %}
+  </ul>
+</section>
 {% endfor %}
-</aside>
-{%else%}
-<div class="bd-notification is-danger">no categories</div>
+{% else %}
+<p class="channel-copy"><small>No chat channels yet.</small></p>
 {% endif %}

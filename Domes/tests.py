@@ -174,14 +174,20 @@ class DomeViewSecurityTests(TestCase):
         self.assertEqual(self.client.post(url).status_code, 403)
         self.client.force_login(self.owner)
         self.assertEqual(self.client.get(url).status_code, 405)
-        self.assertEqual(self.client.post(url).status_code, 200)
+        self.assertEqual(
+            self.client.post(url, HTTP_HX_REQUEST="true").status_code,
+            200,
+        )
         self.assertFalse(self.dome.members.filter(pk=self.member.pk).exists())
         self.assertTrue(self.dome.moderators.filter(pk=self.member.pk).exists())
         demote_url = reverse(
             "domes:dome-member-raiseordown",
             args=[self.dome.pk, self.member.pk, 0],
         )
-        self.assertEqual(self.client.post(demote_url).status_code, 200)
+        self.assertEqual(
+            self.client.post(demote_url, HTTP_HX_REQUEST="true").status_code,
+            200,
+        )
         self.assertTrue(self.dome.members.filter(pk=self.member.pk).exists())
         self.assertFalse(self.dome.moderators.filter(pk=self.member.pk).exists())
         owner_url = reverse(
@@ -197,12 +203,18 @@ class DomeViewSecurityTests(TestCase):
         self.dome.moderators.add(second_moderator)
         self.client.force_login(self.member)
         self.assertEqual(
-            self.client.post(reverse("domes:dome-member-delete", args=[self.dome.pk, second_member.pk])).status_code,
+            self.client.post(
+                reverse("domes:dome-member-delete", args=[self.dome.pk, second_member.pk]),
+                HTTP_HX_REQUEST="true",
+            ).status_code,
             403,
         )
         self.client.force_login(self.moderator)
         self.assertEqual(
-            self.client.post(reverse("domes:dome-member-delete", args=[self.dome.pk, second_moderator.pk])).status_code,
+            self.client.post(
+                reverse("domes:dome-member-delete", args=[self.dome.pk, second_moderator.pk]),
+                HTTP_HX_REQUEST="true",
+            ).status_code,
             403,
         )
         self.assertEqual(
@@ -210,13 +222,19 @@ class DomeViewSecurityTests(TestCase):
             403,
         )
         self.assertEqual(
-            self.client.post(reverse("domes:dome-member-delete", args=[self.dome.pk, second_member.pk])).status_code,
+            self.client.post(
+                reverse("domes:dome-member-delete", args=[self.dome.pk, second_member.pk]),
+                HTTP_HX_REQUEST="true",
+            ).status_code,
             200,
         )
         self.assertFalse(self.dome.members.filter(pk=second_member.pk).exists())
         self.client.force_login(self.owner)
         self.assertEqual(
-            self.client.post(reverse("domes:dome-member-delete", args=[self.dome.pk, second_moderator.pk])).status_code,
+            self.client.post(
+                reverse("domes:dome-member-delete", args=[self.dome.pk, second_moderator.pk]),
+                HTTP_HX_REQUEST="true",
+            ).status_code,
             200,
         )
         self.assertFalse(self.dome.moderators.filter(pk=second_moderator.pk).exists())
@@ -225,8 +243,35 @@ class DomeViewSecurityTests(TestCase):
         self.client.force_login(self.owner)
         url = reverse("domes:dome-member-delete", args=[self.dome.pk, self.member.pk])
         self.assertEqual(self.client.get(url).status_code, 405)
-        self.assertEqual(self.client.post(url).status_code, 200)
+        self.assertEqual(
+            self.client.post(url, HTTP_HX_REQUEST="true").status_code,
+            200,
+        )
         self.assertFalse(self.dome.members.filter(pk=self.member.pk).exists())
+
+    def test_member_role_actions_redirect_without_javascript(self):
+        self.client.force_login(self.owner)
+        promote_url = reverse(
+            "domes:dome-member-raiseordown",
+            args=[self.dome.pk, self.member.pk, 1],
+        )
+        response = self.client.post(promote_url)
+        self.assertRedirects(
+            response,
+            reverse("domes:dome-members", args=[self.dome.pk]),
+            fetch_redirect_response=False,
+        )
+
+        remove_url = reverse(
+            "domes:dome-member-delete",
+            args=[self.dome.pk, self.member.pk],
+        )
+        response = self.client.post(remove_url)
+        self.assertRedirects(
+            response,
+            reverse("domes:dome-members", args=[self.dome.pk]),
+            fetch_redirect_response=False,
+        )
 
     def test_protected_media_denies_before_storage_access(self):
         self.dome.icon = "private/icon.png"
@@ -236,6 +281,24 @@ class DomeViewSecurityTests(TestCase):
             reverse("domes:dome-media", args=[self.dome.pk, "icon"])
         )
         self.assertEqual(response.status_code, 403)
+
+    def test_members_route_is_refreshable_and_keeps_htmx_fragment_mode(self):
+        self.client.force_login(self.member)
+        url = reverse("domes:dome-members", args=[self.dome.pk])
+
+        page = self.client.get(url)
+        self.assertEqual(page.status_code, 200)
+        self.assertContains(page, 'class="dome-shell"')
+        self.assertContains(page, 'id="main-content"')
+        self.assertContains(page, "People in this Dome")
+        self.assertEqual(page.context["active_section"], "members")
+        self.assertIn("HX-Request", page.headers.get("Vary", ""))
+
+        fragment = self.client.get(url, HTTP_HX_REQUEST="true")
+        self.assertEqual(fragment.status_code, 200)
+        self.assertContains(fragment, "People in this Dome")
+        self.assertNotContains(fragment, 'class="dome-shell"')
+        self.assertIn("HX-Request", fragment.headers.get("Vary", ""))
 
     def test_category_database_constraint(self):
         Category.objects.create(Dome=self.dome, title="General")

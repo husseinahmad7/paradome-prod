@@ -1,18 +1,34 @@
 from django import forms
-from .models import ChatMessage, ChatChannel
+
+from .models import ChatChannel, ChatMessage
+
+
 class ChatMessageCreation(forms.ModelForm):
-    body = forms.CharField(max_length=250, label='reply',widget=forms.TextInput(attrs={'class': 'input is-small','autofocus':True}))
-    # file = forms.FileField(allow_empty_file=True, required=False)
+    body = forms.CharField(
+        max_length=250,
+        label="Message",
+        widget=forms.TextInput(
+            attrs={
+                "class": "input",
+                "autocomplete": "off",
+                "maxlength": "250",
+                "placeholder": "Write a short message…",
+                "aria-describedby": "chat-message-hint",
+            }
+        ),
+    )
+
     class Meta:
         model = ChatMessage
-        fields = ['body']
+        fields = ["body"]
 
     def clean_body(self):
         body = self.cleaned_data["body"].strip()
         if not body:
             raise forms.ValidationError("Message cannot be empty.")
         return body
-        
+
+
 class ChatChannelCreation(forms.ModelForm):
     def __init__(self, *args, category=None, **kwargs):
         self.category = category
@@ -20,7 +36,7 @@ class ChatChannelCreation(forms.ModelForm):
 
     class Meta:
         model = ChatChannel
-        fields = ['title', 'topic']
+        fields = ["title", "topic"]
 
     def clean_title(self):
         title = self.cleaned_data["title"].strip()

@@ -1,0 +1,46 @@
+{% load humanize %}
+{% load post_security %}
+<article class="post-card" id="post-{{ post.pk }}">
+  <header class="post-card-header">
+    {% if post.user.profile.picture %}
+    <figure class="image is-44x44">
+      <img class="is-rounded" src="{% url 'users:profile_picture' post.user.username %}" alt="">
+    </figure>
+    {% else %}
+    <span class="avatar-fallback" aria-hidden="true">{{ post.user.username|slice:":1" }}</span>
+    {% endif %}
+    <div class="post-card-author">
+      <a href="{% url 'posts:user-posts' post.user.username %}">@{{ post.user.username }}</a>
+      <time datetime="{{ post.posted_date|date:'c' }}">{{ post.posted_date|naturaltime }}</time>
+    </div>
+  </header>
+
+  <div class="post-card-body">
+    <h3><a href="{% url 'posts:post-detail' post.pk %}">{{ post.question_text }}</a></h3>
+    <div class="content">{{ post.content|safe_rich_text|truncatechars_html:220 }}</div>
+    {% if post.tags.all %}
+    <div aria-label="Post tags">
+      {% for tag in post.tags.all %}
+      <a class="tag is-info is-light" href="{{ tag.get_absolute_url }}">{{ tag }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  {% if post.picture %}
+  <img class="post-card-image" src="{% url 'posts:post-picture' post.pk %}" alt="{{ post.question_text }}">
+  {% endif %}
+
+  <footer class="post-card-actions">
+    {% if user.is_authenticated %}
+    <div id="like{{ post.pk }}">
+      {% if post.pk in likedset %}
+      {% include "posts/like.html" with liked=True pk=post.pk likes=post.likes %}
+      {% else %}
+      {% include "posts/like.html" with liked=False pk=post.pk likes=post.likes %}
+      {% endif %}
+    </div>
+    {% endif %}
+    <a class="post-action" href="{% url 'posts:post-detail' post.pk %}">{{ post.comment_count }} repl{{ post.comment_count|pluralize:"y,ies" }}</a>
+  </footer>
+</article>

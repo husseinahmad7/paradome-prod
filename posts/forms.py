@@ -14,6 +14,8 @@ class PostCreation(forms.ModelForm):
     def __init__(self, *args, user=None, **kwargs):
         self.user = user
         super().__init__(*args, **kwargs)
+        if is_demo_user(self.user):
+            self.fields.pop("picture", None)
 
     class Meta:
         model = Post
@@ -24,6 +26,12 @@ class PostCreation(forms.ModelForm):
         if not strip_tags(content).strip():
             raise ValidationError("Post content cannot be empty.")
         return content
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if is_demo_user(self.user) and self.files:
+            raise ValidationError("Demo accounts cannot upload files.")
+        return cleaned_data
     
     def clean_picture(self):
         image = self.cleaned_data.get('picture')

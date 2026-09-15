@@ -14,7 +14,7 @@ from users.models import Profile
 
 
 class Command(BaseCommand):
-    help = "Reset the isolated guest sandbox to its canonical text-only fixture."
+    help = "Reset the shared guest sandbox to its canonical text-only fixture."
 
     @transaction.atomic
     def handle(self, *args, **options):
@@ -66,7 +66,7 @@ class Command(BaseCommand):
         profile, _ = Profile.objects.get_or_create(user=demo_user)
         profile.first_name = "Guest"
         profile.last_name = ""
-        profile.bio = "A resettable, isolated ParaDome guest sandbox."
+        profile.bio = "A resettable, shared ParaDome guest sandbox."
         profile.favorite.clear()
         Profile.objects.filter(pk=profile.pk).update(
             first_name=profile.first_name,
@@ -77,8 +77,8 @@ class Command(BaseCommand):
 
         dome = Dome.objects.create(
             user=demo_user,
-            title=getattr(settings, "DEMO_DOME_TITLE", "ParaDome Demo")[:25],
-            description="A private sandbox for trying posts, replies, reactions, and chat.",
+            title="ParaDome Demo",
+            description="A shared, text-only space for trying posts, replies, reactions, and chat.",
             privacy=0,
             icon=None,
             banner=None,
@@ -94,8 +94,9 @@ class Command(BaseCommand):
             dome=dome,
             question_text="Welcome to the ParaDome demo",
             content=(
-                "<p>This sandbox resets every day. Try a text post, comment, "
-                "reaction, or chat message—nothing here reaches real users.</p>"
+                "<p>This shared sandbox resets every day at 00:00 UTC. Try a text "
+                "post, comment, reaction, or chat message. Do not enter personal "
+                "information because other demo visitors may see it.</p>"
             ),
         )
         Comment.objects.create(
@@ -106,7 +107,7 @@ class Command(BaseCommand):
         ChatMessage.objects.create(
             user=demo_user,
             channel=channel,
-            body="Welcome. This demo channel is isolated and resets daily.",
+            body="Welcome. This shared demo channel resets daily at 00:00 UTC.",
         )
 
         self.stdout.write(

@@ -1,87 +1,66 @@
-<div class="card">
-    <div class="card-image">
-      {% if dome.banner %}
-      <figure class="image is-3by1">
-          <img src="{% url 'domes:dome-media' dome.pk 'banner' %}" alt="{{dome.title}}">
-        </figure>
-      {% endif %}
-    </div>
+<article class="overview-panel">
+  {% if dome.banner %}
+  <img class="post-card-image" src="{% url 'domes:dome-media' dome.pk 'banner' %}" alt="{{ dome.title }} banner">
+  {% endif %}
 
-  <div class="card-content">
-     <div class="media">
-         <div class="media-left">
-             {% if dome.user.profile.picture %}
-             <figure class="image is-48x48 is-1by1">
-                 <img class="is-rounded" src="{% url 'users:profile_picture' dome.user.username %}" alt="{{ dome.user.username }} image">
-               </figure>
-             {% else %}
-             <figure class="image is-48x48 is-1by1">
-             <img class="is-rounded" src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
-           </figure>
-             {% endif %}
-           
-         </div>
-         <div class="media-content">
-           <p class="title is-4"><a href="{% url 'posts:user-posts' dome.user.username %}">{{ dome.user.username }}</a></p>
-         </div>
-       </div>
-       <div class="card-header">
-         <div class="card-header-title is-centered">
-            <nav class="level is-mobile">
-                  {% if dome.icon %}
-                  <div class="level-item has-text-centered">
-                    <div>
-                        <figure class="image is-48x48 is-1by1">
-                            <img class="is-rounded" src="{% url 'domes:dome-media' dome.pk 'icon' %}" alt="{{dome.title}}">
-                          </figure>
-                      </div>
-                  </div>
-                  {% endif %}
-                  <div class="level-item has-text-centered">
-                    <div>
-                  <p class="title">{{ dome.title }}</p>
-                    </div>
-                  </div>
-              </nav>
-         </div>
-     </div>
-  </div>
- <div class="card-content">
-   <div class="content">
-       <p class="subtitle is-6">{{ dome.description }}</p>
-     <br>
-     <time datetime="2016-1-1">{{ dome.date }}</time>
-     {% if can_administer %}
-     <br>
-     <div class="field is-horizontal">
-      <div class="field-label is-normal">
-        <label class="label">Invite Link</label>
-      </div>
-      <div class="field-body">
-        <div class="field">
-          <p class="control">
-            <input class="input is-small" type="text" value="{{dome.get_invitation_link}}" readonly>
-          </p>
-        </div>
-      </div>
+  {% if is_demo_session %}
+  <header class="overview-hero">
+    <span class="sandbox-badge">You are in guest mode</span>
+    <h2>Try the social loop in three minutes.</h2>
+    <p>Create a text post, react or reply, then open <strong>#general</strong> for realtime chat. The account is intentionally restricted from uploads, profiles, invitations, and real-user interactions.</p>
+    <div class="composer-actions">
+      <a class="button primary-action" href="{% url 'posts:domepost-create' dome.pk %}">Write a demo post</a>
+      <a class="button secondary-action" href="{% url 'posts:htmxdomeposts' dome.pk %}" hx-get="{% url 'posts:htmxdomeposts' dome.pk %}" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true">Browse sandbox posts</a>
     </div>
-    {%endif%}
-   </div>
-</div>
- <div class="card-footer">
-     <div class="card-footer-item">
-         <span>{{dome.posts.count}} post{{dome.posts.count|pluralize}}</span>
-     </div>
-     <div class="card-footer-item">
-         <span>{{dome.members.count}} member{{dome.members.count|pluralize}}</span>
-     </div>
-     {% if can_administer %}
-     <div class="card-footer-item">
-        <a class="button is-secondary" href="{%url 'domes:dome-update' dome.pk %}">update</a>
-     </div>
-     <div class="card-footer-item">
-        <a class="button is-danger" href="{% url 'domes:dome-delete' dome.pk %}">delete</a>
-     </div>
-    {%endif%}
-</div>
-</div>
+  </header>
+  <ol class="sandbox-guide">
+    <li>
+      <span class="sandbox-step">1</span>
+      <h3>Write a post</h3>
+      <p>Share a fictional update inside this Dome. Rich text is sanitized on the server.</p>
+    </li>
+    <li>
+      <span class="sandbox-step">2</span>
+      <h3>Reply or react</h3>
+      <p>Open a post to leave a comment, or use the reaction control to see the count update.</p>
+    </li>
+    <li>
+      <span class="sandbox-step">3</span>
+      <h3>Open #general</h3>
+      <p>Send a short message and watch the authorized private channel update.</p>
+    </li>
+  </ol>
+  <dl class="sandbox-facts">
+    <div><dt>Visibility</dt><dd>Shared with other demo visitors</dd></div>
+    <div><dt>Input</dt><dd>Text only—no personal information</dd></div>
+    <div><dt>Reset</dt><dd>Daily at 00:00 UTC</dd></div>
+    <div><dt>Session</dt><dd>30 minutes</dd></div>
+  </dl>
+  {% else %}
+  <div class="dome-summary">
+    <header class="dome-summary-header">
+      {% if dome.icon %}
+      <img class="dome-avatar" src="{% url 'domes:dome-media' dome.pk 'icon' %}" alt="">
+      {% else %}
+      <span class="dome-avatar" aria-hidden="true">{{ dome.title|slice:":1" }}</span>
+      {% endif %}
+      <div>
+        <h2>{{ dome.title }}</h2>
+        <p>Owned by <a href="{% url 'posts:user-posts' dome.user.username %}">@{{ dome.user.username }}</a></p>
+      </div>
+    </header>
+    <p class="dome-summary-copy">{{ dome.description }}</p>
+    <p><time datetime="{{ dome.date|date:'c' }}">Created {{ dome.date|date:"F j, Y" }}</time></p>
+    <div class="dome-stats" aria-label="Dome activity">
+      <div class="dome-stat"><strong>{{ dome.posts.count }}</strong><span>post{{ dome.posts.count|pluralize }}</span></div>
+      <div class="dome-stat"><strong>{{ dome.members.count }}</strong><span>member{{ dome.members.count|pluralize }}</span></div>
+    </div>
+    {% if can_administer %}
+    <div class="composer-actions">
+      <a class="button secondary-action" href="{% url 'domes:dome-update' dome.pk %}">Edit Dome</a>
+      <a class="button is-danger is-light" href="{% url 'domes:dome-delete' dome.pk %}">Delete Dome</a>
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+</article>

@@ -422,7 +422,6 @@ class PrivateMediaMigrationTests(TestCase):
 @override_settings(
     DEMO_ACCOUNT_ENABLED=True,
     DEMO_USERNAME="guest-sandbox",
-    DEMO_DOME_TITLE="Guest Dome",
 )
 class DemoSandboxTests(TestCase):
     def setUp(self):
@@ -465,6 +464,31 @@ class DemoSandboxTests(TestCase):
         self.assertEqual(response.headers["X-Robots-Tag"], "noindex, nofollow")
         self.assertEqual(int(self.client.session["_auth_user_id"]), demo.pk)
         self.assertLessEqual(self.client.session.get_expiry_age(), 30 * 60)
+
+    def test_login_explains_shared_demo_boundaries_before_entry(self):
+        response = self.client.get(reverse("users:login"))
+        self.assertContains(response, "Shared guest sandbox")
+        self.assertContains(response, "Other visitors may see demo content")
+        self.assertContains(response, "Do not enter personal information")
+        self.assertContains(response, "00:00 UTC")
+        self.assertContains(response, "30 minutes")
+
+    def test_every_authenticated_demo_page_is_nonindexed_and_not_cached(self):
+        demo = self.reset()
+        dome = Dome.objects.get(user=demo)
+        self.client.force_login(demo)
+        response = self.client.get(reverse("domes:dome-detail", args=[dome.pk]))
+        self.assertEqual(response.headers["X-Robots-Tag"], "noindex, nofollow")
+        self.assertEqual(response.headers["Cache-Control"], "no-store")
+        self.assertEqual(response.headers["Pragma"], "no-cache")
+        self.assertContains(response, "Shared guest sandbox")
+        self.assertContains(response, "Exit demo")
+        self.assertNotContains(response, "Inbox")
+        self.assertNotContains(response, "Notifications")
+        self.assertNotContains(
+            response,
+            reverse("domes:dome-media", args=[dome.pk, "icon"]),
+        )
 
     def test_demo_login_rejects_usable_password_account(self):
         demo = self.reset()
