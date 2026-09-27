@@ -32,3 +32,4 @@ backups/
 
 # Local browser QA
 paradome/settings/qa_runtime.py
+.impeccable/review/

@@ -1,0 +1,16 @@
+{% extends "engineering/base.html" %}
+{% block title %}Permission explorer · ParaDome engineering lab{% endblock %}
+{% block content %}
+<header class="lab-run-heading"><div><h1>Who can do what?</h1><p>Explore the same pure decision evaluator used by ParaDome’s Dome access checks.</p></div><a href="{% url 'engineering:index' %}">Back to the lab</a></header>
+<p class="lab-notice">{{ simulation_notice }} No real user, Dome, or membership is changed.</p>
+<div class="lab-permissions-layout">
+  <form class="lab-panel" method="get" action="{% url 'engineering:permissions' %}">
+    <h2>Choose a hypothetical situation</h2>
+    <label for="permission-role">Visitor role</label><select id="permission-role" name="role">{% for role in roles %}<option value="{{ role.value }}"{% if role.value == selected_role %} selected{% endif %}>{{ role.label }}</option>{% endfor %}</select>
+    <label for="permission-resource">Dome type</label><select id="permission-resource" name="resource">{% for resource in resources %}<option value="{{ resource.value }}"{% if resource.value == selected_resource %} selected{% endif %}>{{ resource.label }}</option>{% endfor %}</select>
+    <button class="lab-button" type="submit">Evaluate permissions</button>
+  </form>
+  <section class="lab-panel" aria-labelledby="permission-result"><h2 id="permission-result">{{ role_label }} · {{ resource_label }}</h2><p>{{ resource_description }}</p><ul class="lab-permission-results">{% for decision in decisions %}<li><div><strong>{{ decision.label }}</strong><span class="lab-state-tag {% if decision.allowed %}is-delivered{% else %}is-retry{% endif %}">{% if decision.allowed %}Allowed{% else %}Denied{% endif %}</span></div><p>{{ decision.explanation }}</p></li>{% endfor %}</ul></section>
+</div>
+<section class="lab-section"><h2>One policy, two kinds of check</h2><p class="lab-readable">The object checks use the pure evaluator; queryset filters apply equivalent rules when listing Domes. Matrix tests compare both paths. A public Dome can be readable without granting chat participation or moderation.</p><p><a href="{{ source_base }}/Domes/access.py">Read the policy</a> · <a href="{{ source_base }}/engineering/test_permissions.py">Inspect the parity matrix tests</a></p></section>
+{% endblock %}

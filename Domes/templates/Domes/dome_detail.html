@@ -38,6 +38,10 @@
         </a>
       </nav>
 
+      {% if engineering_lab_enabled %}
+      <a class="dome-nav-link" href="{% url 'engineering:index' %}">Explore the engineering lab</a>
+      {% endif %}
+
       <p class="dome-section-label">Chat channels</p>
       {% include "Domes/dome_detail_categories.html" %}
 
@@ -74,6 +78,9 @@
         </details>
       </div>
 
+      {% if engineering_lab_enabled %}
+      <p class="engineering-lab-invite"><a href="{% url 'engineering:index' %}">Explore the engineering lab</a> · A separate, browser-owned delivery and ML walkthrough.</p>
+      {% endif %}
       <div class="content-panel" id="main-content" tabindex="-1">
         {% block dome_content %}
           {% include "Domes/dome_info.html" %}

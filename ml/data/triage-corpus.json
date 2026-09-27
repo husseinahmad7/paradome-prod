@@ -1,0 +1,1090 @@
+{
+  "schema_version": 1,
+  "dataset_version": "authored-english-v1",
+  "provenance": "LLM-authored synthetic technical discussions written specifically for this repository. No user messages, scraped corpora, personal data, or production telemetry. Not independently human-annotated.",
+  "label_policy": "An observed malfunction takes precedence over a proposed capability; a proposed capability takes precedence over a request for guidance. Otherwise a request for guidance is question.",
+  "split_policy": "Within each ordered class block of 30 scenario groups, index modulo 5 assigns 0,1,2 to train, 3 to validation, 4 to test. Assignment frozen before fitting. Four paraphrases always remain together. No corpus-derived vocabulary or IDF is fitted on validation/test.",
+  "groups": [
+    {
+      "id": "bug-login",
+      "label": "bug report",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "After signing in successfully, I am sent straight back to the login page.",
+        "The login form accepts my password but the next request forgets the session.",
+        "I can reproduce a sign-in loop in two browsers; valid credentials never open the dashboard.",
+        "Yesterday login worked. Today the session cookie disappears immediately after authentication."
+      ]
+    },
+    {
+      "id": "bug-save",
+      "label": "bug report",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "The editor says saved, but my text disappears when I reload the page.",
+        "Saving a draft returns success while the database still contains the previous version.",
+        "I edited the title and pressed save; reopening the record shows the old title.",
+        "Changes made in the form are silently discarded even though a success banner appears."
+      ]
+    },
+    {
+      "id": "bug-upload",
+      "label": "bug report",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Uploading a small PNG fails with a server error, although JPEG uploads work.",
+        "The attachment endpoint returns 500 for a valid image below the size limit.",
+        "A two hundred kilobyte screenshot is rejected as too large every time I attach it.",
+        "Can someone check the uploader? It crashes on a valid PNG in the current release."
+      ]
+    },
+    {
+      "id": "bug-duplicate",
+      "label": "bug report",
+      "split": "validation",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Clicking submit once creates two identical records in the inbox.",
+        "One request is producing duplicate comments after the latest deployment.",
+        "I received the same notification twice even though only one message was sent.",
+        "The retry path has a defect: a repeated request inserts a second row instead of reusing the first."
+      ]
+    },
+    {
+      "id": "bug-permission",
+      "label": "bug report",
+      "split": "test",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "An account outside the private group can read its posts through the detail URL.",
+        "The access check is broken: removing a member still leaves their download link usable.",
+        "I signed out and could still open a private attachment with its copied address.",
+        "A viewer was able to delete another user's message, contrary to the permission settings."
+      ]
+    },
+    {
+      "id": "bug-pagination",
+      "label": "bug report",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "The next-page button repeats the first ten results instead of showing more.",
+        "Page three crashes when the search returns exactly twenty records.",
+        "Several entries disappear between pages even though no records changed.",
+        "The final page contains duplicate rows and the page counter is wrong."
+      ]
+    },
+    {
+      "id": "bug-timezone",
+      "label": "bug report",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Scheduled messages are delivered three hours early after the timezone setting changes.",
+        "The displayed deadline is a day earlier than the date stored on the record.",
+        "Events created near midnight appear under yesterday in the activity list.",
+        "Our timestamps are wrong after daylight saving; local times are being interpreted as UTC."
+      ]
+    },
+    {
+      "id": "bug-notification",
+      "label": "bug report",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Unread notifications never clear after I open them.",
+        "Marking a notification as read fails with a 403 response for its owner.",
+        "The badge still shows five unread items after the list is empty.",
+        "Notifications have stopped arriving since the release, although new messages are stored correctly."
+      ]
+    },
+    {
+      "id": "bug-search",
+      "label": "bug report",
+      "split": "validation",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Searching for an exact visible title returns no results.",
+        "The search page crashes whenever the query contains an apostrophe.",
+        "An archived record still appears in search even after the index refresh.",
+        "The results ignore the selected category filter and show unrelated categories."
+      ]
+    },
+    {
+      "id": "bug-mobile",
+      "label": "bug report",
+      "split": "test",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "On a narrow screen the submit button is clipped and cannot be reached.",
+        "Opening the mobile menu covers the close control so I cannot dismiss it.",
+        "The message composer overflows its container on my phone.",
+        "At two hundred percent zoom the navigation overlaps the form and hides its label."
+      ]
+    },
+    {
+      "id": "bug-retry",
+      "label": "bug report",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "The failed job remains stuck even after I press retry.",
+        "Retrying a timed-out operation raises an exception instead of resuming delivery.",
+        "The second attempt reports success but the destination inbox is still empty.",
+        "A recovered request overwrites the newer status with an old failure result."
+      ]
+    },
+    {
+      "id": "bug-counter",
+      "label": "bug report",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Removing a reaction makes the like count negative.",
+        "The counter increases twice when I react once and refresh.",
+        "The displayed reply total differs from the number of stored replies.",
+        "A deleted message still contributes to the unread count; the badge is incorrect."
+      ]
+    },
+    {
+      "id": "bug-email",
+      "label": "bug report",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Password reset emails contain an expired link immediately after they arrive.",
+        "The feedback form raises a server error rather than sending the email.",
+        "Mail is sent with the wrong recipient despite the form showing the intended address.",
+        "Reset emails stopped being delivered after the SMTP configuration update."
+      ]
+    },
+    {
+      "id": "bug-cache",
+      "label": "bug report",
+      "split": "validation",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "The dashboard shows another account's name until I refresh twice.",
+        "A cached private page is visible after logout in a new browser tab.",
+        "Updating the settings never invalidates the cache, so the old value persists.",
+        "The cache key ignores the tenant and returns data belonging to a different workspace."
+      ]
+    },
+    {
+      "id": "bug-csv",
+      "label": "bug report",
+      "split": "test",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "The CSV export truncates names containing commas.",
+        "Downloading the report produces an empty file although there are forty matching rows.",
+        "Exported amounts are doubled compared with the values on the screen.",
+        "The report generator crashes when a record contains a newline in its notes."
+      ]
+    },
+    {
+      "id": "bug-migration",
+      "label": "bug report",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "The migration fails on an existing database because it adds a non-null column without a default.",
+        "Deploying the latest schema raises a duplicate-index error.",
+        "A clean database migrates successfully, but upgrading the previous release crashes halfway through.",
+        "The rollback migration drops the wrong constraint and leaves the application unable to start."
+      ]
+    },
+    {
+      "id": "bug-webhook",
+      "label": "bug report",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "The webhook receiver accepts an invalid signature and processes the event.",
+        "A legitimate callback is rejected because the signature is computed from the parsed JSON.",
+        "Webhook retries are arriving, but every attempt fails with a missing-header exception.",
+        "The same signed event is being applied twice despite its unchanged event identifier."
+      ]
+    },
+    {
+      "id": "bug-filter",
+      "label": "bug report",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Selecting the closed status filter still displays open tickets.",
+        "Changing the date range resets the category without updating the visible control.",
+        "The clear-filter action leaves a hidden query parameter that excludes all results.",
+        "An empty filter crashes the list view instead of displaying all records."
+      ]
+    },
+    {
+      "id": "bug-session",
+      "label": "bug report",
+      "split": "validation",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "My session expires during an active request, and the form exposes a traceback.",
+        "Logging out in one tab leaves the other tab able to submit protected changes.",
+        "The remember-me setting is ignored and the account is logged out after one minute.",
+        "Session renewal keeps changing the identifier and causes intermittent CSRF failures."
+      ]
+    },
+    {
+      "id": "bug-file-delete",
+      "label": "bug report",
+      "split": "test",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Deleting an attachment removes the row but leaves its download accessible.",
+        "The file removal endpoint returns success while the object remains visible.",
+        "Deleting one image also deletes the thumbnail belonging to a different record.",
+        "The application crashes when deleting a post whose attachment is already missing."
+      ]
+    },
+    {
+      "id": "bug-channel",
+      "label": "bug report",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Joining a channel fails with a uniqueness error when I double-click the button.",
+        "A channel message appears in the wrong conversation after reconnecting.",
+        "Leaving the chat does not unsubscribe the browser, so private events still arrive.",
+        "The conversation list is blank even though the account has active memberships."
+      ]
+    },
+    {
+      "id": "bug-validation",
+      "label": "bug report",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "The form accepts a negative quantity and stores an invalid total.",
+        "A required field can be submitted empty by sending the request directly.",
+        "Entering a valid international phone number triggers an unrelated password error.",
+        "Validation errors clear all typed content rather than keeping the rejected values."
+      ]
+    },
+    {
+      "id": "bug-race",
+      "label": "bug report",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Two simultaneous approvals both succeed and deduct the balance twice.",
+        "A concurrent update silently replaces the newer value with an older one.",
+        "The transaction commits the order but loses its associated event under load.",
+        "When two workers claim the same record, both deliver the message."
+      ]
+    },
+    {
+      "id": "bug-image",
+      "label": "bug report",
+      "split": "validation",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "The portrait loads at its original resolution despite the responsive image settings.",
+        "The generated thumbnail is rotated incorrectly for photos from my phone.",
+        "An uploaded image with transparency renders as a solid black rectangle.",
+        "Image processing runs out of memory for a file that passes the upload checks."
+      ]
+    },
+    {
+      "id": "bug-routing",
+      "label": "bug report",
+      "split": "test",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Opening a bookmarked detail URL returns 404 even though the record exists.",
+        "The trailing-slash redirect loses the query string on the search page.",
+        "The reset button sends me to the production dashboard instead of the sandbox.",
+        "A valid UUID in the route triggers an unhandled conversion exception."
+      ]
+    },
+    {
+      "id": "bug-transaction",
+      "label": "bug report",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "If notification creation fails, the post is still saved without its required event.",
+        "The receipt is committed even when writing the inbox entry rolls back.",
+        "An exception between two inserts leaves a partially created account.",
+        "The rollback path leaves the delivery status marked complete although nothing reached the destination."
+      ]
+    },
+    {
+      "id": "bug-rate-limit",
+      "label": "bug report",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "The limiter blocks every visitor after a single shared demo account makes several requests.",
+        "The rate limit can be bypassed by changing an untrusted forwarded header.",
+        "Requests remain blocked after the advertised retry window has elapsed.",
+        "The login endpoint returns an internal error when its rate-limit table is temporarily unavailable."
+      ]
+    },
+    {
+      "id": "bug-ordering",
+      "label": "bug report",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Messages appear out of order when two records share the same timestamp.",
+        "The activity timeline reverses older events after loading the next page.",
+        "Sorting by title sorts numeric identifiers instead of the visible text.",
+        "Newly created records appear at the bottom despite selecting newest first."
+      ]
+    },
+    {
+      "id": "bug-browser",
+      "label": "bug report",
+      "split": "validation",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "The form works with JavaScript enabled but submits to a missing route without it.",
+        "Pressing Enter submits the message twice in the current browser.",
+        "Keyboard focus disappears after the panel is replaced.",
+        "A failed asynchronous request leaves the submit button permanently disabled."
+      ]
+    },
+    {
+      "id": "bug-startup",
+      "label": "bug report",
+      "split": "test",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "The application fails to start because a required environment variable is parsed incorrectly.",
+        "The health endpoint returns 500 after a clean installation.",
+        "Static file collection crashes on a missing referenced stylesheet.",
+        "Starting a second server process causes the configuration loader to overwrite a valid setting."
+      ]
+    },
+    {
+      "id": "idea-preview",
+      "label": "idea",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Could we add a preview before publishing a message?",
+        "A side-by-side draft preview would make longer announcements easier to review.",
+        "I propose a read-only preview mode that uses the same rendering as the published page.",
+        "It would be useful to see the final formatting before confirming a submission."
+      ]
+    },
+    {
+      "id": "idea-bulk",
+      "label": "idea",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Please consider a bulk action for archiving several selected records.",
+        "I would like to select a group of messages and mark them read together.",
+        "A batch approval screen could reduce repetitive clicks for moderators.",
+        "What about adding a select-all control with a confirmation for bulk changes?"
+      ]
+    },
+    {
+      "id": "idea-history",
+      "label": "idea",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "An edit history showing who changed each field would be useful.",
+        "I suggest keeping previous versions of a post with a comparison view.",
+        "Could the next release include a timeline of record revisions?",
+        "We could expose a read-only change log so operators can understand how a value evolved."
+      ]
+    },
+    {
+      "id": "idea-offline",
+      "label": "idea",
+      "split": "validation",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "An offline draft mode would help when connectivity is unreliable.",
+        "I would like the composer to retain unsent text locally until the connection returns.",
+        "Consider allowing users to continue writing while the network is unavailable.",
+        "We could add a small local draft store with an explicit resume action."
+      ]
+    },
+    {
+      "id": "idea-shortcuts",
+      "label": "idea",
+      "split": "test",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Could we add keyboard shortcuts for moving between conversations?",
+        "A command palette would make frequent navigation actions faster.",
+        "I suggest an optional shortcut for opening the message composer.",
+        "Power users would benefit from searchable actions accessible from the keyboard."
+      ]
+    },
+    {
+      "id": "idea-digest",
+      "label": "idea",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Please add an optional daily digest instead of sending every notification separately.",
+        "A weekly summary of workspace activity could reduce email noise.",
+        "I would like a setting that groups low-priority alerts into one message.",
+        "We could offer a digest schedule with a preview of the included events."
+      ]
+    },
+    {
+      "id": "idea-saved-search",
+      "label": "idea",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Saving a search and its filters for later would be convenient.",
+        "I propose named filter presets for common support views.",
+        "Could users bookmark a query inside the application?",
+        "A saved-search menu could make repeated investigations less tedious."
+      ]
+    },
+    {
+      "id": "idea-expiry",
+      "label": "idea",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Temporary invitation links with configurable expiration would be a useful addition.",
+        "I suggest allowing owners to set a lifetime when creating a share link.",
+        "Could the sharing dialog offer one-hour and one-day access options?",
+        "We could introduce expiring links for short-lived collaboration sessions."
+      ]
+    },
+    {
+      "id": "idea-labels",
+      "label": "idea",
+      "split": "validation",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Custom labels would help teams organize discussions beyond the fixed categories.",
+        "Please consider colored tags with accessible text names.",
+        "I would like an option to assign several descriptive labels to one ticket.",
+        "A team-managed tag vocabulary could make the archive easier to browse."
+      ]
+    },
+    {
+      "id": "idea-export",
+      "label": "idea",
+      "split": "test",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Could we provide a downloadable activity report for a selected date range?",
+        "An export to a plain CSV file would be useful for offline analysis.",
+        "I propose a report page that lets owners choose which columns to include.",
+        "We could add a lightweight data export without depending on a spreadsheet service."
+      ]
+    },
+    {
+      "id": "idea-access-preview",
+      "label": "idea",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "A permission preview would help owners see what each role can access.",
+        "I suggest a read-only role explorer before changing membership settings.",
+        "Could we display the reason an action is allowed or denied?",
+        "An access matrix in the settings page could make policy decisions easier to audit."
+      ]
+    },
+    {
+      "id": "idea-templates",
+      "label": "idea",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Reusable message templates would make routine support replies faster.",
+        "Please add an optional template picker to the announcement editor.",
+        "I propose starter formats for incident updates and release notes.",
+        "We could let each workspace save a few text snippets for common responses."
+      ]
+    },
+    {
+      "id": "idea-pins",
+      "label": "idea",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Pinning important messages at the top of a channel would be helpful.",
+        "Could moderators highlight a small set of reference posts?",
+        "I would like a dedicated area for pinned onboarding information.",
+        "An optional pinned-message list could keep essential links easy to find."
+      ]
+    },
+    {
+      "id": "idea-snooze",
+      "label": "idea",
+      "split": "validation",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "A snooze option could hide a notification until a chosen time.",
+        "Please consider reminders for messages that need a later response.",
+        "I suggest a remind-me-later action with a short list of durations.",
+        "We could let visitors postpone a task without marking it complete."
+      ]
+    },
+    {
+      "id": "idea-dry-run",
+      "label": "idea",
+      "split": "test",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Could administrative actions offer a dry-run preview of affected records?",
+        "I propose a simulation mode before applying a bulk permission change.",
+        "A confirmation screen listing the expected changes would make maintenance safer.",
+        "We could show the scope of an operation before committing it."
+      ]
+    },
+    {
+      "id": "idea-diff",
+      "label": "idea",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "A compact comparison between two configuration versions would be useful.",
+        "I suggest highlighting changed fields in the release review screen.",
+        "Could we add a before-and-after view for edited announcements?",
+        "Operators would benefit from a small diff panel when reviewing a proposed update."
+      ]
+    },
+    {
+      "id": "idea-progress",
+      "label": "idea",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Please add a progress indicator for long-running report generation.",
+        "I propose displaying completed stages while a maintenance task runs.",
+        "Could the interface explain what is happening during a slow operation?",
+        "A step-by-step progress view would make waits easier to understand."
+      ]
+    },
+    {
+      "id": "idea-language",
+      "label": "idea",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "An optional second interface language would make onboarding more inclusive.",
+        "I would like a language selector that does not change the account settings.",
+        "Consider adding right-to-left layout support to the message list.",
+        "We could separate translation strings from templates to support future locales."
+      ]
+    },
+    {
+      "id": "idea-bookmarks",
+      "label": "idea",
+      "split": "validation",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Personal bookmarks would help users return to useful discussions.",
+        "Could we add a private saved-items list that only the owner can see?",
+        "I propose a bookmark action distinct from public reactions.",
+        "An optional reading list could collect posts without notifying their authors."
+      ]
+    },
+    {
+      "id": "idea-status",
+      "label": "idea",
+      "split": "test",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "A public status page could explain ongoing service incidents.",
+        "I suggest a simple maintenance banner with an estimated update time.",
+        "Could we show the availability of optional features before users try them?",
+        "A small service-health panel would help visitors understand temporary limitations."
+      ]
+    },
+    {
+      "id": "idea-attachments",
+      "label": "idea",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Could image attachments include a text-description field?",
+        "I propose an accessible caption editor alongside the upload control.",
+        "It would be useful to preview image dimensions before submitting the file.",
+        "We could add an optional description so shared screenshots are understandable without seeing them."
+      ]
+    },
+    {
+      "id": "idea-retention",
+      "label": "idea",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "A configurable retention window would help keep old audit records manageable.",
+        "Please consider a cleanup preview showing what will expire next.",
+        "I would like workspace owners to choose how long inactive drafts are retained.",
+        "We could provide a retention settings page with safe minimum limits."
+      ]
+    },
+    {
+      "id": "idea-comparison",
+      "label": "idea",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "An interactive comparison of delivery strategies would strengthen the demo.",
+        "I suggest a switch between immediate dispatch and an outbox-based workflow.",
+        "Could the lab illustrate the difference between a retry and a duplicate effect?",
+        "We could add a side-by-side explanation of acknowledgment and destination persistence."
+      ]
+    },
+    {
+      "id": "idea-mentions",
+      "label": "idea",
+      "split": "validation",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Could users mention a team rather than listing each member?",
+        "A group-mention feature would simplify announcements to a small working group.",
+        "I propose opt-in mentions with a clear notification preview.",
+        "We could introduce named groups that can be referenced in a message."
+      ]
+    },
+    {
+      "id": "idea-audit-search",
+      "label": "idea",
+      "split": "test",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Filtering audit events by request identifier would make investigations easier.",
+        "I suggest adding a search box for the execution timeline.",
+        "Could we let operators narrow the event list to a single action?",
+        "A request-level filter could connect related records across the activity view."
+      ]
+    },
+    {
+      "id": "idea-theme",
+      "label": "idea",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "An optional high-contrast theme would be a useful accessibility improvement.",
+        "Please consider a theme setting that follows the system preference.",
+        "I would like a reduced-density layout for reading long discussions.",
+        "We could provide a compact and a comfortable spacing option without changing the content."
+      ]
+    },
+    {
+      "id": "idea-onboarding",
+      "label": "idea",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "A short guided tour could help first-time visitors understand the demo.",
+        "I propose contextual explanations next to the three main controls.",
+        "Could we include a sample message that visitors can edit before submitting?",
+        "An optional walkthrough would make the architectural behavior easier to discover."
+      ]
+    },
+    {
+      "id": "idea-model-review",
+      "label": "idea",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "It would be useful to compare the suggested category with a visitor-selected label.",
+        "I suggest an explanation panel showing which terms influenced the classifier.",
+        "Could the model card include examples where the system chooses not to predict?",
+        "We could let visitors inspect the confidence threshold without changing the deployed model."
+      ]
+    },
+    {
+      "id": "idea-read-receipt",
+      "label": "idea",
+      "split": "validation",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Optional read receipts could help small teams coordinate urgent discussions.",
+        "I propose a per-channel setting for displaying whether a message has been opened.",
+        "Could we add an acknowledgment button that does not imply agreement with the content?",
+        "A lightweight seen indicator would be useful if recipients can opt out."
+      ]
+    },
+    {
+      "id": "idea-sandbox-reset",
+      "label": "idea",
+      "split": "test",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "A reset action would let visitors repeat the demo from a known starting point.",
+        "I suggest a way to replace only the current visitor's practice records.",
+        "Could the lab offer a fresh-run button after the walkthrough is complete?",
+        "We could provide a clearly scoped reset without deleting anyone else's sandbox."
+      ]
+    },
+    {
+      "id": "question-transaction",
+      "label": "question",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "How should I choose the transaction boundary when saving a record and its event?",
+        "What is the difference between an atomic block and an on-commit callback?",
+        "Can someone explain when a database transaction becomes visible to another connection?",
+        "I am learning Django transactions; where should related inserts be grouped?"
+      ]
+    },
+    {
+      "id": "question-index",
+      "label": "question",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Which columns should be included in an index for this filtered list?",
+        "How do I decide whether a composite index will help a query?",
+        "What is the purpose of column order in a multi-column database index?",
+        "Could someone explain how to read an index choice in a query plan?"
+      ]
+    },
+    {
+      "id": "question-csrf",
+      "label": "question",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Why does a POST form need a CSRF token even when the user is logged in?",
+        "How is CSRF protection different from checking authentication?",
+        "What should a normal HTML form include to satisfy Django's CSRF middleware?",
+        "Can someone explain the relationship between cookies and cross-site request forgery?"
+      ]
+    },
+    {
+      "id": "question-idempotency",
+      "label": "question",
+      "split": "validation",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "How long should an idempotency key remain valid?",
+        "What is the expected response when a client repeats the same operation identifier?",
+        "How does an idempotency key differ from a request tracing identifier?",
+        "Could someone explain where duplicate-prevention keys are usually stored?"
+      ]
+    },
+    {
+      "id": "question-outbox",
+      "label": "question",
+      "split": "test",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "What problem does a transactional outbox solve?",
+        "How is an outbox different from sending an event immediately after saving a row?",
+        "Can someone explain why a database write and a network call cannot share one normal transaction?",
+        "I am studying reliable delivery; when is the outbox pattern appropriate?"
+      ]
+    },
+    {
+      "id": "question-lease",
+      "label": "question",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "How does a lease differ from a permanent lock?",
+        "What should happen when a worker's claim expires before it finishes?",
+        "Could someone explain why a claim token is needed in addition to a timestamp?",
+        "How is lease duration selected for a short request-driven task?"
+      ]
+    },
+    {
+      "id": "question-sessions",
+      "label": "question",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Where does Django store session data with the database session backend?",
+        "How do session expiry and cookie expiry interact?",
+        "What information belongs in a session instead of a user profile?",
+        "Could someone explain what happens to session keys during login?"
+      ]
+    },
+    {
+      "id": "question-private-media",
+      "label": "question",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "How can a Django view authorize a file download?",
+        "What is the difference between public static files and protected user uploads?",
+        "Where should private attachments be stored on a small hosted application?",
+        "Can someone explain how download permissions can be checked for each object?"
+      ]
+    },
+    {
+      "id": "question-rate-limit",
+      "label": "question",
+      "split": "validation",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Should a public form be rate-limited by IP address or by account?",
+        "How do fixed-window and sliding-window rate limits differ?",
+        "What does the Retry-After response header tell a client?",
+        "Could someone explain the tradeoffs of storing rate-limit counters in a database?"
+      ]
+    },
+    {
+      "id": "question-tfidf",
+      "label": "question",
+      "split": "test",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "What does inverse document frequency measure?",
+        "How does TF-IDF turn a short message into numeric features?",
+        "Why are rare words given more weight than words appearing in every document?",
+        "Can someone explain the difference between a unigram and a bigram?"
+      ]
+    },
+    {
+      "id": "question-softmax",
+      "label": "question",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "How are logistic-regression scores converted into class probabilities?",
+        "What is the purpose of the softmax function in multiclass classification?",
+        "Does a model score of eighty percent mean eighty percent of similar predictions are correct?",
+        "Could someone explain how calibration differs from a model's raw confidence score?"
+      ]
+    },
+    {
+      "id": "question-split",
+      "label": "question",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Why should paraphrases stay in the same dataset split?",
+        "How can I separate training and validation data without leaking related examples?",
+        "What is the role of a final untouched test set?",
+        "Can someone explain why selecting a threshold on the test set is misleading?"
+      ]
+    },
+    {
+      "id": "question-metrics",
+      "label": "question",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "How do precision and recall differ for a three-class classifier?",
+        "What does macro-F1 tell me when each category has a different number of examples?",
+        "How should coverage be measured when a model can abstain?",
+        "Could someone explain why accuracy alone may hide a weak category?"
+      ]
+    },
+    {
+      "id": "question-normalization",
+      "label": "question",
+      "split": "validation",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "What changes when text is normalized with NFKC?",
+        "How does lowercasing affect vocabulary matching in a text classifier?",
+        "Should punctuation be removed before generating word bigrams?",
+        "Can someone explain Unicode normalization with an example using full-width letters?"
+      ]
+    },
+    {
+      "id": "question-deploy",
+      "label": "question",
+      "split": "test",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "How can I deploy a Django application without a persistent background worker?",
+        "What is the difference between the web application's virtual environment and the shell's environment?",
+        "Where should deployment-specific configuration be loaded from?",
+        "Could someone explain what a WSGI server does on a managed host?"
+      ]
+    },
+    {
+      "id": "question-migration",
+      "label": "question",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "When should data cleanup run before adding a uniqueness constraint?",
+        "How do additive migrations make a release easier to roll back?",
+        "What is the difference between a schema migration and a data migration?",
+        "Can someone explain how to test a database migration against an existing dataset?"
+      ]
+    },
+    {
+      "id": "question-cache",
+      "label": "question",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "How should a cache key include tenant and permission context?",
+        "What is the difference between no-cache and no-store?",
+        "When is it safe to cache a response containing user-specific information?",
+        "Could someone explain what the Vary header means for an HTTP cache?"
+      ]
+    },
+    {
+      "id": "question-htmx",
+      "label": "question",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "How can the same endpoint return a full page and an HTML fragment?",
+        "What does HTMX change about a normal form submission?",
+        "How should an enhanced form work when JavaScript is unavailable?",
+        "Can someone explain where server-rendered fragments belong in a Django template structure?"
+      ]
+    },
+    {
+      "id": "question-testing",
+      "label": "question",
+      "split": "validation",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "How can a concurrency test use separate database connections?",
+        "What is the difference between a unit test and an integration test for delivery?",
+        "When should I use TransactionTestCase rather than TestCase?",
+        "Could someone explain how to test a race condition deterministically?"
+      ]
+    },
+    {
+      "id": "question-policy",
+      "label": "question",
+      "split": "test",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "How should object-level checks agree with filtered querysets?",
+        "What is the difference between being allowed to view a group and being allowed to manage it?",
+        "Where should shared authorization rules live in a Django project?",
+        "Can someone explain why checking membership only in the template is insufficient?"
+      ]
+    },
+    {
+      "id": "question-upload",
+      "label": "question",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "How can I check an uploaded image's dimensions before accepting it?",
+        "What is the difference between trusting a file extension and validating its content?",
+        "Which limits are useful for safely accepting small image attachments?",
+        "Could someone explain why a compressed file's byte size does not bound its decoded size?"
+      ]
+    },
+    {
+      "id": "question-inbox",
+      "label": "question",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Why should a consumer store a receipt when handling an event?",
+        "How can a unique event identifier prevent duplicate effects?",
+        "What should the sender do if delivery succeeded but the acknowledgment was lost?",
+        "Can someone explain why repeated delivery does not have to mean repeated processing?"
+      ]
+    },
+    {
+      "id": "question-tracing",
+      "label": "question",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "Which timings are useful in a request execution trace?",
+        "How can I distinguish processing time from time spent waiting for a user?",
+        "What information should be omitted from a public trace panel?",
+        "Could someone explain the role of a correlation identifier across several execution stages?"
+      ]
+    },
+    {
+      "id": "question-constraints",
+      "label": "question",
+      "split": "validation",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "When should validation be enforced by a database constraint as well as a form?",
+        "How does a unique constraint behave during simultaneous inserts?",
+        "What is the purpose of a check constraint on a counter?",
+        "Can someone explain how database constraints complement application-level validation?"
+      ]
+    },
+    {
+      "id": "question-sanitization",
+      "label": "question",
+      "split": "test",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "How is HTML sanitization different from escaping plain text?",
+        "Which approach is appropriate when a field intentionally accepts rich text?",
+        "Why should sanitization happen on the server as well as in the editor?",
+        "Could someone explain the risks of inserting event payloads directly as HTML?"
+      ]
+    },
+    {
+      "id": "question-cleanup",
+      "label": "question",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "How can a cleanup command delete expired records in bounded batches?",
+        "What is a reasonable way to schedule maintenance on a small hosting account?",
+        "Why should cleanup be idempotent?",
+        "Can someone explain how to avoid a long transaction when purging old trace records?"
+      ]
+    },
+    {
+      "id": "question-artifact",
+      "label": "question",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "What information must accompany exported classifier coefficients?",
+        "How can a small JSON model be evaluated without the original training libraries?",
+        "Why is a numeric parity test useful when replacing a training pipeline with custom inference?",
+        "Could someone explain the difference between storing model parameters and serializing executable objects?"
+      ]
+    },
+    {
+      "id": "question-csp",
+      "label": "question",
+      "split": "train",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "How does a Content Security Policy restrict scripts on a page?",
+        "What is the difference between a nonce and a hash in a script policy?",
+        "How should a server-rendered application handle inline scripts under a strict policy?",
+        "Can someone explain what frame-ancestors protects against?"
+      ]
+    },
+    {
+      "id": "question-performance",
+      "label": "question",
+      "split": "validation",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "How should I measure warm inference latency fairly?",
+        "What is the difference between the ninety-fifth percentile and the average response time?",
+        "Which resources contribute to a page's compressed transfer size?",
+        "Could someone explain how a cold request differs from a warm request?"
+      ]
+    },
+    {
+      "id": "question-rollback",
+      "label": "question",
+      "split": "test",
+      "provenance": "authored-english-v1",
+      "texts": [
+        "How can a feature flag simplify rollback of an additive release?",
+        "What should a deployment backup include besides the database?",
+        "When is it safer to retain new tables instead of reversing their migrations?",
+        "Can someone explain how to verify a backup before making a configuration cutover?"
+      ]
+    }
+  ]
+}
+

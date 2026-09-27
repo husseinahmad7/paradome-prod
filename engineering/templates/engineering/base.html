@@ -1,0 +1,37 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1730">
+  <meta name="description" content="An interactive, isolated Django engineering lab: inspect transactional delivery, recover from failure, explore permissions, and evaluate a compact text classifier.">
+  {% block robots %}{% endblock %}
+  <title>{% block title %}Engineering lab · ParaDome{% endblock %}</title>
+  <link rel="icon" href="{% static 'images/icon.png' %}">
+  <link rel="stylesheet" href="{% static 'css/paradome-app.css' %}">
+  <link rel="stylesheet" href="{% static 'engineering/lab.css' %}">
+  <meta name="htmx-config" content='{"allowEval":false,"allowScriptTags":false,"historyCacheSize":0,"selfRequestsOnly":true}'>
+  <script src="{% static 'js/htmx.min.js' %}" defer></script>
+  <script src="{% static 'engineering/lab.js' %}" defer></script>
+</head>
+<body class="paradome-app engineering-lab">
+  <a class="app-skip-link" href="#lab-main">Skip to main content</a>
+  <header class="lab-header">
+    <div class="lab-width lab-header-inner">
+      <a class="lab-brand" href="/" aria-label="ParaDome portfolio home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18V9l9-6 9 6v9l-9 3-9-3ZM3 9l9 4 9-4M12 13v8"></path></svg>ParaDome</a>
+      <nav aria-label="Engineering lab">
+        <a href="{% url 'engineering:index' %}"{% if request.resolver_match.url_name == 'index' %} aria-current="page"{% endif %}>Lab overview</a>
+        <a href="{% url 'engineering:permissions' %}"{% if request.resolver_match.url_name == 'permissions' %} aria-current="page"{% endif %}>Permissions</a>
+        <a href="/#section-projects">Portfolio</a>
+      </nav>
+    </div>
+  </header>
+  <main class="lab-width" id="lab-main" tabindex="-1">{% block content %}{% endblock %}</main>
+  <footer class="lab-width lab-footer">
+    <p><strong>ParaDome engineering lab</strong> · Designed and built by Hussein Ahmad.</p>
+    <p>Isolated lab records. Request-driven execution. Live chat delivery is unchanged.</p>
+    <a href="{% url 'engineering:index' %}#architecture">Read the architecture decisions</a>
+  </footer>
+</body>
+</html>

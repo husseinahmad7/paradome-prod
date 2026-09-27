@@ -1,0 +1,7 @@
+{% extends "engineering/base.html" %}
+{% block title %}Your delivery run · ParaDome engineering lab{% endblock %}
+{% block robots %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block content %}
+<header class="lab-run-heading"><div><h1>Your delivery workbench</h1><p>Submit a message. Lose its acknowledgement. Recover without a second inbox entry.</p></div><a href="{% url 'engineering:index' %}#architecture">How it works</a></header>
+{% include "engineering/_state.html" %}
+{% endblock %}

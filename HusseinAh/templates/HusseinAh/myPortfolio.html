@@ -280,6 +280,13 @@
                     </article>
                 </div>
 
+                {% if engineering_lab_enabled %}
+                <aside class="engineering-project-link">
+                    <div><h3>ParaDome engineering lab</h3><p>Submit a message, lose its acknowledgement, then recover without duplicating the inbox entry. Inspect the delivery trace, permissions, and a compact English classifier.</p></div>
+                    <a class="portfolio-button" href="{% url 'engineering:index' %}">Explore the engineering lab</a>
+                </aside>
+                {% endif %}
+
                 <div class="archive-heading">
                     <h3>Additional builds</h3>
                     <p>Focused systems across retrieval, data quality, service delivery, feedback, and visualization.</p>

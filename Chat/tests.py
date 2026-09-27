@@ -261,7 +261,8 @@ class ChatSecurityTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(ChatChannel.objects.filter(category=self.category).count(), 1)
 
-    def test_message_creation_is_rate_limited_after_forty_posts(self):
+    @patch("Domes.ratelimits.time", return_value=1_800_000_000)
+    def test_message_creation_is_rate_limited_after_forty_posts(self, clock):
         self.client.force_login(self.member)
         url = reverse("chat:chat-channel", args=[self.channel.pk])
         for index in range(40):
@@ -271,7 +272,14 @@ class ChatSecurityTests(TestCase):
             )
         response = self.client.post(url, {"body": "one-too-many"})
         self.assertEqual(response.status_code, 429)
+        self.assertEqual(response.headers["Retry-After"], "60")
         self.assertEqual(ChatMessage.objects.filter(channel=self.channel).count(), 40)
+
+        # A new fixed window accepts writes again, independent of test runtime.
+        clock.return_value += 60
+        response = self.client.post(url, {"body": "next-window"})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(ChatMessage.objects.filter(channel=self.channel).count(), 41)
 
 
 class DemoChatTests(TestCase):

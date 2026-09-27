@@ -11,6 +11,7 @@ from messages.models import Message
 from notify.models import Notification
 from posts.models import Comment, Follow, Like, Post, Stream
 from users.models import Profile
+from engineering.services import purge_expired_runs
 
 
 class Command(BaseCommand):
@@ -115,3 +116,6 @@ class Command(BaseCommand):
                 f"Reset demo sandbox for {demo_user.username} (Dome {dome.pk})."
             )
         )
+        # Reuse the existing midnight task: no additional task slot or worker.
+        purged = purge_expired_runs()
+        self.stdout.write(f"Purged {purged} expired engineering runs.")

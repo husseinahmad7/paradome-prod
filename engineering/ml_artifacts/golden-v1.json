@@ -1,0 +1,1154 @@
+{
+  "version": "triage-en-v1",
+  "tolerance": 1e-06,
+  "examples": [
+    {
+      "text": "An account outside the private group can read its posts through the detail URL.",
+      "scores": [
+        0.6628992365232752,
+        0.1903484577888667,
+        0.14675230568785821
+      ],
+      "logits": [
+        0.9185478146573913,
+        -0.32921880204729675,
+        -0.5893290126102473
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "The access check is broken: removing a member still leaves their download link usable.",
+      "scores": [
+        0.7164021250305294,
+        0.1362419623585849,
+        0.14735591261088565
+      ],
+      "logits": [
+        1.0803999994223654,
+        -0.5794091970827278,
+        -0.50099080233979
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "I signed out and could still open a private attachment with its copied address.",
+      "scores": [
+        0.570018393157779,
+        0.2762128372610178,
+        0.15376876958120317
+      ],
+      "logits": [
+        0.6782385207227809,
+        -0.04625839025245953,
+        -0.6319801304704744
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "A viewer was able to delete another user's message, contrary to the permission settings.",
+      "scores": [
+        0.2068973548587947,
+        0.5371665457808438,
+        0.2559360993603616
+      ],
+      "logits": [
+        -0.3889301296414849,
+        0.5651552578687628,
+        -0.1762251282274303
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "On a narrow screen the submit button is clipped and cannot be reached.",
+      "scores": [
+        0.46324236789173795,
+        0.20897597212202426,
+        0.3277816599862378
+      ],
+      "logits": [
+        0.3806445947983742,
+        -0.4153865156597248,
+        0.034741920861197734
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "Opening the mobile menu covers the close control so I cannot dismiss it.",
+      "scores": [
+        0.6800657032516181,
+        0.2415625967598425,
+        0.07837169998853945
+      ],
+      "logits": [
+        1.0652624332884824,
+        0.030201656696996572,
+        -1.0954640899856316
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "The message composer overflows its container on my phone.",
+      "scores": [
+        0.6867587241211164,
+        0.18069273404840203,
+        0.13254854183048156
+      ],
+      "logits": [
+        0.9934063794100796,
+        -0.34177866220938885,
+        -0.6516277172008432
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "At two hundred percent zoom the navigation overlaps the form and hides its label.",
+      "scores": [
+        0.7857420161974592,
+        0.10528496925544181,
+        0.10897301454709894
+      ],
+      "logits": [
+        1.3284953614386503,
+        -0.6814624866082825,
+        -0.6470328748305203
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "The CSV export truncates names containing commas.",
+      "scores": [
+        0.6555744633850015,
+        0.1786772017988226,
+        0.1657483348161759
+      ],
+      "logits": [
+        0.8916574568575781,
+        -0.40827360177954963,
+        -0.48338385507818116
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "Downloading the report produces an empty file although there are forty matching rows.",
+      "scores": [
+        0.687386639922545,
+        0.1627910204950893,
+        0.14982233958236574
+      ],
+      "logits": [
+        0.9879587907945905,
+        -0.45247084238214286,
+        -0.5354879484126008
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "Exported amounts are doubled compared with the values on the screen.",
+      "scores": [
+        0.6822890567274872,
+        0.15229969885237266,
+        0.1654112444201403
+      ],
+      "logits": [
+        0.9722072545827138,
+        -0.5273958677437077,
+        -0.4448113868391591
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "The report generator crashes when a record contains a newline in its notes.",
+      "scores": [
+        0.6816277759990237,
+        0.13744572678236622,
+        0.18092649721861
+      ],
+      "logits": [
+        0.9758824902548828,
+        -0.6253721107258295,
+        -0.3505103795292057
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "Deleting an attachment removes the row but leaves its download accessible.",
+      "scores": [
+        0.7204694080602596,
+        0.15073655002764647,
+        0.12879404191209404
+      ],
+      "logits": [
+        1.0953525816789182,
+        -0.46901676229321443,
+        -0.6263358193858565
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "The file removal endpoint returns success while the object remains visible.",
+      "scores": [
+        0.7664110629766832,
+        0.1264940022875963,
+        0.1070949347357205
+      ],
+      "logits": [
+        1.2565089157236546,
+        -0.5450148515219848,
+        -0.7114940642018222
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "Deleting one image also deletes the thumbnail belonging to a different record.",
+      "scores": [
+        0.37708084897246935,
+        0.3933452915517703,
+        0.22957385947576034
+      ],
+      "logits": [
+        0.15133553328064173,
+        0.19356374589634615,
+        -0.3448992791771404
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "The application crashes when deleting a post whose attachment is already missing.",
+      "scores": [
+        0.6413888550934904,
+        0.1481011982108761,
+        0.21050994669563344
+      ],
+      "logits": [
+        0.8599477019640006,
+        -0.6057923974435973,
+        -0.2541553045205558
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "Opening a bookmarked detail URL returns 404 even though the record exists.",
+      "scores": [
+        0.8520591105862796,
+        0.08201949062976426,
+        0.06592139878395602
+      ],
+      "logits": [
+        1.6332972638900007,
+        -0.7074017295279259,
+        -0.9258955343622276
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "The trailing-slash redirect loses the query string on the search page.",
+      "scores": [
+        0.83867387810412,
+        0.0927076310569708,
+        0.06861849083890917
+      ],
+      "logits": [
+        1.5685436741138272,
+        -0.6338274645868495,
+        -0.9347162095271303
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "The reset button sends me to the production dashboard instead of the sandbox.",
+      "scores": [
+        0.7869042325245964,
+        0.14009215279798926,
+        0.07300361467741444
+      ],
+      "logits": [
+        1.367801237375601,
+        -0.35800487654386526,
+        -1.0097963608318887
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "A valid UUID in the route triggers an unhandled conversion exception.",
+      "scores": [
+        0.7876924005827325,
+        0.1095574170892383,
+        0.1027501823280292
+      ],
+      "logits": [
+        1.3364886404842424,
+        -0.6361702497661914,
+        -0.7003183907182038
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "The application fails to start because a required environment variable is parsed incorrectly.",
+      "scores": [
+        0.6724816306861862,
+        0.17814196569682833,
+        0.1493764036169856
+      ],
+      "logits": [
+        0.9442998268436266,
+        -0.3840941767899452,
+        -0.5602056500538342
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "The health endpoint returns 500 after a clean installation.",
+      "scores": [
+        0.8428375373526706,
+        0.0848621035428648,
+        0.07230035910446465
+      ],
+      "logits": [
+        1.583897238574205,
+        -0.7118493533677337,
+        -0.8720478852066235
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "Static file collection crashes on a missing referenced stylesheet.",
+      "scores": [
+        0.4761991993723592,
+        0.20646655311104176,
+        0.31733424751659906
+      ],
+      "logits": [
+        0.41385948323636446,
+        -0.4218383406546775,
+        0.007978857418160318
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "Starting a second server process causes the configuration loader to overwrite a valid setting.",
+      "scores": [
+        0.5680034974711564,
+        0.2978480931522799,
+        0.13414840937656375
+      ],
+      "logits": [
+        0.6962416102265553,
+        0.05069763601856695,
+        -0.7469392462452751
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "Could we add keyboard shortcuts for moving between conversations?",
+      "scores": [
+        0.02146247475341356,
+        0.9353454196339851,
+        0.0431921056126015
+      ],
+      "logits": [
+        -1.4913205107027367,
+        2.2832893332147277,
+        -0.7919688225121435
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "A command palette would make frequent navigation actions faster.",
+      "scores": [
+        0.08248847763292241,
+        0.8214152073360266,
+        0.09609631503105094
+      ],
+      "logits": [
+        -0.8170208161007926,
+        1.4813492806418114,
+        -0.6643284645411716
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "I suggest an optional shortcut for opening the message composer.",
+      "scores": [
+        0.1222585086411863,
+        0.8304340272198223,
+        0.047307464138991395
+      ],
+      "logits": [
+        -0.32211370773002146,
+        1.5936970544746634,
+        -1.2715833467447946
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "Power users would benefit from searchable actions accessible from the keyboard.",
+      "scores": [
+        0.25855136152639197,
+        0.6000903161208573,
+        0.14135832235275075
+      ],
+      "logits": [
+        -0.07939646703935418,
+        0.762589338880399,
+        -0.6831928718411974
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "Could we provide a downloadable activity report for a selected date range?",
+      "scores": [
+        0.11662381728046635,
+        0.787531398675479,
+        0.09584478404405457
+      ],
+      "logits": [
+        -0.5712420851837151,
+        1.3387076381569551,
+        -0.7674655529733924
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "An export to a plain CSV file would be useful for offline analysis.",
+      "scores": [
+        0.02198719048811543,
+        0.9009114398905504,
+        0.07710136962133411
+      ],
+      "logits": [
+        -1.6558693133368003,
+        2.0570776152867443,
+        -0.4012083019500965
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "I propose a report page that lets owners choose which columns to include.",
+      "scores": [
+        0.10789612505365936,
+        0.6959588328344442,
+        0.19614504211189657
+      ],
+      "logits": [
+        -0.8206023294076475,
+        1.0435192217168416,
+        -0.22291689230934747
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "We could add a lightweight data export without depending on a spreadsheet service.",
+      "scores": [
+        0.049960554093894924,
+        0.8510298067960501,
+        0.09900963911005492
+      ],
+      "logits": [
+        -1.1730656039408855,
+        1.662147773685012,
+        -0.4890821697442792
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "Could administrative actions offer a dry-run preview of affected records?",
+      "scores": [
+        0.11306837806491857,
+        0.7535342084599055,
+        0.13339741347517592
+      ],
+      "logits": [
+        -0.6873738859530631,
+        1.2094077791764408,
+        -0.5220338932235302
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "I propose a simulation mode before applying a bulk permission change.",
+      "scores": [
+        0.109591250523981,
+        0.7288647675043405,
+        0.16154398197167855
+      ],
+      "logits": [
+        -0.7609168565948716,
+        1.1338138137548213,
+        -0.3728969571601022
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "A confirmation screen listing the expected changes would make maintenance safer.",
+      "scores": [
+        0.13369971719148255,
+        0.8062110862032313,
+        0.060089196605286
+      ],
+      "logits": [
+        -0.3323276441509917,
+        1.4644215887611942,
+        -1.1320939446103557
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "We could show the scope of an operation before committing it.",
+      "scores": [
+        0.06894961197018365,
+        0.8915571889976824,
+        0.039493199032133865
+      ],
+      "logits": [
+        -0.6674487040205241,
+        1.8921449038844582,
+        -1.2246961998640866
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "A public status page could explain ongoing service incidents.",
+      "scores": [
+        0.22646005300356306,
+        0.42559787922601555,
+        0.3479420677704214
+      ],
+      "logits": [
+        -0.35346460770299004,
+        0.27746178435193336,
+        0.07600282335090333
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "I suggest a simple maintenance banner with an estimated update time.",
+      "scores": [
+        0.34877859643495057,
+        0.491930119457562,
+        0.15929128410748747
+      ],
+      "logits": [
+        0.14660115964660309,
+        0.4905005057082351,
+        -0.6371016653549914
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "Could we show the availability of optional features before users try them?",
+      "scores": [
+        0.05520519052875615,
+        0.9051135556151313,
+        0.03968125385611246
+      ],
+      "logits": [
+        -0.8222751107998081,
+        1.9747283206660822,
+        -1.1524532098664262
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "A small service-health panel would help visitors understand temporary limitations.",
+      "scores": [
+        0.0747480687127906,
+        0.8296873887527002,
+        0.09556454253450915
+      ],
+      "logits": [
+        -0.8842013654727093,
+        1.5227242489954267,
+        -0.6385228835228705
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "Filtering audit events by request identifier would make investigations easier.",
+      "scores": [
+        0.15335525832809502,
+        0.7298831038978284,
+        0.11676163777407657
+      ],
+      "logits": [
+        -0.4291682010080813,
+        1.1309590089757677,
+        -0.7017908079678389
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "I suggest adding a search box for the execution timeline.",
+      "scores": [
+        0.22174170149303568,
+        0.6309754497858948,
+        0.14728284872106948
+      ],
+      "logits": [
+        -0.21219847950953794,
+        0.8335552777532124,
+        -0.6213567982438274
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "Could we let operators narrow the event list to a single action?",
+      "scores": [
+        0.18449788851467014,
+        0.737579658491453,
+        0.07792245299387687
+      ],
+      "logits": [
+        -0.17460406518705193,
+        1.211132009657771,
+        -1.0365279444708715
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "A request-level filter could connect related records across the activity view.",
+      "scores": [
+        0.5039081801674059,
+        0.31911677786584947,
+        0.17697504196674466
+      ],
+      "logits": [
+        0.5010741037095956,
+        0.04423714505333191,
+        -0.5453112487630802
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "A reset action would let visitors repeat the demo from a known starting point.",
+      "scores": [
+        0.21409175141775402,
+        0.6967848620102514,
+        0.08912338657199455
+      ],
+      "logits": [
+        -0.10122971324016203,
+        1.078842318968372,
+        -0.9776126057283631
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "I suggest a way to replace only the current visitor's practice records.",
+      "scores": [
+        0.36544707747049693,
+        0.48076439638812923,
+        0.1537885261413738
+      ],
+      "logits": [
+        0.19709572203823802,
+        0.4713515779202194,
+        -0.6684472999586102
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "Could the lab offer a fresh-run button after the walkthrough is complete?",
+      "scores": [
+        0.5389111829950392,
+        0.36658597624979916,
+        0.09450284075516167
+      ],
+      "logits": [
+        0.7087461921383933,
+        0.32342849701983345,
+        -1.0321746891583796
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "We could provide a clearly scoped reset without deleting anyone else's sandbox.",
+      "scores": [
+        0.06683474391216018,
+        0.8772591116914406,
+        0.05590614439639922
+      ],
+      "logits": [
+        -0.7986768550940624,
+        1.7759024821950349,
+        -0.9772256271011247
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "What problem does a transactional outbox solve?",
+      "scores": [
+        0.08583141551613305,
+        0.16935212528788368,
+        0.7448164591959833
+      ],
+      "logits": [
+        -0.946782592675016,
+        -0.26718755149718604,
+        1.2139701441720492
+      ],
+      "label": "question"
+    },
+    {
+      "text": "How is an outbox different from sending an event immediately after saving a row?",
+      "scores": [
+        0.38024979176927615,
+        0.1494537488772677,
+        0.4702964593534562
+      ],
+      "logits": [
+        0.2404355112344122,
+        -0.6934058993826009,
+        0.45297038814803636
+      ],
+      "label": "question"
+    },
+    {
+      "text": "Can someone explain why a database write and a network call cannot share one normal transaction?",
+      "scores": [
+        0.03222187394824049,
+        0.02820488417088493,
+        0.9395732418808747
+      ],
+      "logits": [
+        -1.0798766201690138,
+        -1.2130269967558054,
+        2.292903616924666
+      ],
+      "label": "question"
+    },
+    {
+      "text": "I am studying reliable delivery; when is the outbox pattern appropriate?",
+      "scores": [
+        0.3750008756851924,
+        0.12252057057190115,
+        0.5024785537429065
+      ],
+      "logits": [
+        0.2753416078097234,
+        -0.8433078143952595,
+        0.5679662065853832
+      ],
+      "label": "question"
+    },
+    {
+      "text": "What does inverse document frequency measure?",
+      "scores": [
+        0.054192381921426155,
+        0.07882849994268325,
+        0.8669791181358907
+      ],
+      "logits": [
+        -1.049069603315786,
+        -0.6743353410524286,
+        1.7234049443680617
+      ],
+      "label": "question"
+    },
+    {
+      "text": "How does TF-IDF turn a short message into numeric features?",
+      "scores": [
+        0.11133097186931121,
+        0.16919464235663007,
+        0.7194743857740588
+      ],
+      "logits": [
+        -0.7615185737039302,
+        -0.34297628492101356,
+        1.1044948586247918
+      ],
+      "label": "question"
+    },
+    {
+      "text": "Why are rare words given more weight than words appearing in every document?",
+      "scores": [
+        0.40070365223645826,
+        0.13957027893827972,
+        0.459726068825262
+      ],
+      "logits": [
+        0.3057483962871561,
+        -0.7489054698806717,
+        0.44315707359336276
+      ],
+      "label": "question"
+    },
+    {
+      "text": "Can someone explain the difference between a unigram and a bigram?",
+      "scores": [
+        0.020418578597686466,
+        0.016104528827299954,
+        0.9634768925750137
+      ],
+      "logits": [
+        -1.2055862089597866,
+        -1.442930884877108,
+        2.648517093836742
+      ],
+      "label": "question"
+    },
+    {
+      "text": "How can I deploy a Django application without a persistent background worker?",
+      "scores": [
+        0.046625514813250925,
+        0.04989020740345066,
+        0.9034842777832984
+      ],
+      "logits": [
+        -1.0105958695182367,
+        -0.9429190499131332,
+        1.9535149194312178
+      ],
+      "label": "question"
+    },
+    {
+      "text": "What is the difference between the web application's virtual environment and the shell's environment?",
+      "scores": [
+        0.1733905292179949,
+        0.059447187429685085,
+        0.7671622833523201
+      ],
+      "logits": [
+        -0.13889792787841418,
+        -1.2093560604411027,
+        1.3482539883193632
+      ],
+      "label": "question"
+    },
+    {
+      "text": "Where should deployment-specific configuration be loaded from?",
+      "scores": [
+        0.0986920132675268,
+        0.14587103711260413,
+        0.7554369496198691
+      ],
+      "logits": [
+        -0.8086703997319941,
+        -0.41795149970746265,
+        1.2266218994393043
+      ],
+      "label": "question"
+    },
+    {
+      "text": "Could someone explain what a WSGI server does on a managed host?",
+      "scores": [
+        0.011555360673550888,
+        0.02575754476896599,
+        0.9626870945574831
+      ],
+      "logits": [
+        -1.7413857008032037,
+        -0.9398075727473234,
+        2.681193273550374
+      ],
+      "label": "question"
+    },
+    {
+      "text": "How should object-level checks agree with filtered querysets?",
+      "scores": [
+        0.06471946407501125,
+        0.06611299036579406,
+        0.8691675455591948
+      ],
+      "logits": [
+        -0.8729257262705779,
+        -0.8516224648096277,
+        1.7245481910800537
+      ],
+      "label": "question"
+    },
+    {
+      "text": "What is the difference between being allowed to view a group and being allowed to manage it?",
+      "scores": [
+        0.11824538011700635,
+        0.2060609333315405,
+        0.6756936865514531
+      ],
+      "logits": [
+        -0.7661292830694808,
+        -0.21071932297730925,
+        0.9768486060466371
+      ],
+      "label": "question"
+    },
+    {
+      "text": "Where should shared authorization rules live in a Django project?",
+      "scores": [
+        0.09241493877342938,
+        0.08483724111573214,
+        0.8227478201108385
+      ],
+      "logits": [
+        -0.7002690225216278,
+        -0.785823052644238,
+        1.4860920751657136
+      ],
+      "label": "question"
+    },
+    {
+      "text": "Can someone explain why checking membership only in the template is insufficient?",
+      "scores": [
+        0.06418018144789928,
+        0.036514142161993744,
+        0.899305676390107
+      ],
+      "logits": [
+        -0.691977903750088,
+        -1.2559727245602659,
+        1.9479506283102015
+      ],
+      "label": "question"
+    },
+    {
+      "text": "How is HTML sanitization different from escaping plain text?",
+      "scores": [
+        0.11520918132101016,
+        0.09173620275163359,
+        0.7930546159273563
+      ],
+      "logits": [
+        -0.5671034335330094,
+        -0.7949357806882327,
+        1.3620392142210898
+      ],
+      "label": "question"
+    },
+    {
+      "text": "Which approach is appropriate when a field intentionally accepts rich text?",
+      "scores": [
+        0.40374692364023446,
+        0.20158187673821307,
+        0.3946711996215524
+      ],
+      "logits": [
+        0.23910928760662997,
+        -0.455483332409952,
+        0.21637404480316877
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "Why should sanitization happen on the server as well as in the editor?",
+      "scores": [
+        0.461586104606268,
+        0.09989749280548127,
+        0.4385164025882507
+      ],
+      "logits": [
+        0.5272651395318101,
+        -1.0032588842389134,
+        0.47599374470695066
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "Could someone explain the risks of inserting event payloads directly as HTML?",
+      "scores": [
+        0.1410945891098377,
+        0.10700473549643522,
+        0.7519006753937271
+      ],
+      "logits": [
+        -0.46553876822189744,
+        -0.7420961879763062,
+        1.2076349561980508
+      ],
+      "label": "question"
+    },
+    {
+      "text": "How can a feature flag simplify rollback of an additive release?",
+      "scores": [
+        0.09365326927934466,
+        0.10651696373917523,
+        0.7998297669814802
+      ],
+      "logits": [
+        -0.7578348314971465,
+        -0.6291299129267249,
+        1.3869647444237194
+      ],
+      "label": "question"
+    },
+    {
+      "text": "What should a deployment backup include besides the database?",
+      "scores": [
+        0.12645847696327353,
+        0.09035100501315725,
+        0.7831905180235693
+      ],
+      "logits": [
+        -0.49575003569844145,
+        -0.8319619041011419,
+        1.3277119397994308
+      ],
+      "label": "question"
+    },
+    {
+      "text": "When is it safer to retain new tables instead of reversing their migrations?",
+      "scores": [
+        0.3211472422855899,
+        0.1885951062884902,
+        0.4902576514259199
+      ],
+      "logits": [
+        0.03642197963240532,
+        -0.495875314742788,
+        0.45945333511023
+      ],
+      "label": "question"
+    },
+    {
+      "text": "Can someone explain how to verify a backup before making a configuration cutover?",
+      "scores": [
+        0.01282466944014248,
+        0.023969125556084696,
+        0.9632062050037729
+      ],
+      "logits": [
+        -1.6480976171563135,
+        -1.0227016662164536,
+        2.6707992833726153
+      ],
+      "label": "question"
+    },
+    {
+      "text": "THE message FAILS after login.",
+      "scores": [
+        0.8923425684947929,
+        0.07463155956203316,
+        0.03302587194317398
+      ],
+      "logits": [
+        1.9259484959151247,
+        -0.5553381401575653,
+        -1.370610355757712
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "Ｆｕｌｌｗｉｄｔｈ login fails.",
+      "scores": [
+        0.7317365931269693,
+        0.13485560067611246,
+        0.13340780619691822
+      ],
+      "logits": [
+        1.1310753257148705,
+        -0.5601406966711897,
+        -0.5709346290438341
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "A ﬁle fails to save.",
+      "scores": [
+        0.374881143008561,
+        0.3610226812809237,
+        0.26409617571051536
+      ],
+      "logits": [
+        0.12932130779201376,
+        0.09165306943091697,
+        -0.22097437722308366
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "save save save",
+      "scores": [
+        0.389704024904029,
+        0.36115697589171836,
+        0.24913899920425261
+      ],
+      "logits": [
+        0.174483803491,
+        0.09840896307229063,
+        -0.2728927665634433
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "x a 1 _ aa_ab",
+      "scores": [
+        0.3595230705797671,
+        0.35090054123362474,
+        0.2895763881866081
+      ],
+      "logits": [
+        0.08021158288882477,
+        0.055936058715888116,
+        -0.13614764160486562
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "Could we add a preview?",
+      "scores": [
+        0.028669820084745633,
+        0.9397236618175752,
+        0.0316065180976791
+      ],
+      "logits": [
+        -1.1957530715024922,
+        2.293987779260337,
+        -1.0982347077579973
+      ],
+      "label": "idea"
+    },
+    {
+      "text": "",
+      "scores": [
+        0.3595230705797671,
+        0.35090054123362474,
+        0.2895763881866081
+      ],
+      "logits": [
+        0.08021158288882477,
+        0.055936058715888116,
+        -0.13614764160486562
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "موضوع جديد",
+      "scores": [
+        0.3595230705797671,
+        0.35090054123362474,
+        0.2895763881866081
+      ],
+      "logits": [
+        0.08021158288882477,
+        0.055936058715888116,
+        -0.13614764160486562
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "unknownword flerm snorf",
+      "scores": [
+        0.3595230705797671,
+        0.35090054123362474,
+        0.2895763881866081
+      ],
+      "logits": [
+        0.08021158288882477,
+        0.055936058715888116,
+        -0.13614764160486562
+      ],
+      "label": "bug report"
+    },
+    {
+      "text": "How does a database transaction work?",
+      "scores": [
+        0.10239650988799408,
+        0.07521978811778365,
+        0.8223837019942223
+      ],
+      "logits": [
+        -0.5916387184321187,
+        -0.9000770111269085,
+        1.4917157295588745
+      ],
+      "label": "question"
+    }
+  ]
+}

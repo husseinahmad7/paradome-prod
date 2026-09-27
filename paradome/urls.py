@@ -17,6 +17,7 @@ sitemaps = {
 }
 urlpatterns = [
     path('health/', health, name='health'),
+    path('engineering/', include('engineering.urls')),
     path('admin/', admin.site.urls),
     path('', include('HusseinAh.urls')),
     path('users/', include('users.urls')),

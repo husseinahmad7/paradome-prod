@@ -1,0 +1,334 @@
+{
+  "version": "triage-en-v1",
+  "dataset_sha256": "89eec325f507488d4cd1b65d386a187cdadf6d3060db761ace92f49ea026246f",
+  "artifact_sha256": "83e48c7c6fefb799c26d14bdb809a3e8294de346dd817db50fe6f883f1e63a3d",
+  "artifact_bytes": 256961,
+  "feature_count": 2740,
+  "threshold": 0.45,
+  "test": {
+    "count": 72,
+    "macro_f1": 0.9177294685990338,
+    "accuracy": 0.9166666666666666,
+    "per_class": {
+      "bug report": {
+        "precision": 0.8461538461538461,
+        "recall": 0.9166666666666666,
+        "f1": 0.88,
+        "support": 24,
+        "accepted_precision": 0.875,
+        "coverage": 0.9166666666666666
+      },
+      "idea": {
+        "precision": 0.9166666666666666,
+        "recall": 0.9166666666666666,
+        "f1": 0.9166666666666666,
+        "support": 24,
+        "accepted_precision": 0.9545454545454546,
+        "coverage": 0.9583333333333334
+      },
+      "question": {
+        "precision": 1.0,
+        "recall": 0.9166666666666666,
+        "f1": 0.9565217391304348,
+        "support": 24,
+        "accepted_precision": 1.0,
+        "coverage": 0.9166666666666666
+      }
+    },
+    "accepted_precision": 0.9402985074626866,
+    "coverage": 0.9305555555555556,
+    "accepted_count": 67,
+    "baseline": {
+      "name": "training-majority (lexical tie-break)",
+      "label": "bug report",
+      "macro_f1": 0.16666666666666666,
+      "accuracy": 0.3333333333333333
+    }
+  },
+  "promotion_passed": true,
+  "parity_max_absolute_error": 4.440892098500626e-16,
+  "benchmark": {
+    "scope": "500 warm local predict_scores + abstention calls; excludes disk loading, Django and network",
+    "python": "3.12.14",
+    "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.41",
+    "sample_count": 500,
+    "p50_ms": 0.4231000000345375,
+    "p95_ms": 2.6314990000173566,
+    "max_ms": 5.975899000077334
+  },
+  "challenges": [
+    {
+      "id": "challenge-01",
+      "kind": "ambiguous",
+      "label": "bug report",
+      "text": "Could we add a retry button? The current request already crashes every time it is submitted.",
+      "predicted_label": "bug report",
+      "score": 0.4472830899415292,
+      "accepted": false,
+      "reason": "below_threshold",
+      "correct": true
+    },
+    {
+      "id": "challenge-02",
+      "kind": "ambiguous",
+      "label": "bug report",
+      "text": "I expected a duplicate request to reuse the result, but it creates another row. How should I debug this?",
+      "predicted_label": "question",
+      "score": 0.7137071362890831,
+      "accepted": true,
+      "reason": null,
+      "correct": false
+    },
+    {
+      "id": "challenge-03",
+      "kind": "ambiguous",
+      "label": "idea",
+      "text": "How about adding a preview that shows the destination before sending?",
+      "predicted_label": "idea",
+      "score": 0.4619167863746619,
+      "accepted": true,
+      "reason": null,
+      "correct": true
+    },
+    {
+      "id": "challenge-04",
+      "kind": "ambiguous",
+      "label": "question",
+      "text": "Could someone explain how to add a database index in Django? I am following the existing tutorial.",
+      "predicted_label": "question",
+      "score": 0.9139166881770385,
+      "accepted": true,
+      "reason": null,
+      "correct": true
+    },
+    {
+      "id": "challenge-05",
+      "kind": "ambiguous",
+      "label": "bug report",
+      "text": "An improvement would be nice, but first the current export is empty despite visible records.",
+      "predicted_label": "bug report",
+      "score": 0.5902509940654409,
+      "accepted": true,
+      "reason": null,
+      "correct": true
+    },
+    {
+      "id": "challenge-06",
+      "kind": "ambiguous",
+      "label": "idea",
+      "text": "Can the next release support saved filters? The current filtering works as documented.",
+      "predicted_label": "bug report",
+      "score": 0.5863298851559346,
+      "accepted": true,
+      "reason": null,
+      "correct": false
+    },
+    {
+      "id": "challenge-07",
+      "kind": "ambiguous",
+      "label": "question",
+      "text": "Why is a lost acknowledgment different from failed delivery when the inbox already contains the message?",
+      "predicted_label": "bug report",
+      "score": 0.5204397906658504,
+      "accepted": true,
+      "reason": null,
+      "correct": false
+    },
+    {
+      "id": "challenge-08",
+      "kind": "ambiguous",
+      "label": "bug report",
+      "text": "The build used to pass; now importing the settings module raises an exception. What changed?",
+      "predicted_label": "bug report",
+      "score": 0.6176356619636383,
+      "accepted": true,
+      "reason": null,
+      "correct": true
+    },
+    {
+      "id": "challenge-09",
+      "kind": "unfamiliar",
+      "label": "question",
+      "text": "How does a Raft pre-vote interact with joint consensus during learner promotion?",
+      "predicted_label": "question",
+      "score": 0.746114870775031,
+      "accepted": true,
+      "reason": null,
+      "correct": true
+    },
+    {
+      "id": "challenge-10",
+      "kind": "unfamiliar",
+      "label": "bug report",
+      "text": "The eBPF verifier rejects a bounded loop after a CO-RE relocation changes the pointer provenance.",
+      "predicted_label": "bug report",
+      "score": 0.8787347932417546,
+      "accepted": true,
+      "reason": null,
+      "correct": true
+    },
+    {
+      "id": "challenge-11",
+      "kind": "unfamiliar",
+      "label": "idea",
+      "text": "An adaptive radix tree could replace the current succinct trie for skewed workloads.",
+      "predicted_label": "idea",
+      "score": 0.5993411251238779,
+      "accepted": true,
+      "reason": null,
+      "correct": true
+    },
+    {
+      "id": "challenge-12",
+      "kind": "unfamiliar",
+      "label": "question",
+      "text": "Does a non-Archimedean valuation preserve this filtration under base extension?",
+      "predicted_label": "question",
+      "score": 0.473538534272311,
+      "accepted": true,
+      "reason": null,
+      "correct": true
+    },
+    {
+      "id": "challenge-13",
+      "kind": "unfamiliar",
+      "label": "idea",
+      "text": "Let's expose CRDT anti-entropy convergence as a semilattice visualization.",
+      "predicted_label": "idea",
+      "score": 0.42847908874182067,
+      "accepted": false,
+      "reason": "below_threshold",
+      "correct": true
+    },
+    {
+      "id": "challenge-14",
+      "kind": "unfamiliar",
+      "label": "bug report",
+      "text": "A phonon dispersion calculation produces imaginary frequencies after k-point interpolation.",
+      "predicted_label": "bug report",
+      "score": 0.8594049021236957,
+      "accepted": false,
+      "reason": "insufficient_vocabulary",
+      "correct": true
+    },
+    {
+      "id": "challenge-15",
+      "kind": "unfamiliar",
+      "label": null,
+      "text": "Lunch tomorrow sounds good; I will bring the sandwiches.",
+      "predicted_label": "bug report",
+      "score": 0.647564955403133,
+      "accepted": false,
+      "reason": "insufficient_vocabulary",
+      "correct": null
+    },
+    {
+      "id": "challenge-16",
+      "kind": "unfamiliar",
+      "label": null,
+      "text": "quux flerm snorf zazzle",
+      "predicted_label": "bug report",
+      "score": 0.3595230705797671,
+      "accepted": false,
+      "reason": "insufficient_vocabulary",
+      "correct": null
+    },
+    {
+      "id": "challenge-17",
+      "kind": "unsupported_script",
+      "label": null,
+      "text": "لا أستطيع إرسال الرسالة بعد تسجيل الدخول",
+      "predicted_label": "bug report",
+      "score": 0.3595230705797671,
+      "accepted": false,
+      "reason": "unsupported_script",
+      "correct": null
+    },
+    {
+      "id": "challenge-18",
+      "kind": "unsupported_script",
+      "label": null,
+      "text": "保存したメッセージが消えます",
+      "predicted_label": "bug report",
+      "score": 0.3595230705797671,
+      "accepted": false,
+      "reason": "unsupported_script",
+      "correct": null
+    },
+    {
+      "id": "challenge-19",
+      "kind": "unsupported_script",
+      "label": null,
+      "text": "После входа приложение перестает работать",
+      "predicted_label": "bug report",
+      "score": 0.3595230705797671,
+      "accepted": false,
+      "reason": "unsupported_script",
+      "correct": null
+    },
+    {
+      "id": "challenge-20",
+      "kind": "unsupported_script",
+      "label": null,
+      "text": "保存按钮没有响应",
+      "predicted_label": "bug report",
+      "score": 0.3595230705797671,
+      "accepted": false,
+      "reason": "unsupported_script",
+      "correct": null
+    },
+    {
+      "id": "challenge-21",
+      "kind": "unsupported_script",
+      "label": null,
+      "text": "Could we add العربية to the interface?",
+      "predicted_label": "idea",
+      "score": 0.9257879004515267,
+      "accepted": false,
+      "reason": "unsupported_script",
+      "correct": null
+    },
+    {
+      "id": "challenge-22",
+      "kind": "unsupported_script",
+      "label": null,
+      "text": "Η εφαρμογή δεν αποθηκεύει το μήνυμα",
+      "predicted_label": "bug report",
+      "score": 0.3595230705797671,
+      "accepted": false,
+      "reason": "unsupported_script",
+      "correct": null
+    },
+    {
+      "id": "challenge-23",
+      "kind": "unsupported_script",
+      "label": null,
+      "text": "메시지가 두 번 표시됩니다",
+      "predicted_label": "bug report",
+      "score": 0.3595230705797671,
+      "accepted": false,
+      "reason": "unsupported_script",
+      "correct": null
+    },
+    {
+      "id": "challenge-24",
+      "kind": "unsupported_script",
+      "label": null,
+      "text": "यह फ़ॉर्म काम नहीं करता",
+      "predicted_label": "bug report",
+      "score": 0.3595230705797671,
+      "accepted": false,
+      "reason": "unsupported_script",
+      "correct": null
+    }
+  ],
+  "limitations": [
+    "360 LLM-authored synthetic English examples, not independent human labels or production traffic.",
+    "Paraphrases stay together in 90 scenario groups. Wording style is still shared across groups.",
+    "A score is the model's softmax output, not a calibrated probability of correctness.",
+    "Latin-script checks do not identify English. Unfamiliar English and other Latin-script languages can be misclassified confidently.",
+    "The small bag-of-words model does not reliably reason about negation, intent, or mixed requests.",
+    "Observed malfunction takes precedence over a proposed capability, then requests for guidance.",
+    "Suggestions never change permissions, delivery, or real application content. Visitors retain the final decision."
+  ]
+}

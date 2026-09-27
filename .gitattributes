@@ -2,3 +2,8 @@ docker-entrypoint.sh text eol=lf
 Dockerfile text eol=lf
 docker-compose*.yml text eol=lf
 .github/workflows/*.yml text eol=lf
+# Frozen ML evidence hashes these JSON files byte-for-byte.
+ml/data/*.json text eol=lf
+ml/frozen-*.json text eol=lf
+ml/evaluation-*.json text eol=lf
+engineering/ml_artifacts/*.json text eol=lf

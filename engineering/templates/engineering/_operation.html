@@ -1,0 +1,23 @@
+<article class="lab-operation" aria-labelledby="operation-{{ submission.id }}">
+  <header class="lab-panel-heading"><h3 id="operation-{{ submission.id }}" tabindex="-1">Saved operation {{ forloop.counter }}</h3><span class="lab-state-tag is-{{ submission.event.status }}">{{ submission.event.get_status_display }}</span></header>
+  <p class="lab-message">{{ submission.text }}</p>
+  <dl class="lab-record"><div><dt>Submission</dt><dd><code>{{ submission.id }}</code></dd></div><div><dt>Event</dt><dd><code>{{ submission.event.id }}</code></dd></div><div><dt>Request key</dt><dd><code>{{ submission.idempotency_key }}</code></dd></div><div><dt>Attempts</dt><dd>{{ submission.event.attempt_count }} / 5</dd></div></dl>
+  <details class="lab-triage" open><summary>ML triage · {% if submission.triage.status == 'suggested' %}{{ submission.triage.label|capfirst }}{% elif submission.triage.status == 'uncertain' %}Needs human judgement{% else %}Unavailable{% endif %}</summary>
+    {% if submission.triage.explanation %}<p>{{ submission.triage.explanation }}</p>{% endif %}
+    {% if submission.triage.score != None %}<p>Model score <strong>{{ submission.triage.score|floatformat:3 }}</strong>. This is not a calibrated probability of correctness.</p>{% endif %}
+    {% if submission.triage.terms %}<p class="lab-field-hint">Influential terms: positive contributions raise the top candidate’s linear score; negative contributions lower it.</p><ul class="lab-terms">{% for term in submission.triage.terms %}<li><code>{{ term.name }}</code> <span>{{ term.contribution|floatformat:3 }}</span></li>{% endfor %}</ul>{% endif %}
+    <p class="lab-note">{% if submission.triage.version %}Artifact <code>{{ submission.triage.version }}</code> · {% endif %}Inference {{ submission.triage.latency_ms|floatformat:2 }} ms</p><a href="{% url 'engineering:index' %}#model-evidence">Evaluation &amp; limitations</a>
+  </details>
+  {% if submission.event.last_outcome %}<p class="lab-outcome">{{ submission.event.last_outcome_label }}</p>{% endif %}
+  {% if submission.event.status != 'delivered' and submission.event.status != 'exhausted' %}
+  <form class="lab-delivery-form" method="post" action="{% url 'engineering:delivery' run.id %}" hx-post="{% url 'engineering:delivery' run.id %}" hx-target="#lab-state" hx-swap="outerHTML">
+    {% csrf_token %}<input type="hidden" name="event_id" value="{{ submission.event.id }}">
+    <label for="scenario-{{ submission.event.id }}">Next delivery scenario</label>
+    <select id="scenario-{{ submission.event.id }}" name="scenario" aria-describedby="scenario-help-{{ submission.event.id }}"><option value="lost_ack"{% if delivery_form.scenario.value == 'lost_ack' %} selected{% endif %}>Lost acknowledgement</option><option value="success"{% if delivery_form.scenario.value == 'success' %} selected{% endif %}>Deliver / recover</option><option value="fail_before_delivery"{% if delivery_form.scenario.value == 'fail_before_delivery' %} selected{% endif %}>Fail before delivery</option></select>
+    <p id="scenario-help-{{ submission.event.id }}" class="lab-field-hint"><strong>Lost acknowledgement</strong> delivers to the inbox but loses the reply. <strong>Deliver / recover</strong> acknowledges delivery without duplicating it. <strong>Fail before delivery</strong> leaves the inbox untouched. Nothing runs until you press Attempt delivery.</p>
+    <button class="lab-button" type="submit">Attempt delivery</button><span class="lab-pending" aria-hidden="true">Attempting…</span>
+  </form>
+  {% elif submission.event.status == 'delivered' %}<p class="lab-notice is-success">The source acknowledgement is recorded. Replay below to check that the original submission comes back.</p>
+  {% else %}<p class="lab-notice">The five-attempt limit is reached. Inspect the receipt and trace, then reset to try another run.</p>{% endif %}
+  <form class="lab-replay-form" method="post" action="{% url 'engineering:submit' run.id %}" hx-post="{% url 'engineering:submit' run.id %}" hx-target="#lab-state" hx-swap="outerHTML">{% csrf_token %}<textarea hidden name="text">{{ submission.text }}</textarea><input type="hidden" name="idempotency_key" value="{{ submission.idempotency_key }}"><button class="lab-button is-secondary" type="submit">Replay this submission</button><span class="lab-pending" aria-hidden="true">Checking…</span></form>
+</article>
