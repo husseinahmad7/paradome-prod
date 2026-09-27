@@ -1,5 +1,12 @@
 # ParaDome production deployment runbook
 
+For the additive Engineering Lab release, also follow
+[the lab rollout and rollback notes](docs/engineering-lab.md) and
+[its verification record](docs/engineering-verification.md).
+`ENGINEERING_LAB_ENABLED` defaults to false. Keep it disabled until all lab
+release gates pass. The existing daily demo reset command performs bounded
+expired-run cleanup; do not replace its PythonAnywhere scheduled-task slot.
+
 Production uses Python 3.12 and `paradome.settings.production`. The settings
 module fails closed when required configuration is absent and loads its values
 only from the process environment or a mode-`0600` environment file outside
@@ -230,6 +237,14 @@ Schema constraints and rich-text sanitization are not treated as reversible.
 After any migration or `--apply` command begins, a code-only rollback is
 forbidden. Do not run reverse migrations or old code against the new schema
 unless that exact path has been rehearsed and documented.
+
+For a release whose only schema change is the additive Engineering Lab migration,
+the [lab-only rollback path](docs/engineering-lab.md#maintenance-and-rollback)
+is an exception after its exact rollback procedure has been rehearsed and
+documented. Before enabling the lab, rehearse disabling
+`ENGINEERING_LAB_ENABLED` and restoring the previous immutable release while
+retaining the additive lab tables. This rehearsal remains a release gate.
+Other schema, data, or media changes require the snapshot procedure below.
 
 To roll back, stop traffic, restore the matching pre-release MySQL dump and
 both media snapshots, restore the previous WSGI/Web-tab/task configuration,

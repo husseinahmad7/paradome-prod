@@ -1,0 +1,449 @@
+{
+  "version": "triage-en-v1",
+  "dataset_sha256": "89eec325f507488d4cd1b65d386a187cdadf6d3060db761ace92f49ea026246f",
+  "configuration": {
+    "max_features": 4000,
+    "C": 5.0,
+    "solver": "lbfgs",
+    "max_iter": 2000,
+    "tol": 1e-09,
+    "random_state": 1729,
+    "min_recognized_words": 3,
+    "min_recognized_ratio": 0.25,
+    "threshold_candidates": [
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9
+    ],
+    "validation_precision_floor": 0.85
+  },
+  "threshold": 0.45,
+  "validation_candidates": [
+    {
+      "threshold": 0.45,
+      "count": 72,
+      "macro_f1": 0.9580317942779949,
+      "accuracy": 0.9583333333333334,
+      "per_class": {
+        "bug report": {
+          "precision": 0.9565217391304348,
+          "recall": 0.9166666666666666,
+          "f1": 0.9361702127659575,
+          "support": 24,
+          "accepted_precision": 0.9523809523809523,
+          "coverage": 0.875
+        },
+        "idea": {
+          "precision": 0.96,
+          "recall": 1.0,
+          "f1": 0.9795918367346939,
+          "support": 24,
+          "accepted_precision": 0.9583333333333334,
+          "coverage": 0.9583333333333334
+        },
+        "question": {
+          "precision": 0.9583333333333334,
+          "recall": 0.9583333333333334,
+          "f1": 0.9583333333333334,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.9166666666666666
+        }
+      },
+      "accepted_precision": 0.9696969696969697,
+      "coverage": 0.9166666666666666,
+      "accepted_count": 66,
+      "baseline": {
+        "name": "training-majority (lexical tie-break)",
+        "label": "bug report",
+        "macro_f1": 0.16666666666666666,
+        "accuracy": 0.3333333333333333
+      }
+    },
+    {
+      "threshold": 0.5,
+      "count": 72,
+      "macro_f1": 0.9580317942779949,
+      "accuracy": 0.9583333333333334,
+      "per_class": {
+        "bug report": {
+          "precision": 0.9565217391304348,
+          "recall": 0.9166666666666666,
+          "f1": 0.9361702127659575,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.875
+        },
+        "idea": {
+          "precision": 0.96,
+          "recall": 1.0,
+          "f1": 0.9795918367346939,
+          "support": 24,
+          "accepted_precision": 0.9583333333333334,
+          "coverage": 0.9583333333333334
+        },
+        "question": {
+          "precision": 0.9583333333333334,
+          "recall": 0.9583333333333334,
+          "f1": 0.9583333333333334,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.875
+        }
+      },
+      "accepted_precision": 0.9846153846153847,
+      "coverage": 0.9027777777777778,
+      "accepted_count": 65,
+      "baseline": {
+        "name": "training-majority (lexical tie-break)",
+        "label": "bug report",
+        "macro_f1": 0.16666666666666666,
+        "accuracy": 0.3333333333333333
+      }
+    },
+    {
+      "threshold": 0.55,
+      "count": 72,
+      "macro_f1": 0.9580317942779949,
+      "accuracy": 0.9583333333333334,
+      "per_class": {
+        "bug report": {
+          "precision": 0.9565217391304348,
+          "recall": 0.9166666666666666,
+          "f1": 0.9361702127659575,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.7916666666666666
+        },
+        "idea": {
+          "precision": 0.96,
+          "recall": 1.0,
+          "f1": 0.9795918367346939,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.9166666666666666
+        },
+        "question": {
+          "precision": 0.9583333333333334,
+          "recall": 0.9583333333333334,
+          "f1": 0.9583333333333334,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.75
+        }
+      },
+      "accepted_precision": 1.0,
+      "coverage": 0.8194444444444444,
+      "accepted_count": 59,
+      "baseline": {
+        "name": "training-majority (lexical tie-break)",
+        "label": "bug report",
+        "macro_f1": 0.16666666666666666,
+        "accuracy": 0.3333333333333333
+      }
+    },
+    {
+      "threshold": 0.6,
+      "count": 72,
+      "macro_f1": 0.9580317942779949,
+      "accuracy": 0.9583333333333334,
+      "per_class": {
+        "bug report": {
+          "precision": 0.9565217391304348,
+          "recall": 0.9166666666666666,
+          "f1": 0.9361702127659575,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.7083333333333334
+        },
+        "idea": {
+          "precision": 0.96,
+          "recall": 1.0,
+          "f1": 0.9795918367346939,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.7916666666666666
+        },
+        "question": {
+          "precision": 0.9583333333333334,
+          "recall": 0.9583333333333334,
+          "f1": 0.9583333333333334,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.7083333333333334
+        }
+      },
+      "accepted_precision": 1.0,
+      "coverage": 0.7361111111111112,
+      "accepted_count": 53,
+      "baseline": {
+        "name": "training-majority (lexical tie-break)",
+        "label": "bug report",
+        "macro_f1": 0.16666666666666666,
+        "accuracy": 0.3333333333333333
+      }
+    },
+    {
+      "threshold": 0.65,
+      "count": 72,
+      "macro_f1": 0.9580317942779949,
+      "accuracy": 0.9583333333333334,
+      "per_class": {
+        "bug report": {
+          "precision": 0.9565217391304348,
+          "recall": 0.9166666666666666,
+          "f1": 0.9361702127659575,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.6666666666666666
+        },
+        "idea": {
+          "precision": 0.96,
+          "recall": 1.0,
+          "f1": 0.9795918367346939,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.625
+        },
+        "question": {
+          "precision": 0.9583333333333334,
+          "recall": 0.9583333333333334,
+          "f1": 0.9583333333333334,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.6666666666666666
+        }
+      },
+      "accepted_precision": 1.0,
+      "coverage": 0.6527777777777778,
+      "accepted_count": 47,
+      "baseline": {
+        "name": "training-majority (lexical tie-break)",
+        "label": "bug report",
+        "macro_f1": 0.16666666666666666,
+        "accuracy": 0.3333333333333333
+      }
+    },
+    {
+      "threshold": 0.7,
+      "count": 72,
+      "macro_f1": 0.9580317942779949,
+      "accuracy": 0.9583333333333334,
+      "per_class": {
+        "bug report": {
+          "precision": 0.9565217391304348,
+          "recall": 0.9166666666666666,
+          "f1": 0.9361702127659575,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.5416666666666666
+        },
+        "idea": {
+          "precision": 0.96,
+          "recall": 1.0,
+          "f1": 0.9795918367346939,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.5833333333333334
+        },
+        "question": {
+          "precision": 0.9583333333333334,
+          "recall": 0.9583333333333334,
+          "f1": 0.9583333333333334,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.6666666666666666
+        }
+      },
+      "accepted_precision": 1.0,
+      "coverage": 0.5972222222222222,
+      "accepted_count": 43,
+      "baseline": {
+        "name": "training-majority (lexical tie-break)",
+        "label": "bug report",
+        "macro_f1": 0.16666666666666666,
+        "accuracy": 0.3333333333333333
+      }
+    },
+    {
+      "threshold": 0.75,
+      "count": 72,
+      "macro_f1": 0.9580317942779949,
+      "accuracy": 0.9583333333333334,
+      "per_class": {
+        "bug report": {
+          "precision": 0.9565217391304348,
+          "recall": 0.9166666666666666,
+          "f1": 0.9361702127659575,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.3333333333333333
+        },
+        "idea": {
+          "precision": 0.96,
+          "recall": 1.0,
+          "f1": 0.9795918367346939,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.5416666666666666
+        },
+        "question": {
+          "precision": 0.9583333333333334,
+          "recall": 0.9583333333333334,
+          "f1": 0.9583333333333334,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.5
+        }
+      },
+      "accepted_precision": 1.0,
+      "coverage": 0.4583333333333333,
+      "accepted_count": 33,
+      "baseline": {
+        "name": "training-majority (lexical tie-break)",
+        "label": "bug report",
+        "macro_f1": 0.16666666666666666,
+        "accuracy": 0.3333333333333333
+      }
+    },
+    {
+      "threshold": 0.8,
+      "count": 72,
+      "macro_f1": 0.9580317942779949,
+      "accuracy": 0.9583333333333334,
+      "per_class": {
+        "bug report": {
+          "precision": 0.9565217391304348,
+          "recall": 0.9166666666666666,
+          "f1": 0.9361702127659575,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.16666666666666666
+        },
+        "idea": {
+          "precision": 0.96,
+          "recall": 1.0,
+          "f1": 0.9795918367346939,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.3333333333333333
+        },
+        "question": {
+          "precision": 0.9583333333333334,
+          "recall": 0.9583333333333334,
+          "f1": 0.9583333333333334,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.4166666666666667
+        }
+      },
+      "accepted_precision": 1.0,
+      "coverage": 0.3055555555555556,
+      "accepted_count": 22,
+      "baseline": {
+        "name": "training-majority (lexical tie-break)",
+        "label": "bug report",
+        "macro_f1": 0.16666666666666666,
+        "accuracy": 0.3333333333333333
+      }
+    },
+    {
+      "threshold": 0.85,
+      "count": 72,
+      "macro_f1": 0.9580317942779949,
+      "accuracy": 0.9583333333333334,
+      "per_class": {
+        "bug report": {
+          "precision": 0.9565217391304348,
+          "recall": 0.9166666666666666,
+          "f1": 0.9361702127659575,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.041666666666666664
+        },
+        "idea": {
+          "precision": 0.96,
+          "recall": 1.0,
+          "f1": 0.9795918367346939,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.041666666666666664
+        },
+        "question": {
+          "precision": 0.9583333333333334,
+          "recall": 0.9583333333333334,
+          "f1": 0.9583333333333334,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.3333333333333333
+        }
+      },
+      "accepted_precision": 1.0,
+      "coverage": 0.1388888888888889,
+      "accepted_count": 10,
+      "baseline": {
+        "name": "training-majority (lexical tie-break)",
+        "label": "bug report",
+        "macro_f1": 0.16666666666666666,
+        "accuracy": 0.3333333333333333
+      }
+    },
+    {
+      "threshold": 0.9,
+      "count": 72,
+      "macro_f1": 0.9580317942779949,
+      "accuracy": 0.9583333333333334,
+      "per_class": {
+        "bug report": {
+          "precision": 0.9565217391304348,
+          "recall": 0.9166666666666666,
+          "f1": 0.9361702127659575,
+          "support": 24,
+          "accepted_precision": null,
+          "coverage": 0.0
+        },
+        "idea": {
+          "precision": 0.96,
+          "recall": 1.0,
+          "f1": 0.9795918367346939,
+          "support": 24,
+          "accepted_precision": null,
+          "coverage": 0.0
+        },
+        "question": {
+          "precision": 0.9583333333333334,
+          "recall": 0.9583333333333334,
+          "f1": 0.9583333333333334,
+          "support": 24,
+          "accepted_precision": 1.0,
+          "coverage": 0.20833333333333334
+        }
+      },
+      "accepted_precision": 1.0,
+      "coverage": 0.06944444444444445,
+      "accepted_count": 5,
+      "baseline": {
+        "name": "training-majority (lexical tie-break)",
+        "label": "bug report",
+        "macro_f1": 0.16666666666666666,
+        "accuracy": 0.3333333333333333
+      }
+    }
+  ],
+  "validation_parity_max_error": 4.440892098500626e-16,
+  "procedure": "Written by train phase before the evaluate phase. No test predictions used.",
+  "training_versions": {
+    "scikit-learn": "1.8.0",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "joblib": "1.6.0",
+    "threadpoolctl": "3.7.0"
+  }
+}

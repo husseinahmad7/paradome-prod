@@ -1,0 +1,17 @@
+{% extends "engineering/base.html" %}
+{% block title %}{{ reason|default:"Run unavailable" }} · ParaDome engineering lab{% endblock %}
+{% block robots %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block content %}
+<section class="lab-intro"><div>
+  <h1>{{ reason|default:"Run unavailable" }}</h1>
+  {% if is_throttled %}
+  <p class="lab-lead">This browser has made too many attempts in a short time. Your saved lab records have not changed.</p>
+  {% elif existing_runs %}
+  <p class="lab-lead">This browser already has three active runs. Open one to continue, or reset it from its workbench.</p>
+  <ul class="lab-recovery-links">{% for existing_run in existing_runs %}<li><a href="{% url 'engineering:run_detail' existing_run.id %}">Open run {{ forloop.counter }} <code>{{ existing_run.id }}</code></a></li>{% endfor %}</ul>
+  {% else %}
+  <p class="lab-lead">It may belong to another browser, have expired, or have ended when you logged out. Run links do not transfer access.</p>
+  {% endif %}
+  <p>{{ message }}</p><a class="lab-button" href="{% url 'engineering:index' %}">Return to the lab</a>
+</div></section>
+{% endblock %}

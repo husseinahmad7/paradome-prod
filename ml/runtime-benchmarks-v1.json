@@ -1,0 +1,38 @@
+{
+  "model_version": "triage-en-v1",
+  "date": "2026-09-27",
+  "environment": {
+    "python": "3.12.4",
+    "platform": "Windows-10-10.0.19044-SP0",
+    "training_libraries_present": {
+      "sklearn": false,
+      "numpy": false,
+      "scipy": false
+    }
+  },
+  "scope": "500 complete warm classify calls per run; includes artifact stat/cache, inference, abstention, contributions, result construction. Excludes first artifact load, Django and network. Local development measurements, not a PythonAnywhere guarantee.",
+  "input": "Cycle through the 72 frozen held-out example texts; prediction metrics and model parameters are not changed by this benchmark.",
+  "runs": [
+    {
+      "method": "one-off perf_counter harness",
+      "sample_count": 500,
+      "p50_ms": 0.8681000003889494,
+      "p95_ms": 9.942399999999907,
+      "max_ms": 149.27420000003622,
+      "p50_definition": "lower median"
+    },
+    {
+      "method": "python ml/benchmark_runtime.py",
+      "sample_count": 500,
+      "p50_ms": 0.8093000001281325,
+      "p95_ms": 4.750200000216864,
+      "max_ms": 41.737499999726424,
+      "p50_definition": "statistics.median"
+    }
+  ],
+  "notes": [
+    "Both local runs meet the warm p95 target of less than 50 ms.",
+    "Maximum latency includes observed local scheduling spikes; these are reported rather than discarded.",
+    "The training evaluation report separately records a 500-call core+abstention Linux CPU benchmark."
+  ]
+}

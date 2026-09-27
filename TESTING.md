@@ -34,6 +34,23 @@ python manage.py check --deploy --settings=paradome.settings.production
 Never point tests at the live database, SMTP account, Pusher application, media
 directory, or demo user.
 
+## Engineering Lab
+
+The additive lab is off by default. Its isolated ownership, transaction, permission,
+and model tests are discovered by the full suite. SQLite intentionally skips the
+six real-MySQL concurrency cases; the existing CI MySQL service runs them.
+
+```sh
+python manage.py test engineering --settings=paradome.settings.test
+node --test engineering/test_lab_js.cjs
+python ml/benchmark_runtime.py
+```
+
+See [the verification record](docs/engineering-verification.md) for actual results
+and outstanding release gates. Browser accessibility/responsive checks are not
+replaced by server-rendered form tests or the JavaScript event-contract tests.
+Offline training dependencies stay out of the production environment.
+
 ## Release acceptance
 
 - `/health/` returns `200` only when the database is reachable and never exposes

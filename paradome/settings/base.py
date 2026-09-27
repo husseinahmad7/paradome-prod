@@ -73,6 +73,7 @@ INSTALLED_APPS = [
     "notify",
     "Domes",
     "Chat",
+    "engineering",
     "django_filters",
     "django_prose_editor",
     "crispy_forms",
@@ -106,6 +107,7 @@ TEMPLATES = [{
             "django.contrib.messages.context_processors.messages",
             "csp.context_processors.nonce",
             "users.context_processors.demo_session",
+            "engineering.context_processors.engineering_lab",
             "messages.views.check_directs",
             "notify.views.CountNotifications",
         ],
@@ -177,6 +179,7 @@ PUSHER_CLUSTER = ""
 PUSHER_SSL = True
 DEMO_ACCOUNT_ENABLED = False
 DEMO_USERNAME = "paradome-demo"
+ENGINEERING_LAB_ENABLED = env_bool("ENGINEERING_LAB_ENABLED", default=False)
 
 CACHES = {"default": {
     "BACKEND": "django.core.cache.backends.locmem.LocMemCache",

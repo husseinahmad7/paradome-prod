@@ -1,0 +1,82 @@
+{% extends "engineering/base.html" %}
+{% block content %}
+<section class="lab-intro" aria-labelledby="lab-title">
+  <div>
+    <h1 id="lab-title">Make it fail.<br>See how it recovers.</h1>
+    <p class="lab-lead">A small message. A lost acknowledgement. One inbox entry. Explore the decisions behind reliable delivery in a hands-on Django lab.</p>
+    <form method="post" action="{% url 'engineering:create_run' %}">
+      {% csrf_token %}
+      <button class="lab-button" type="submit">Start a private lab run <span aria-hidden="true">→</span></button>
+    </form>
+    <p class="lab-note">About 90 seconds · No extra login · No external messages sent</p>
+  </div>
+  <aside class="lab-boundary" aria-labelledby="boundary-title">
+    <h2 id="boundary-title">A safe place to break things</h2>
+    <p>Every message stays in dedicated lab tables. Your browser owns your run, even when you use the shared demo account.</p>
+    <p>Access lasts up to 24 hours, or until your session ends. Logging out ends access. Please use fictional, non-sensitive text.</p>
+    <p><strong>This is a demonstration of an architecture, not a claim that ParaDome’s live chat uses it.</strong></p>
+  </aside>
+</section>
+
+<section class="lab-section" aria-labelledby="walkthrough-title">
+  <h2 id="walkthrough-title">Follow one message through the system</h2>
+  <ol class="lab-walkthrough">
+    <li><strong>Submit</strong><span>Save the message and its delivery event together. Get an English ML category suggestion.</span></li>
+    <li><strong>Lose the acknowledgement</strong><span>Commit the inbox receipt, then simulate a missing response. Inspect the disagreement.</span></li>
+    <li><strong>Recover &amp; replay</strong><span>Retry delivery, then replay the submission. Watch the same records come back.</span></li>
+  </ol>
+  <nav class="lab-explore" aria-label="Explore the lab areas">
+    <a href="#architecture">Delivery &amp; recovery decisions</a>
+    <a href="{% url 'engineering:permissions' %}">Explore permissions</a>
+    <a href="#model-evidence">Inspect ML triage evidence</a>
+  </nav>
+</section>
+
+<section class="lab-section" id="architecture" aria-labelledby="architecture-title">
+  <div class="lab-section-heading"><h2 id="architecture-title">Architecture you can inspect</h2><p>Small boundaries, explicit failure states, and evidence beside each decision.</p></div>
+  <div class="lab-decisions">
+    <details open>
+      <summary>Keep the lab inside a modular Django application</summary>
+      <p>A dedicated app owns runs, submissions, outbox events, receipts, and traces. Its transport accepts only lab events, never live posts, chat channels, user IDs, or external URLs. The existing site stays on PythonAnywhere.</p>
+      <p><strong>Trade-off:</strong> this is an in-process demonstration, not an independently deployed service. Every attempt happens during an explicit request; there is no background worker.</p>
+      <p class="lab-evidence"><a href="{{ source_base }}/engineering/models.py">Record boundaries</a> · <a href="{{ source_base }}/engineering/tests.py">Isolation tests</a></p>
+    </details>
+    <details>
+      <summary>Commit the message and delivery intent together</summary>
+      <p>The source transaction writes a submission and an outbox event atomically. A failure cannot leave one without the other. A unique idempotency key belongs to the run: replaying the same text returns the original; changing it under the same key returns HTTP 409.</p>
+      <p><strong>Trade-off:</strong> a transactional outbox records intent, not guaranteed delivery. An operator or worker must still make an attempt. Here, you do.</p>
+      <p class="lab-evidence"><a href="{{ source_base }}/engineering/services.py">Transaction implementation</a> · <a href="{{ source_base }}/engineering/tests.py">Replay and rollback tests</a></p>
+    </details>
+    <details>
+      <summary>Separate delivery from its acknowledgement</summary>
+      <p>The destination receipt is the observable inbox effect. It commits separately from the source acknowledgement. A unique receipt per event makes retries safe even after the acknowledgement is lost.</p>
+      <p><strong>Trade-off:</strong> this is duplicate prevention inside the controlled adapter, not universal “exactly once” delivery. Real integrations need their own durable idempotency contract.</p>
+      <p class="lab-evidence"><a href="{{ source_base }}/engineering/services.py">Sandbox adapter</a> · <a href="{{ source_base }}/engineering/tests.py">MySQL concurrency tests</a></p>
+    </details>
+    <details>
+      <summary>Lease an attempt; reject a stale completion</summary>
+      <p>A short lease and unique claim token identify the current attempt. When a lease expires, the next explicit request can claim the work. A late attempt cannot overwrite a newer result or release its claim. Each event allows at most five attempts.</p>
+      <p><strong>Trade-off:</strong> a lease can expire while work is still running. The unique destination receipt protects the effect; token checks protect source state.</p>
+      <p class="lab-evidence"><a href="{{ source_base }}/engineering/services.py">Claim and completion checks</a> · <a href="{{ source_base }}/engineering/tests.py">Stale-attempt test</a></p>
+    </details>
+    <details>
+      <summary>Bind the run to a session, not the shared demo user</summary>
+      <p>The browser’s Django session holds a random owner secret; the run stores only its hash. A run UUID is not enough to open it. Foreign and expired runs return 404. Lab responses are not cached or indexed.</p>
+      <p><strong>Trade-off:</strong> closing a session or logging out can end access before the 24-hour limit. Reset replaces only your run; bounded daily maintenance purges expired records.</p>
+      <p class="lab-evidence"><a href="{{ source_base }}/engineering/views.py">Session boundary</a> · <a href="{{ source_base }}/engineering/tests.py">Cross-session tests</a></p>
+    </details>
+    <details>
+      <summary>Ship a compact model with an explicit inference contract</summary>
+      <p>Training happens offline. Production loads versioned JSON and uses Python’s standard library for NFKC normalization, TF-IDF features, linear scores, and softmax. It needs no training framework, GPU, or remote inference service.</p>
+      <p><strong>Trade-off:</strong> a small English classifier has a narrow vocabulary. It can abstain, and unfamiliar English can still be misclassified. Missing or invalid model data does not stop submissions or delivery.</p>
+      <p class="lab-evidence"><a href="{{ source_base }}/engineering/triage.py">Inference code</a> · <a href="{{ source_base }}/engineering/test_triage.py">Parity and fallback tests</a> · <a href="{{ source_base }}/ml">Reproduce training</a></p>
+    </details>
+  </div>
+</section>
+
+<section class="lab-section" id="model-evidence" aria-labelledby="model-title">
+  <div class="lab-section-heading"><h2 id="model-title">A small classifier. A visible evaluation.</h2><p>Bug report, idea, or question. English technical discussions only.</p></div>
+  {% include "engineering/_model_card.html" %}
+</section>
+<section class="lab-close" aria-labelledby="ready-title"><h2 id="ready-title">Trace a message for yourself.</h2><form method="post" action="{% url 'engineering:create_run' %}">{% csrf_token %}<button class="lab-button" type="submit">Start a private lab run</button></form><a href="{% url 'engineering:permissions' %}">Or explore the permission policy</a></section>
+{% endblock %}

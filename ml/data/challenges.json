@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "provenance": "Separate LLM-authored diagnostic challenge examples, never used for fitting, threshold selection, or promotion metrics. Null labels have no supported class.",
+  "examples": [
+    {
+      "id": "challenge-01",
+      "kind": "ambiguous",
+      "label": "bug report",
+      "text": "Could we add a retry button? The current request already crashes every time it is submitted."
+    },
+    {
+      "id": "challenge-02",
+      "kind": "ambiguous",
+      "label": "bug report",
+      "text": "I expected a duplicate request to reuse the result, but it creates another row. How should I debug this?"
+    },
+    {
+      "id": "challenge-03",
+      "kind": "ambiguous",
+      "label": "idea",
+      "text": "How about adding a preview that shows the destination before sending?"
+    },
+    {
+      "id": "challenge-04",
+      "kind": "ambiguous",
+      "label": "question",
+      "text": "Could someone explain how to add a database index in Django? I am following the existing tutorial."
+    },
+    {
+      "id": "challenge-05",
+      "kind": "ambiguous",
+      "label": "bug report",
+      "text": "An improvement would be nice, but first the current export is empty despite visible records."
+    },
+    {
+      "id": "challenge-06",
+      "kind": "ambiguous",
+      "label": "idea",
+      "text": "Can the next release support saved filters? The current filtering works as documented."
+    },
+    {
+      "id": "challenge-07",
+      "kind": "ambiguous",
+      "label": "question",
+      "text": "Why is a lost acknowledgment different from failed delivery when the inbox already contains the message?"
+    },
+    {
+      "id": "challenge-08",
+      "kind": "ambiguous",
+      "label": "bug report",
+      "text": "The build used to pass; now importing the settings module raises an exception. What changed?"
+    },
+    {
+      "id": "challenge-09",
+      "kind": "unfamiliar",
+      "label": "question",
+      "text": "How does a Raft pre-vote interact with joint consensus during learner promotion?"
+    },
+    {
+      "id": "challenge-10",
+      "kind": "unfamiliar",
+      "label": "bug report",
+      "text": "The eBPF verifier rejects a bounded loop after a CO-RE relocation changes the pointer provenance."
+    },
+    {
+      "id": "challenge-11",
+      "kind": "unfamiliar",
+      "label": "idea",
+      "text": "An adaptive radix tree could replace the current succinct trie for skewed workloads."
+    },
+    {
+      "id": "challenge-12",
+      "kind": "unfamiliar",
+      "label": "question",
+      "text": "Does a non-Archimedean valuation preserve this filtration under base extension?"
+    },
+    {
+      "id": "challenge-13",
+      "kind": "unfamiliar",
+      "label": "idea",
+      "text": "Let's expose CRDT anti-entropy convergence as a semilattice visualization."
+    },
+    {
+      "id": "challenge-14",
+      "kind": "unfamiliar",
+      "label": "bug report",
+      "text": "A phonon dispersion calculation produces imaginary frequencies after k-point interpolation."
+    },
+    {
+      "id": "challenge-15",
+      "kind": "unfamiliar",
+      "label": null,
+      "text": "Lunch tomorrow sounds good; I will bring the sandwiches."
+    },
+    {
+      "id": "challenge-16",
+      "kind": "unfamiliar",
+      "label": null,
+      "text": "quux flerm snorf zazzle"
+    },
+    {
+      "id": "challenge-17",
+      "kind": "unsupported_script",
+      "label": null,
+      "text": "لا أستطيع إرسال الرسالة بعد تسجيل الدخول"
+    },
+    {
+      "id": "challenge-18",
+      "kind": "unsupported_script",
+      "label": null,
+      "text": "保存したメッセージが消えます"
+    },
+    {
+      "id": "challenge-19",
+      "kind": "unsupported_script",
+      "label": null,
+      "text": "После входа приложение перестает работать"
+    },
+    {
+      "id": "challenge-20",
+      "kind": "unsupported_script",
+      "label": null,
+      "text": "保存按钮没有响应"
+    },
+    {
+      "id": "challenge-21",
+      "kind": "unsupported_script",
+      "label": null,
+      "text": "Could we add العربية to the interface?"
+    },
+    {
+      "id": "challenge-22",
+      "kind": "unsupported_script",
+      "label": null,
+      "text": "Η εφαρμογή δεν αποθηκεύει το μήνυμα"
+    },
+    {
+      "id": "challenge-23",
+      "kind": "unsupported_script",
+      "label": null,
+      "text": "메시지가 두 번 표시됩니다"
+    },
+    {
+      "id": "challenge-24",
+      "kind": "unsupported_script",
+      "label": null,
+      "text": "यह फ़ॉर्म काम नहीं करता"
+    }
+  ]
+}

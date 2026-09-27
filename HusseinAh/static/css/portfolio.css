@@ -780,6 +780,20 @@ button:focus-visible,
     color: var(--portfolio-muted);
 }
 
+.engineering-project-link {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+    margin-block: 2rem;
+    padding-block: 1.8rem;
+    border-block: 1px solid var(--portfolio-line);
+}
+
+.engineering-project-link > div { flex: 1 1 22rem; }
+.engineering-project-link h3 { margin-top: 0; }
+.engineering-project-link p { max-width: 68ch; margin-bottom: 0; }
+
 .project-archive {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));

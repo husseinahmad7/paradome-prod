@@ -1,0 +1,19 @@
+{% if model_card.status == 'available' %}
+<dl class="lab-model-metrics">
+  <div><dt>Held-out macro-F1</dt><dd>{{ model_card.metrics.test.macro_f1|floatformat:3 }}</dd></div>
+  <div><dt>Accepted precision</dt><dd>{{ model_card.metrics.test.accepted_precision|floatformat:3 }}</dd></div>
+  <div><dt>Accepted coverage</dt><dd>{{ model_card.metrics.test.coverage|floatformat:3 }}</dd></div>
+  <div><dt>Held-out examples</dt><dd>{{ model_card.metrics.test.count }}</dd></div>
+</dl>
+<p class="lab-note">Scores range from 0 to 1. Macro-F1 scores the raw top-category prediction on every held-out example, even when the UI abstains. Accepted precision is correct accepted predictions divided by all accepted predictions; coverage is accepted predictions divided by all examples.</p>
+<table class="lab-model-table"><caption>Held-out results by category</caption><thead><tr><th scope="col">Category</th><th scope="col">Precision</th><th scope="col">Recall</th><th scope="col">F1</th><th scope="col">Examples</th></tr></thead><tbody>{% for label, result in model_card.metrics.test.per_class.items %}<tr><th scope="row">{{ label|capfirst }}</th><td>{{ result.precision|floatformat:3 }}</td><td>{{ result.recall|floatformat:3 }}</td><td>{{ result.f1|floatformat:3 }}</td><td>{{ result.support }}</td></tr>{% endfor %}</tbody></table>
+<div class="lab-model-notes">
+  <p><strong>{% if model_card.metrics.promotion_passed %}The offline promotion targets were met.{% else %}The offline promotion targets were not met; treat this as an experimental model.{% endif %}</strong> Targets: macro-F1 ≥ 0.80, accepted precision ≥ 0.85, and coverage ≥ 0.50. The {{ model_card.metrics.test.baseline.name }} baseline scored {{ model_card.metrics.test.baseline.macro_f1|floatformat:3 }} macro-F1.</p>
+  <p>AI-authored, synthetic technical discussions, grouped by scenario: {{ model_card.metrics.split_counts.train }} training / {{ model_card.metrics.split_counts.validation }} validation / {{ model_card.metrics.split_counts.test }} test examples across {{ model_card.metrics.scenario_groups }} groups. Paraphrases stay together. The score threshold ({{ model_card.threshold|floatformat:3 }}) is selected on validation and frozen before test evaluation.</p>
+  <p>Observed malfunction takes precedence over a proposed feature; a proposed feature takes precedence over a guidance question. Unsupported scripts, too little recognized vocabulary, and low scores cause abstention. This is not language detection, and unfamiliar English can still be wrong.</p>
+  <p><strong>Mixed requests and negation can be confidently wrong.</strong> The separate ambiguous challenge set exposed this failure mode. These metrics describe the authored dataset, not real-world accuracy, and a model score is not a calibrated probability of being correct.</p>
+  <p class="lab-note">Artifact <code>{{ model_card.version }}</code> · {{ model_card.feature_count }} features · {{ model_card.artifact_bytes|filesizeformat }} JSON. Training-pipeline parity maximum absolute error: {{ model_card.metrics.parity_max_absolute_error }}.</p>
+  <details><summary>Dataset and model limitations</summary><ul>{% for limitation in model_card.limitations %}<li>{{ limitation }}</li>{% endfor %}</ul></details>
+  <p class="lab-evidence"><a href="{{ source_base }}/ml/README.md">Training &amp; data provenance</a> · <a href="{{ source_base }}/ml/evaluation-v1.json">Full evaluation and challenges</a> · <a href="{{ source_base }}/ml/frozen-v1.json">Frozen validation contract</a></p>
+</div>
+{% else %}<p class="lab-notice">ML triage is currently unavailable. You can still submit messages, simulate failures, retry, and inspect every delivery record.</p><p><a href="{{ source_base }}/ml/README.md">Read the model design and reproduction instructions</a></p>{% endif %}

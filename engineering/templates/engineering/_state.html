@@ -1,0 +1,37 @@
+{% load tz %}{% timezone "UTC" %}
+<div id="lab-state" hx-history="false">
+  <div id="lab-update" tabindex="-1" class="lab-update" role="status" aria-live="polite">{% if error %}<p class="lab-notice is-error">{{ error }}</p>{% elif feedback %}<p class="lab-notice is-success">{{ feedback }}</p>{% endif %}</div>
+  <div class="lab-run-meta"><p>Browser-owned run <code>{{ run.id }}</code></p><p>Expires <time datetime="{{ run.expires_at|date:'c' }}">{{ run.expires_at|date:'M j, H:i' }} UTC</time></p></div>
+  <p class="lab-note">{{ session_expiry_note }} Use fictional text. Nothing here is sent to another person.</p>
+  <ol class="lab-walkthrough is-compact" aria-label="Suggested walkthrough">
+    <li><strong>Submit a message</strong><span>Inspect the category suggestion and saved event.</span></li><li><strong>Lose the acknowledgement</strong><span>Compare the source with the destination inbox.</span></li><li><strong>Recover, then replay</strong><span>Choose success to retry. Replay the same submission.</span></li>
+  </ol>
+  <div class="lab-workbench">
+    <section class="lab-panel lab-source" aria-labelledby="source-title">
+      <header class="lab-panel-heading"><h2 id="source-title">Source · delivery intent</h2><span class="lab-state-tag">{{ submissions|length }} saved</span></header>
+      {% if can_submit %}
+      <form method="post" action="{% url 'engineering:submit' run.id %}" hx-post="{% url 'engineering:submit' run.id %}" hx-target="#lab-state" hx-swap="outerHTML" class="lab-submit-form">
+        {% csrf_token %}{{ submission_form.non_field_errors }}
+        <label for="id_text">Technical discussion</label><p class="lab-field-hint" id="text-hint">English, plain text, up to 1,500 characters. No sensitive information.</p>
+        <textarea name="text" id="id_text" maxlength="1500" rows="4" required aria-describedby="text-hint{% if submission_form.text.errors %} text-errors{% endif %}"{% if submission_form.text.errors %} aria-invalid="true"{% endif %}>{{ submission_form.text.value|default_if_none:'' }}</textarea>
+        {% if submission_form.text.errors %}<div id="text-errors" class="lab-field-error">{{ submission_form.text.errors }}</div>{% endif %}
+        <details class="lab-key-details"{% if submission_form.idempotency_key.errors %} open{% endif %}><summary>Idempotency key</summary><p class="lab-field-hint" id="key-hint">Same key + same text returns the original. Change the text under this key to see a 409 conflict.</p><label for="id_idempotency_key">Request key</label><input id="id_idempotency_key" name="idempotency_key" value="{{ submission_form.idempotency_key.value|default_if_none:'' }}" maxlength="36" required aria-describedby="key-hint{% if submission_form.idempotency_key.errors %} key-errors{% endif %}"{% if submission_form.idempotency_key.errors %} aria-invalid="true"{% endif %}>{% if submission_form.idempotency_key.errors %}<div id="key-errors" class="lab-field-error">{{ submission_form.idempotency_key.errors }}</div>{% endif %}</details>
+        <div class="lab-form-actions"><button class="lab-button" type="submit">Submit &amp; suggest category</button><span class="lab-pending" aria-hidden="true">Saving…</span></div>
+      </form>
+      {% else %}<p class="lab-notice">This run has reached its submission limit. Existing operations can still be inspected and replayed. Reset below to start again.</p>{% endif %}
+      {% for submission in submissions %}{% include "engineering/_operation.html" %}{% empty %}<p class="lab-empty">No submission yet. The message and its outbox event will appear here after one transaction commits.</p>{% endfor %}
+    </section>
+    <section class="lab-panel lab-inbox" aria-labelledby="inbox-title">
+      <header class="lab-panel-heading"><h2 id="inbox-title">Destination · inbox effect</h2><span class="lab-state-tag{% if receipts %} is-delivered{% endif %}">{{ receipts|length }} receipt{{ receipts|length|pluralize }}</span></header>
+      <p class="lab-note">A unique receipt per event is the inbox entry. Its transaction is separate from the source acknowledgement.</p>
+      {% for receipt in receipts %}<article class="lab-receipt"><h3>Message received</h3><p class="lab-message">{{ receipt.text }}</p><dl class="lab-record"><div><dt>Receipt</dt><dd><code>{{ receipt.id }}</code></dd></div><div><dt>For event</dt><dd><code>{{ receipt.event_id }}</code></dd></div><div><dt>Committed</dt><dd><time datetime="{{ receipt.delivered_at|date:'c' }}">{{ receipt.delivered_at|date:'H:i:s' }} UTC</time></dd></div></dl><p class="lab-receipt-note">Retrying this event cannot create another receipt.</p></article>{% empty %}<div class="lab-empty"><svg class="lab-empty-icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 14h32v25H8zM8 28h10l3 5h6l3-5h10M15 8h18"></path></svg><h3>The inbox is empty.</h3><p>Submit a message and attempt delivery. A failure before delivery keeps this empty; a lost acknowledgement does not.</p></div>{% endfor %}
+    </section>
+    <section class="lab-panel lab-timeline" aria-labelledby="timeline-title">
+      <header class="lab-panel-heading"><h2 id="timeline-title">Execution timeline</h2><span class="lab-note">Measured on the server</span></header>
+      <p class="lab-note">This run has been open for {{ elapsed_seconds|floatformat:1 }} seconds, including your time between clicks. Milliseconds measure each server stage up to its trace write, not transaction-commit or network latency. At most 80 recent trace records are retained.</p>
+      <ol class="lab-traces">{% for trace in traces %}<li><div class="lab-trace-time"><time datetime="{{ trace.created_at|date:'c' }}">{{ trace.created_at|date:'H:i:s' }} UTC</time><span>{{ trace.duration_ms|floatformat:2 }} ms</span></div><div><h3>{{ trace.stage_label }}</h3><p>{{ trace.detail }}</p><p class="lab-note">Request <code>{{ trace.operation_id }}</code></p></div></li>{% empty %}<li><p>Execution stages will appear as you advance the walkthrough.</p></li>{% endfor %}</ol>
+    </section>
+  </div>
+  <div class="lab-reset"><div><h2>Try a different path</h2><p>Reset deletes only this run and replaces it with an empty one. Other visitors and the shared demo are untouched.</p></div><form method="post" action="{% url 'engineering:reset' run.id %}">{% csrf_token %}<button class="lab-button is-secondary" type="submit">Reset my run</button></form></div>
+</div>
+{% endtimezone %}

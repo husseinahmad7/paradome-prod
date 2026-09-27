@@ -94,6 +94,9 @@ body.paradome-app {
   text-wrap: pretty;
 }
 
+.engineering-lab-invite { margin: 0; padding: .6rem 1.5rem 1.1rem; font-size: .9rem; color: var(--pd-text-muted); }
+.engineering-lab-invite a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 650; }
+
 .app-container {
   width: min(1120px, calc(100% - 32px));
   margin-inline: auto;
