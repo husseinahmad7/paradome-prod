@@ -1,8 +1,10 @@
 # Engineering lab verification record
 
 Verification date: 2026-09-27. Implementation is on `codex/engineering-lab`.
-Production is unchanged and the feature flag defaults to off. No commit, push,
-or deployment has been performed for this change. Incomplete gates are not passes.
+The implementation was committed and pushed as `3400e08`, following the separate
+chat-test fix `ac5daea`, from a clean release checkout. Production remains at
+`37e29d2` and the feature flag is off. Deployment and CI gates remain pending;
+incomplete gates are not passes.
 
 ## Executed checks
 
@@ -12,9 +14,10 @@ or deployment has been performed for this change. Incomplete gates are not passe
 - **All 77 Engineering Lab tests passed on MySQL 8.4.11**, zero skips, in
   22.268 seconds after a clean full migration chain. This includes all six
   concurrency/lost-acknowledgement/rollback/stale-claim cases.
-  This run preceded the final lazy-auth ordering fix; that fix and its two new
-  tests were verified in the final SQLite suite. The six concurrency paths are
-  unchanged. The expanded MySQL suite must also run in CI before release.
+  This run preceded the final lazy-auth, first-use owner, and expired-run cleanup
+  fixes. The final SQLite suite passed the lazy-auth and owner regressions; the
+  two new MySQL race tests were skipped locally. The expanded suite, including
+  eight MySQL concurrency cases, must run in CI before release.
 - Final shipping review reproduced two further concurrency defects: independently
   loaded session copies could initialize different owner secrets, and expired-run
   cleanup could collect children before a concurrent source transaction committed.
@@ -72,6 +75,9 @@ or deployment has been performed for this change. Incomplete gates are not passe
   evidence. Redacted reports remain under ignored `.gstack/security-scan-*`.
 - A subsequent staged-release scan covered approximately 616,811 bytes with full
   redaction and found no leaks. CI must still scan the final published history.
+- The published release history through `3400e08` also passed Gitleaks with no
+  findings: 56 commits with scanned diffs, approximately 1.53 MB. This local
+  result does not replace CI's scan of the final published commit.
 - `.gitattributes` pins hashed model/data JSON to LF. A fresh index export with
   `core.autocrlf=true` retained all five inspected frozen-file SHA256 hashes,
   including the corpus and runtime artifact; model contents were not retuned.
@@ -158,15 +164,16 @@ See `ml/evaluation-v1.json`, `ml/frozen-v1.json`, and `ml/README.md`.
   disposable bare clone of remote main subsequently succeeded: its complete
   tree exactly matches local pre-feature HEAD `b741c9f`. That equality verifies
   the reviewed baseline against current remote main without trusting stale refs.
-  Use a clean working checkout for the eventual release.
+  A clean release checkout was then created from remote main and used to publish
+  this branch, excluding the user's unrelated portfolio date/employment edits.
 - The optional outside Claude reviewer is unavailable locally. Native independent
   reviews are recorded separately; missing outside coverage is not a clean pass.
 
 ## Remaining release gates
 
-1. Use a clean release checkout, then run CI, including the expanded MySQL suite
-   and a full-history secret scan of the published commit. Publish source links
-   only after the reviewed branch/release exists remotely.
+1. Run CI, including the expanded MySQL suite and a full-history secret scan of
+   the final published commit. Source links target `main`; verify they resolve
+   after merge and before enabling the lab.
 2. Verified production backups, immutable release, additive migration, feature
    enablement, reload, and live smoke tests using the established deployment
    process. Recheck browser transfer and inference latency on PythonAnywhere.

@@ -20,8 +20,9 @@ containerized development server.
 
 CI uses Python 3.12 and MySQL 8.4 to run model drift checks, Django production
 and deployment checks, real MySQL migrations, the test suite, `pip-audit`, and a
-full-history Gitleaks scan. The history scan is expected to remain red until the
-planned repository-history rewrite removes the previously committed values.
+full-history Gitleaks scan. Local scans of the fetched main history and the
+published Engineering Lab release history found no leaks. CI must still scan
+the final published commit before merge.
 
 For a production-settings check outside CI, provide a disposable non-production
 environment and run:
@@ -38,7 +39,7 @@ directory, or demo user.
 
 The additive lab is off by default. Its isolated ownership, transaction, permission,
 and model tests are discovered by the full suite. SQLite intentionally skips the
-six real-MySQL concurrency cases; the existing CI MySQL service runs them.
+eight real-MySQL concurrency cases; the existing CI MySQL service runs them.
 
 ```sh
 python manage.py test engineering --settings=paradome.settings.test
@@ -46,7 +47,8 @@ node --test engineering/test_lab_js.cjs
 python ml/benchmark_runtime.py
 ```
 
-See [the verification record](docs/engineering-verification.md) for actual results
+See [the lab walkthrough and operations](docs/engineering-lab.md) and
+[the verification record](docs/engineering-verification.md) for usage, actual results,
 and outstanding release gates. Browser accessibility/responsive checks are not
 replaced by server-rendered form tests or the JavaScript event-contract tests.
 Offline training dependencies stay out of the production environment.
