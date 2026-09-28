@@ -5,6 +5,8 @@
   <div><dt>Accepted coverage</dt><dd>{{ model_card.metrics.test.coverage|floatformat:3 }}</dd></div>
   <div><dt>Held-out examples</dt><dd>{{ model_card.metrics.test.count }}</dd></div>
 </dl>
+<details class="lab-model-detail">
+  <summary>Full evaluation, method, and limitations</summary>
 <p class="lab-note">Scores range from 0 to 1. Macro-F1 scores the raw top-category prediction on every held-out example, even when the UI abstains. Accepted precision is correct accepted predictions divided by all accepted predictions; coverage is accepted predictions divided by all examples.</p>
 <table class="lab-model-table"><caption>Held-out results by category</caption><thead><tr><th scope="col">Category</th><th scope="col">Precision</th><th scope="col">Recall</th><th scope="col">F1</th><th scope="col">Examples</th></tr></thead><tbody>{% for label, result in model_card.metrics.test.per_class.items %}<tr><th scope="row">{{ label|capfirst }}</th><td>{{ result.precision|floatformat:3 }}</td><td>{{ result.recall|floatformat:3 }}</td><td>{{ result.f1|floatformat:3 }}</td><td>{{ result.support }}</td></tr>{% endfor %}</tbody></table>
 <div class="lab-model-notes">
@@ -16,4 +18,5 @@
   <details><summary>Dataset and model limitations</summary><ul>{% for limitation in model_card.limitations %}<li>{{ limitation }}</li>{% endfor %}</ul></details>
   <p class="lab-evidence"><a href="{{ source_base }}/ml/README.md">Training &amp; data provenance</a> · <a href="{{ source_base }}/ml/evaluation-v1.json">Full evaluation and challenges</a> · <a href="{{ source_base }}/ml/frozen-v1.json">Frozen validation contract</a></p>
 </div>
+</details>
 {% else %}<p class="lab-notice">ML triage is currently unavailable. You can still submit messages, simulate failures, retry, and inspect every delivery record.</p><p><a href="{{ source_base }}/ml/README.md">Read the model design and reproduction instructions</a></p>{% endif %}

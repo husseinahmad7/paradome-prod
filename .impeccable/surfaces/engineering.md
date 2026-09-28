@@ -115,3 +115,24 @@ explicitly deferred and is not repaired here. Present system-derived heading
 styles and the decorative start-button arrow are observed implementation details,
 not newly canonized global design rules or additional findings resolved by the
 three-correction finish verdict.
+
+### Focused UX refinement — 2026-09-28
+
+The overview now keeps its three-step story visible while the privacy boundary,
+six architecture decisions, and full model evaluation use named native
+disclosures. The run starts with source/inbox/timeline jump links, retains the
+source → inbox → trace reading order, and shows the ML category and qualified
+model score outside optional details. Result and error messages use a
+dismissible, non-modal native dialog; ordinary forms and dismissal work without
+JavaScript. Reset now confirms that the replacement run is ready.
+
+In the isolated local Edge pass, the 390px overview measured 2,326px high
+(previous screenshot: 4,784px) and the submitted run 2,616px (previous:
+3,843px). The source panel began 419px below the viewport top. At 320, 390,
+768, and 1440px there was no horizontal overflow. Automated WCAG checks
+reported zero violations for overview, submitted, and conflict states; keyboard
+disclosure, native toast dismissal, no-JavaScript submission/dismissal, and
+reset feedback passed. These are local-browser checks, not a native
+screen-reader audit or production release claim. The Impeccable detector
+returned no findings, with a known limitation: it could not resolve Django
+`{% static %}` stylesheet URLs, so browser checks supplied the visual evidence.

@@ -20,6 +20,7 @@ from .permissions import permission_explorer
 DEFAULT_TEXT = "The export button returns an error after I select a date range."
 SOURCE_BASE = "https://github.com/husseinahmad7/paradome-prod/blob/main"
 OUTCOME_MESSAGES = {
+    "reset": "A fresh private run is ready. Your previous run was removed.",
     "submitted": "Submission and event committed together. Choose a delivery scenario below.",
     "replayed": "The original submission was returned. No extra event was created.",
     "acknowledged": "Delivery acknowledged. The destination contains one inbox effect for this event.",
@@ -209,7 +210,7 @@ def delivery(request, run_id):
 def reset(request, run_id):
     run = services.owned_run(request, run_id)
     replacement = services.reset_run(request, run)
-    return _redirect(request, replacement)
+    return _redirect(request, replacement, "reset")
 
 
 @lab_page

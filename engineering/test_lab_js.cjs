@@ -7,16 +7,28 @@ const vm = require("node:vm");
 
 function harness() {
   const listeners = {};
-  const state = {message: "", focused: false, busy: false};
-  const status = {
-    querySelector: () => null,
-    replaceChildren: (node) => { state.message = node.textContent; },
-    focus: () => { state.focused = true; },
+  const state = {message: "", focused: false, focusPreventScroll: false, busy: false, visible: false, alertRole: ""};
+  const classes = new Set(["is-success"]);
+  const title = {textContent: "Lab updated"};
+  const body = {
+    textContent: "",
+    setAttribute: (name, value) => { if (name === "role") state.alertRole = value; },
   };
+  const status = {
+    open: false,
+    classList: {
+      add: (name) => classes.add(name),
+      remove: (name) => classes.delete(name),
+      contains: (name) => classes.has(name),
+    },
+    querySelector: (selector) => selector === "#lab-toast-title" ? title : selector === "#lab-toast-message" ? body : null,
+    show: () => { status.open = true; state.visible = true; },
+    focus: (options) => { state.focused = true; state.focusPreventScroll = options.preventScroll; },
+  };
+  Object.defineProperty(state, "message", {get: () => body.textContent});
   const document = {
     body: {addEventListener: (name, callback) => { listeners[name] = callback; }},
     getElementById: () => status,
-    createElement: () => ({}),
   };
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, "static/engineering/lab.js"), "utf8"), {document});
   const elt = {
@@ -43,6 +55,9 @@ test("HTMX 1.7 network errors and timeouts announce recovery without failed flag
     assert.equal(state.busy, false);
     assert.match(state.message, /Reload to check the saved state/);
     assert.equal(state.focused, true);
+    assert.equal(state.focusPreventScroll, true);
+    assert.equal(state.visible, true);
+    assert.equal(state.alertRole, "alert");
   }
 });
 
@@ -61,6 +76,13 @@ test("validation fragments swap only with the lab marker", () => {
     const detail = fire("htmx:beforeSwap", {target: {id: "lab-state"}, xhr: {status: 409, getResponseHeader: () => marker}});
     assert.equal(detail.shouldSwap, marker === "1" ? true : undefined);
   }
+});
+
+test("marked validation errors use the specific swapped toast, not a generic network error", () => {
+  const {state, fire} = harness();
+  fire("htmx:afterRequest", {failed: true, xhr: {status: 409, getResponseHeader: () => "1"}});
+  assert.equal(state.visible, false);
+  assert.equal(state.message, "");
 });
 
 test("successful responses and unrelated forms do not announce failure", () => {
@@ -103,7 +125,9 @@ test("successful swaps keep focus in the matching operation instead of the globa
 
 test("validation swaps retain deliberate focus on the error status", () => {
   const {state, fire, status} = harness();
-  status.querySelector = () => ({});
+  status.open = true;
+  status.classList.add("is-error");
   fire("htmx:afterSwap", {target: {id: "lab-state"}});
   assert.equal(state.focused, true);
+  assert.equal(state.focusPreventScroll, true);
 });

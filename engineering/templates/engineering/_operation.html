@@ -1,10 +1,20 @@
 <article class="lab-operation" aria-labelledby="operation-{{ submission.id }}">
   <header class="lab-panel-heading"><h3 id="operation-{{ submission.id }}" tabindex="-1">Saved operation {{ forloop.counter }}</h3><span class="lab-state-tag is-{{ submission.event.status }}">{{ submission.event.get_status_display }}</span></header>
   <p class="lab-message">{{ submission.text }}</p>
-  <dl class="lab-record"><div><dt>Submission</dt><dd><code>{{ submission.id }}</code></dd></div><div><dt>Event</dt><dd><code>{{ submission.event.id }}</code></dd></div><div><dt>Request key</dt><dd><code>{{ submission.idempotency_key }}</code></dd></div><div><dt>Attempts</dt><dd>{{ submission.event.attempt_count }} / 5</dd></div></dl>
-  <details class="lab-triage" open><summary>ML triage · {% if submission.triage.status == 'suggested' %}{{ submission.triage.label|capfirst }}{% elif submission.triage.status == 'uncertain' %}Needs human judgement{% else %}Unavailable{% endif %}</summary>
+  <p class="lab-operation-attempts">{{ submission.event.attempt_count }} / 5 delivery attempts</p>
+  <details class="lab-record-details"><summary>Saved record IDs and request key</summary><dl class="lab-record"><div><dt>Submission</dt><dd><code>{{ submission.id }}</code></dd></div><div><dt>Event</dt><dd><code>{{ submission.event.id }}</code></dd></div><div><dt>Request key</dt><dd><code>{{ submission.idempotency_key }}</code></dd></div></dl></details>
+  <dl class="lab-triage-result">
+    {% if submission.triage.status == 'suggested' %}
+    <div><dt>Suggested category</dt><dd><strong>{{ submission.triage.label|capfirst }}</strong></dd></div>
+    <div><dt>Model score</dt><dd>{{ submission.triage.score|floatformat:3 }} <span>Not a confidence probability</span></dd></div>
+    {% elif submission.triage.status == 'uncertain' %}
+    <div><dt>Category suggestion</dt><dd><strong>Needs human judgement</strong></dd></div>
+    {% else %}
+    <div><dt>Category suggestion</dt><dd><strong>Unavailable</strong></dd></div>
+    {% endif %}
+  </dl>
+  <details class="lab-triage"><summary>ML triage details · terms and limitations</summary>
     {% if submission.triage.explanation %}<p>{{ submission.triage.explanation }}</p>{% endif %}
-    {% if submission.triage.score != None %}<p>Model score <strong>{{ submission.triage.score|floatformat:3 }}</strong>. This is not a calibrated probability of correctness.</p>{% endif %}
     {% if submission.triage.terms %}<p class="lab-field-hint">Influential terms: positive contributions raise the top candidate’s linear score; negative contributions lower it.</p><ul class="lab-terms">{% for term in submission.triage.terms %}<li><code>{{ term.name }}</code> <span>{{ term.contribution|floatformat:3 }}</span></li>{% endfor %}</ul>{% endif %}
     <p class="lab-note">{% if submission.triage.version %}Artifact <code>{{ submission.triage.version }}</code> · {% endif %}Inference {{ submission.triage.latency_ms|floatformat:2 }} ms</p><a href="{% url 'engineering:index' %}#model-evidence">Evaluation &amp; limitations</a>
   </details>
