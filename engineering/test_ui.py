@@ -59,7 +59,11 @@ class LabRenderedWalkthroughTests(TransactionTestCase):
         response = self.post(submit_url, {"text": text, "idempotency_key": key})
         self.assertEqual(response.status_code, 303)
         submission = Submission.objects.get()
-        self.assertContains(self.client.get(response["Location"]), "ML triage")
+        submitted = self.client.get(response["Location"])
+        self.assertContains(submitted, "ML triage")
+        self.assertContains(submitted, "<dt>Suggested category</dt>")
+        self.assertContains(submitted, "<strong>Bug report</strong>")
+        self.assertContains(submitted, "Not a confidence probability")
         delivery_url = reverse("engineering:delivery", args=[run.id])
         response = self.post(delivery_url, {"event_id": submission.event.id, "scenario": "lost_ack"})
         self.assertEqual(response.status_code, 303)
@@ -72,6 +76,9 @@ class LabRenderedWalkthroughTests(TransactionTestCase):
         recovered = self.client.get(response["Location"])
         self.assertContains(recovered, "Duplicate effect prevented")
         self.assertContains(recovered, "Source acknowledged")
+        self.assertContains(recovered, 'id="lab-update"')
+        self.assertContains(recovered, 'role="status" aria-atomic="true"')
+        self.assertContains(recovered, '<form method="dialog">')
         self.assertEqual(ConsumerReceipt.objects.get().id, receipt_id)
         replay = self.post(submit_url, {"text": text, "idempotency_key": key})
         self.assertEqual(replay.status_code, 303)
@@ -90,7 +97,10 @@ class LabRenderedWalkthroughTests(TransactionTestCase):
         markup = Markup(response.content)
         self.assertEqual(len(markup.ids), len(set(markup.ids)))
         self.assertGreaterEqual(len(markup.forms), 6)
+        self.assertEqual(sum(form["attrs"].get("method") == "dialog" for form in markup.forms), 1)
         for form in markup.forms:
+            if form["attrs"].get("method") == "dialog":
+                continue  # Native toast dismissal never sends a request.
             self.assertEqual(form["attrs"].get("method"), "post")
             self.assertTrue(any(field.get("name") == "csrfmiddlewaretoken" for field in form["fields"]))
         self.assertContains(response, 'maxlength="1500"')
@@ -106,6 +116,8 @@ class LabRenderedWalkthroughTests(TransactionTestCase):
         self.assertEqual(conflict["X-Lab-State"], "1")
         self.assertContains(conflict, 'id="lab-state"', status_code=409)
         self.assertContains(conflict, "Restore the original text or use a new key", status_code=409)
+        self.assertContains(conflict, 'class="lab-toast is-error"', status_code=409)
+        self.assertContains(conflict, 'role="alert" aria-atomic="true"', status_code=409)
         self.assertNotContains(conflict, "<!doctype html>", status_code=409)
         invalid = self.post(url, {"text": "x", "idempotency_key": "bad-key"})
         self.assertContains(invalid, "<!doctype html>", status_code=400)
@@ -138,3 +150,20 @@ class LabRenderedWalkthroughTests(TransactionTestCase):
         self.assertContains(permissions, "Who can do what?")
         self.assertContains(permissions, "Denied")
         self.assertContains(permissions, 'method="get"')
+
+    def test_overview_keeps_evidence_available_without_expanding_it_by_default(self):
+        response = self.client.get(self.index_url)
+        self.assertContains(response, "Full evaluation, method, and limitations")
+        self.assertContains(response, "Explore six architecture decisions")
+        self.assertContains(response, "Commit the message and delivery intent together")
+        self.assertNotContains(response, '<details open>')
+        self.assertContains(response, "Privacy and production boundaries")
+
+    def test_reset_confirms_replacement_in_the_same_popup(self):
+        run, _ = self.start()
+        response = self.post(reverse("engineering:reset", args=[run.id]))
+        self.assertEqual(response.status_code, 303)
+        replacement = self.client.get(response["Location"])
+        self.assertContains(replacement, "A fresh private run is ready.")
+        self.assertContains(replacement, 'class="lab-toast is-success"')
+        self.assertContains(replacement, 'role="status" aria-atomic="true"')

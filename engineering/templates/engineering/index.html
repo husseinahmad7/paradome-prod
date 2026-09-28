@@ -11,10 +11,13 @@
     <p class="lab-note">About 90 seconds · No extra login · No external messages sent</p>
   </div>
   <aside class="lab-boundary" aria-labelledby="boundary-title">
-    <h2 id="boundary-title">A safe place to break things</h2>
-    <p>Every message stays in dedicated lab tables. Your browser owns your run, even when you use the shared demo account.</p>
-    <p>Access lasts up to 24 hours, or until your session ends. Logging out ends access. Please use fictional, non-sensitive text.</p>
-    <p><strong>This is a demonstration of an architecture, not a claim that ParaDome’s live chat uses it.</strong></p>
+    <h2 id="boundary-title">Isolated by design</h2>
+    <p>Messages stay in lab-only tables. Your browser owns the run, even on the shared demo account.</p>
+    <details>
+      <summary>Privacy and production boundaries</summary>
+      <p>Access lasts up to 24 hours, or until your session ends. Logging out ends access. Use fictional, non-sensitive text.</p>
+      <p><strong>This demonstrates an architecture; ParaDome’s live chat does not use this delivery flow.</strong></p>
+    </details>
   </aside>
 </section>
 
@@ -34,8 +37,10 @@
 
 <section class="lab-section" id="architecture" aria-labelledby="architecture-title">
   <div class="lab-section-heading"><h2 id="architecture-title">Architecture you can inspect</h2><p>Small boundaries, explicit failure states, and evidence beside each decision.</p></div>
-  <div class="lab-decisions">
-    <details open>
+  <details class="lab-architecture-disclosure">
+    <summary>Explore six architecture decisions</summary>
+    <div class="lab-decisions">
+    <details>
       <summary>Keep the lab inside a modular Django application</summary>
       <p>A dedicated app owns runs, submissions, outbox events, receipts, and traces. Its transport accepts only lab events, never live posts, chat channels, user IDs, or external URLs. The existing site stays on PythonAnywhere.</p>
       <p><strong>Trade-off:</strong> this is an in-process demonstration, not an independently deployed service. Every attempt happens during an explicit request; there is no background worker.</p>
@@ -71,12 +76,13 @@
       <p><strong>Trade-off:</strong> a small English classifier has a narrow vocabulary. It can abstain, and unfamiliar English can still be misclassified. Missing or invalid model data does not stop submissions or delivery.</p>
       <p class="lab-evidence"><a href="{{ source_base }}/engineering/triage.py">Inference code</a> · <a href="{{ source_base }}/engineering/test_triage.py">Parity and fallback tests</a> · <a href="{{ source_base }}/ml">Reproduce training</a></p>
     </details>
-  </div>
+    </div>
+  </details>
 </section>
 
 <section class="lab-section" id="model-evidence" aria-labelledby="model-title">
   <div class="lab-section-heading"><h2 id="model-title">A small classifier. A visible evaluation.</h2><p>Bug report, idea, or question. English technical discussions only.</p></div>
   {% include "engineering/_model_card.html" %}
 </section>
-<section class="lab-close" aria-labelledby="ready-title"><h2 id="ready-title">Trace a message for yourself.</h2><form method="post" action="{% url 'engineering:create_run' %}">{% csrf_token %}<button class="lab-button" type="submit">Start a private lab run</button></form><a href="{% url 'engineering:permissions' %}">Or explore the permission policy</a></section>
+<section class="lab-close" aria-labelledby="ready-title"><h2 id="ready-title">Ready to trace a message?</h2><form method="post" action="{% url 'engineering:create_run' %}">{% csrf_token %}<button class="lab-button" type="submit">Start a private lab run</button></form><a href="{% url 'engineering:permissions' %}">Explore permissions instead</a></section>
 {% endblock %}

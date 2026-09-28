@@ -1,11 +1,13 @@
 {% load tz %}{% timezone "UTC" %}
 <div id="lab-state" hx-history="false">
-  <div id="lab-update" tabindex="-1" class="lab-update" role="status" aria-live="polite">{% if error %}<p class="lab-notice is-error">{{ error }}</p>{% elif feedback %}<p class="lab-notice is-success">{{ feedback }}</p>{% endif %}</div>
-  <div class="lab-run-meta"><p>Browser-owned run <code>{{ run.id }}</code></p><p>Expires <time datetime="{{ run.expires_at|date:'c' }}">{{ run.expires_at|date:'M j, H:i' }} UTC</time></p></div>
-  <p class="lab-note">{{ session_expiry_note }} Use fictional text. Nothing here is sent to another person.</p>
-  <ol class="lab-walkthrough is-compact" aria-label="Suggested walkthrough">
-    <li><strong>Submit a message</strong><span>Inspect the category suggestion and saved event.</span></li><li><strong>Lose the acknowledgement</strong><span>Compare the source with the destination inbox.</span></li><li><strong>Recover, then replay</strong><span>Choose success to retry. Replay the same submission.</span></li>
-  </ol>
+  <dialog id="lab-update" tabindex="-1" class="lab-toast {% if error %}is-error{% else %}is-success{% endif %}" aria-labelledby="lab-toast-title" aria-describedby="lab-toast-message"{% if error or feedback %} open{% endif %}>
+    <div class="lab-toast-heading"><strong id="lab-toast-title">{% if error %}Action needed{% else %}Lab updated{% endif %}</strong><form method="dialog"><button type="submit" class="lab-toast-dismiss" aria-label="Dismiss notification">Close</button></form></div>
+    <p id="lab-toast-message" role="{% if error %}alert{% else %}status{% endif %}" aria-atomic="true">{{ error|default:feedback }}</p>
+  </dialog>
+  <div class="lab-run-utility">
+    <nav class="lab-workbench-nav" aria-label="Jump to workbench area"><a href="#source-title">Source</a><a href="#inbox-title">Inbox</a><a href="#timeline-title">Timeline</a></nav>
+    <details class="lab-run-details"><summary>Private run · expires <time datetime="{{ run.expires_at|date:'c' }}">{{ run.expires_at|date:'M j, H:i' }} UTC</time></summary><p>Run ID <code>{{ run.id }}</code></p><p>{{ session_expiry_note }} Use fictional text. Nothing here is sent to another person.</p></details>
+  </div>
   <div class="lab-workbench">
     <section class="lab-panel lab-source" aria-labelledby="source-title">
       <header class="lab-panel-heading"><h2 id="source-title">Source · delivery intent</h2><span class="lab-state-tag">{{ submissions|length }} saved</span></header>
@@ -23,12 +25,12 @@
     </section>
     <section class="lab-panel lab-inbox" aria-labelledby="inbox-title">
       <header class="lab-panel-heading"><h2 id="inbox-title">Destination · inbox effect</h2><span class="lab-state-tag{% if receipts %} is-delivered{% endif %}">{{ receipts|length }} receipt{{ receipts|length|pluralize }}</span></header>
-      <p class="lab-note">A unique receipt per event is the inbox entry. Its transaction is separate from the source acknowledgement.</p>
-      {% for receipt in receipts %}<article class="lab-receipt"><h3>Message received</h3><p class="lab-message">{{ receipt.text }}</p><dl class="lab-record"><div><dt>Receipt</dt><dd><code>{{ receipt.id }}</code></dd></div><div><dt>For event</dt><dd><code>{{ receipt.event_id }}</code></dd></div><div><dt>Committed</dt><dd><time datetime="{{ receipt.delivered_at|date:'c' }}">{{ receipt.delivered_at|date:'H:i:s' }} UTC</time></dd></div></dl><p class="lab-receipt-note">Retrying this event cannot create another receipt.</p></article>{% empty %}<div class="lab-empty"><svg class="lab-empty-icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 14h32v25H8zM8 28h10l3 5h6l3-5h10M15 8h18"></path></svg><h3>The inbox is empty.</h3><p>Submit a message and attempt delivery. A failure before delivery keeps this empty; a lost acknowledgement does not.</p></div>{% endfor %}
+      <p class="lab-note">One unique receipt per event, committed separately from the source acknowledgement.</p>
+      {% for receipt in receipts %}<article class="lab-receipt"><h3>Message received</h3><p class="lab-message">{{ receipt.text }}</p><dl class="lab-record"><div><dt>Receipt</dt><dd><code>{{ receipt.id }}</code></dd></div><div><dt>For event</dt><dd><code>{{ receipt.event_id }}</code></dd></div><div><dt>Committed</dt><dd><time datetime="{{ receipt.delivered_at|date:'c' }}">{{ receipt.delivered_at|date:'H:i:s' }} UTC</time></dd></div></dl><p class="lab-receipt-note">Retrying this event cannot create another receipt.</p></article>{% empty %}<div class="lab-empty"><h3>The inbox is empty.</h3><p>A pre-delivery failure leaves it empty; a lost acknowledgement leaves one receipt.</p></div>{% endfor %}
     </section>
     <section class="lab-panel lab-timeline" aria-labelledby="timeline-title">
       <header class="lab-panel-heading"><h2 id="timeline-title">Execution timeline</h2><span class="lab-note">Measured on the server</span></header>
-      <p class="lab-note">This run has been open for {{ elapsed_seconds|floatformat:1 }} seconds, including your time between clicks. Milliseconds measure each server stage up to its trace write, not transaction-commit or network latency. At most 80 recent trace records are retained.</p>
+      <details class="lab-timing-notes"><summary>What these timings measure</summary><p class="lab-note">This run has been open for {{ elapsed_seconds|floatformat:1 }} seconds, including your time between clicks. Milliseconds measure each server stage up to its trace write, not transaction-commit or network latency. At most 80 recent trace records are retained.</p></details>
       <ol class="lab-traces">{% for trace in traces %}<li><div class="lab-trace-time"><time datetime="{{ trace.created_at|date:'c' }}">{{ trace.created_at|date:'H:i:s' }} UTC</time><span>{{ trace.duration_ms|floatformat:2 }} ms</span></div><div><h3>{{ trace.stage_label }}</h3><p>{{ trace.detail }}</p><p class="lab-note">Request <code>{{ trace.operation_id }}</code></p></div></li>{% empty %}<li><p>Execution stages will appear as you advance the walkthrough.</p></li>{% endfor %}</ol>
     </section>
   </div>

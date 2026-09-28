@@ -2,6 +2,18 @@
 (() => {
   "use strict";
   const focusByRequest = new WeakMap();
+  function showRequestError(status, message) {
+    const title = status.querySelector("#lab-toast-title");
+    const body = status.querySelector("#lab-toast-message");
+    if (!title || !body) return;
+    title.textContent = "Request needs attention";
+    body.textContent = message;
+    body.setAttribute("role", "alert");
+    status.classList.remove("is-success");
+    status.classList.add("is-error");
+    if (!status.open) status.show();
+    status.focus({preventScroll: true});
+  }
   document.body.addEventListener("htmx:beforeSwap", (event) => {
     const response = event.detail.xhr;
     if (event.detail.target.id !== "lab-state") return;
@@ -27,23 +39,23 @@
     event.detail.elt.removeAttribute("aria-busy");
     // HTMX 1.7 omits `failed` for XHR network errors and timeouts.
     if (event.detail.failed || event.detail.error || event.detail.xhr.status === 0) {
+      // A marked validation response swaps a specific server-rendered message.
+      if (event.detail.xhr.getResponseHeader?.("X-Lab-State") === "1") return;
       const status = document.getElementById("lab-update");
       if (!status) return;
-      const message = document.createElement("p");
-      message.className = "lab-notice is-error";
       const response = event.detail.xhr;
+      let message;
       if (response.status === 404) {
-        message.textContent = "This run is unavailable or your session has ended. Return to Lab overview to start again.";
+        message = "This run is unavailable or your session has ended. Return to Lab overview to start again.";
       } else if (response.status === 429) {
         const seconds = Number(response.getResponseHeader("Retry-After"));
         const wait = Number.isInteger(seconds) && seconds > 0 && seconds <= 86400
           ? `Wait ${seconds} seconds` : "Wait a little";
-        message.textContent = `Too many attempts. ${wait} before trying again. Your saved records are unchanged; keep the same request key when retrying.`;
+        message = `Too many attempts. ${wait} before trying again. Your saved records are unchanged; keep the same request key when retrying.`;
       } else {
-        message.textContent = "The request did not finish successfully. Reload to check the saved state before trying again. Replaying the same request key is safe.";
+        message = "The request did not finish successfully. Reload to check the saved state before trying again. Replaying the same request key is safe.";
       }
-      status.replaceChildren(message);
-      status.focus({preventScroll: false});
+      showRequestError(status, message);
     }
   });
   document.body.addEventListener("htmx:afterSwap", (event) => {
@@ -51,8 +63,8 @@
     const status = document.getElementById("lab-update");
     const previous = focusByRequest.get(event.detail.xhr);
     focusByRequest.delete(event.detail.xhr);
-    if (status && status.querySelector(".is-error")) {
-      status.focus({preventScroll: false});
+    if (status && status.open && status.classList.contains("is-error")) {
+      status.focus({preventScroll: true});
       return;
     }
     // The polite live region announces success without pulling mobile users
