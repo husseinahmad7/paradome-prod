@@ -102,13 +102,13 @@ def preview(options):
         "repoUrl": "https://github.com/husseinahmad7/paradome-prod",
         "branch": options.branch, "appName": options.name, "owner": options.owner,
         "presetName": "django", "region": "fr-roub1", "enableDatabase": True,
-        "dbEngine": "MYSQL", "waitForScreenshotGeneration": False,
+        "dbEngine": "POSTGRES", "waitForScreenshotGeneration": False,
         # Keep Anybuild's install steps: they bind-mount dependency inputs only
         # for the step that needs them and resolve target-runtime wheels.
         "buildCmd": "python deployment/wasmer/build.py",
         "startCmd": "python -m uvicorn paradome.wasmer_wsgi:app --interface wsgi --host 0.0.0.0 --port 8080",
         "afterDeployCmd": "python manage.py prepare_wasmer_demo",
-        "envVars": [env("ANYBUILD_PYTHON_EXTRA_DEPENDENCIES", json.dumps(["mysqlclient==2.2.8", "uvicorn==0.54.0"])),
+        "envVars": [env("ANYBUILD_PYTHON_EXTRA_DEPENDENCIES", json.dumps(["psycopg[binary]==3.3.4", "uvicorn==0.54.0"])),
                     env("DJANGO_SETTINGS_MODULE", "paradome.settings.wasmer"),
                     env("DJANGO_SECRET_KEY", demo_key(options.name, bool(options.app_id)), True),
                     env("DJANGO_ALLOWED_HOSTS", origin.removeprefix("https://")),
@@ -134,8 +134,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("action", choices=["preflight", "preview", "status"])
     parser.add_argument("--owner", default="h7osanna_xyc")
-    parser.add_argument("--name", default="paradome-control-room-preview")
-    parser.add_argument("--branch", default="hussein/portfolio-control-room")
+    parser.add_argument("--name", default="paradome-control-room-pg-preview")
+    parser.add_argument("--branch", default="hussein/wasmer-demo")
     parser.add_argument("--revision")
     parser.add_argument("--origin")
     parser.add_argument("--app-id")

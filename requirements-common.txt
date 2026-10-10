@@ -1,0 +1,13 @@
+# Shared application dependencies; sanitization and database bindings are
+# selected by each runtime profile without weakening the HTML allowlist.
+Django==5.2.17
+crispy-bulma==0.12.0
+django-crispy-forms==2.7
+django-filter==26.1
+django-prose-editor==0.26.0
+Pillow==12.3.0
+pusher==3.3.4
+django-csp==4.0
+django-ratelimit==4.1.0
+WhiteNoise==6.12.0
+python-dotenv==1.2.3

@@ -543,8 +543,8 @@ class SocialCleanupMigrationTests(TransactionTestCase):
         )
 
 
-@skipUnless(connection.vendor == "mysql", "MySQL concurrency coverage runs in CI")
-class MySQLSocialConcurrencyTests(TransactionTestCase):
+@skipUnless(connection.vendor in {"mysql", "postgresql"}, "Database concurrency coverage runs in CI")
+class DatabaseSocialConcurrencyTests(TransactionTestCase):
     def test_concurrent_duplicate_like_is_rejected_by_database_constraint(self):
         owner = User.objects.create_user("mysql-owner", password="x")
         actor = User.objects.create_user("mysql-actor", password="x")

@@ -11,7 +11,7 @@ from . import search
 from .models import LabRun, SearchObservation
 
 
-@skipUnless(connection.vendor == "mysql", "Requires real MySQL row locks.")
+@skipUnless(connection.vendor in {"mysql", "postgresql"}, "Requires real database row locks.")
 class SearchTelemetryConcurrencyTests(TransactionTestCase):
     def test_two_connections_cannot_exceed_the_observation_cap(self):
         run = LabRun.objects.create(owner_hash="a" * 64, slot=0, expires_at=timezone.now() + timedelta(hours=1))

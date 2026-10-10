@@ -16,7 +16,7 @@ env:
   ENGINEERING_SOURCE_REVISION: "{revision}"
 capabilities:
   database:
-    engine: mysql
+    engine: postgres
   cdn_cache:
     enabled: true
 locality:

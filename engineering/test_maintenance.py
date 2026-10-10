@@ -80,7 +80,7 @@ class WasmerProfileTests(SimpleTestCase):
                  "DJANGO_ALLOWED_HOSTS": "example.wasmer.app",
                  "DJANGO_CSRF_TRUSTED_ORIGINS": "https://example.wasmer.app",
                  "PUBLIC_SITE_URL": "https://example.wasmer.app",
-                 "DB_HOST": "managed-db.internal", "DB_PORT": "3306", "DB_NAME": "demo",
+                 "DB_HOST": "managed-db.internal", "DB_PORT": "5432", "DB_NAME": "demo",
                  "DB_USERNAME": "injected-user", "DB_USER": "ignored-legacy-user", "DB_PASSWORD": "test-only"}
 
     def profile(self, **changes):
@@ -90,12 +90,18 @@ class WasmerProfileTests(SimpleTestCase):
     def test_injected_username_secure_cookies_and_disabled_services(self):
         profile = self.profile()
         self.assertEqual(profile["DATABASES"]["default"]["USER"], "injected-user")
-        self.assertEqual(profile["DATABASES"]["default"]["OPTIONS"]["ssl_mode"], "REQUIRED")
+        self.assertEqual(profile["DATABASES"]["default"]["ENGINE"], "django.db.backends.postgresql")
+        self.assertEqual(profile["DATABASES"]["default"]["OPTIONS"]["sslmode"], "require")
         self.assertTrue(profile["SESSION_COOKIE_SECURE"])
         self.assertTrue(profile["SESSION_PAGES_NOSTORE"])
         self.assertFalse(profile["CHAT_REALTIME_ENABLED"])
         self.assertFalse(profile["CONTACT_FORM_ENABLED"])
         self.assertEqual(profile["DEMO_USERNAME"], "paradome-wasmer-guest")
+
+    def test_database_ca_enables_identity_verification(self):
+        options = self.profile(DB_SSL_CA="/data/database-ca.pem")["DATABASES"]["default"]["OPTIONS"]
+        self.assertEqual(options["sslmode"], "verify-full")
+        self.assertEqual(options["sslrootcert"], "/data/database-ca.pem")
 
     def test_hosts_origins_and_private_storage_fail_closed(self):
         for changes in ({"DJANGO_SECRET_KEY": "short"}, {"DB_USERNAME": ""}, {"DJANGO_ALLOWED_HOSTS": "*"}, {"PUBLIC_SITE_URL": "http://example.wasmer.app"}, {"DJANGO_CSRF_TRUSTED_ORIGINS": "https://foreign.wasmer.app"}, {"PRIVATE_MEDIA_ROOT": "/tmp/media"}, {"PRIVATE_MEDIA_ROOT": "/data/../tmp/media"}, {"PRIVATE_MEDIA_ROOT": "relative/media"}):

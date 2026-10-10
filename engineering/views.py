@@ -340,8 +340,8 @@ def evaluation(request):
 def embedding_goldens(request):
     from . import search as retrieval
     try:
-        golden = json.loads(retrieval.ARTIFACT_ROOT.joinpath("search-golden-v1.json").read_bytes())
-        index = json.loads(retrieval.ARTIFACT_ROOT.joinpath("search-index-v1.json").read_bytes())
+        golden = json.loads(retrieval.ARTIFACT_ROOT.joinpath(f"search-golden-{retrieval.VERSION}.json").read_bytes())
+        index = json.loads(retrieval.ARTIFACT_ROOT.joinpath(f"search-index-{retrieval.VERSION}.json").read_bytes())
         golden["reference_index"] = {"document_ids": index["document_ids"], "vectors": index["vectors"]}
         return JsonResponse(golden)
     except (OSError, ValueError):

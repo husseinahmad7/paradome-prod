@@ -1,0 +1,20 @@
+[
+  {"id":"rich-document", "html":"<h2>Title</h2><p><strong>bold</strong> and <em>emphasis</em></p><ul><li>first</li></ul><pre><code>a &lt; b</code></pre>"},
+  {"id":"safe-links", "html":"<p><a href='https://example.invalid/a?b=1&amp;c=2' title='Example'>https</a> <a href='mailto:test@example.invalid'>mail</a></p>"},
+  {"id":"relative-links", "html":"<a href='/posts/1/'>local</a><a href='#answer'>anchor</a>"},
+  {"id":"script-content", "html":"<p>safe<script>alert(1)</script>after</p>"},
+  {"id":"event-and-image", "html":"<p onclick='alert(1)' style='color:red'>text<img src=x onerror=alert(2)></p>"},
+  {"id":"javascript-url", "html":"<a href='javascript:alert(1)'>unsafe</a>"},
+  {"id":"encoded-scheme", "html":"<a href='java&#x73;cript&#58;alert(1)'>unsafe</a><a href='data:text/html,unsafe'>data</a>"},
+  {"id":"url-control", "html":"<a href='java&#10;script:alert(1)'>unsafe</a>"},
+  {"id":"active-containers", "html":"<iframe srcdoc='<script>x</script>'>bad</iframe><object>bad</object><embed src=x><template>bad</template><p>kept</p>"},
+  {"id":"svg-namespace", "html":"<svg><a xlink:href='javascript:alert(1)'><text>unsafe</text></a><foreignObject><p onmouseover='x()'>safe</p></foreignObject></svg>"},
+  {"id":"svg-style-namespace", "html":"<svg><style><a title='</style><img src=x onerror=alert(1)>'>x</a></svg><p>end</p>"},
+  {"id":"mathml-namespace", "html":"<math><mtext><table><mglyph><style><!--</style><img title='--><img src=x onerror=alert(1)>'></table></mtext></math>"},
+  {"id":"malformed-nesting", "html":"<p><b>bold<i>mixed</b>tail</i><a href='javascript:x'>bad</a>"},
+  {"id":"comments-and-unicode", "html":"<!-- hidden --><p>مرحبا 🙂 &amp; English</p>"},
+  {"id":"empty-document", "html":"<p></p>"},
+  {"id":"plain-escaping", "html":"some text < and > plus & ampersands"},
+  {"id":"link-rel-policy", "html":"<a href='https://example.invalid' rel='opener' target='_blank'>open</a>"},
+  {"id":"unknown-attributes", "html":"<p id='x' class='x' data-secret='x'>text</p><a href='https://example.invalid' title='kept' download>link</a>"}
+]

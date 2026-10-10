@@ -2,12 +2,12 @@
 # publish its URL only after runtime, persistence, authorization and rollback QA.
 kind: wasmer.io/App.v0
 owner: h7osanna_xyc
-name: paradome-control-room-preview
+name: paradome-control-room-pg-preview
 package: .
 debug: false
 capabilities:
   database:
-    engine: mysql
+    engine: postgres
   cdn_cache:
     enabled: true
 locality:

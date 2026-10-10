@@ -507,8 +507,8 @@ class LabHttpTests(TransactionTestCase):
         self.assertContains(response, "then try again", status_code=429)
 
 
-@skipUnless(connection.vendor == "mysql", "Requires real MySQL locking/uniqueness semantics (CI MySQL 8).")
-class LabMySQLConcurrencyTests(TransactionTestCase):
+@skipUnless(connection.vendor in {"mysql", "postgresql"}, "Requires real database row locks and uniqueness.")
+class LabDatabaseConcurrencyTests(TransactionTestCase):
     def setUp(self):
         self.run = new_run()
 
@@ -564,7 +564,7 @@ class LabMySQLConcurrencyTests(TransactionTestCase):
         self.assertEqual(sorted(self.concurrent([lambda: operation("The export is broken."), lambda: operation("Please add exports.")])), ["conflict", "created"])
         self.assertEqual(Submission.objects.count(), 1)
 
-    def test_source_rollback_remains_atomic_on_mysql(self):
+    def test_source_rollback_remains_atomic_on_database(self):
         with patch("engineering.services.OutboxEvent.objects.create", side_effect=IntegrityError("injected")):
             with self.assertRaises(IntegrityError):
                 new_submission(self.run)

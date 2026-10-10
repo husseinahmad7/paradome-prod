@@ -77,6 +77,7 @@
     for (const resultItem of result.results) {
       const li = document.createElement('li');
       li.append(text('h4', resultItem.title));
+      if (resultItem.retrieval_reason === 'related_thread') li.append(text('p', 'Related thread · included through a published discussion link', 'lab-note'));
       li.append(text('p', `${resultItem.score_kind === 'cosine' ? 'Similarity' : 'BM25 keyword score'}: ${resultItem.score.toFixed(3)}${resultItem.confidence === null ? '' : ' · Estimated top-result relevance: ' + (resultItem.confidence * 100).toFixed(1) + '%'}`, 'room-result-score'));
       const details = document.createElement('details');
       details.append(text('summary', 'Inspect discussion'), text('p', resultItem.text), text('p', `Fictional discussion · ${resultItem.id}`, 'lab-note'));

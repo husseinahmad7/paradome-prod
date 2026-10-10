@@ -19,11 +19,13 @@ from django.db.models import Count, Sum
 
 from . import services
 from .models import ConsumerReceipt, OutboxEvent, SearchObservation
+from .related_search import expand_related, unrelated_margin
 
 MODEL_ID = "Xenova/all-MiniLM-L6-v2"
 REVISION = "751bff37182d3f1213fa05d7196b954e230abad9"
 RUNTIME = "4.3.1"
-INDEX_VERSION = "minilm-q8-discussions-v1"
+VERSION = "v2"
+INDEX_VERSION = "minilm-q8-discussions-v2"
 DIMENSION = 384
 POOLING = "mean-l2"
 ROOT = Path(__file__).resolve().parents[1] / "ml" / "search"
@@ -50,8 +52,8 @@ def tokens(text):
 
 
 @lru_cache(maxsize=1)
-def corpus():
-    raw = ROOT.joinpath("data/corpus-v1.json").read_bytes()
+def corpus(version=VERSION):
+    raw = ROOT.joinpath(f"data/corpus-{version}.json").read_bytes()
     content = json.loads(raw)
     documents = content["documents"]
     if len(documents) != 120 or len({doc["id"] for doc in documents}) != 120:
@@ -60,21 +62,21 @@ def corpus():
 
 
 @lru_cache(maxsize=1)
-def keyword_index():
-    documents = corpus()[0]["documents"]
+def keyword_index(version=VERSION):
+    documents = corpus(version)[0]["documents"]
     counts = [Counter(tokens(doc["title"] + " " + doc["text"])) for doc in documents]
     lengths = [sum(count.values()) for count in counts]
     frequencies = Counter(term for count in counts for term in count)
     return counts, lengths, sum(lengths) / len(lengths), frequencies
 
 
-def keyword_rank(text, *, limit=5):
+def keyword_rank(text, *, limit=5, version=VERSION):
     """BM25 k1=1.2, b=.75; query terms count once; positive matches only."""
-    counts, lengths, average, frequencies = keyword_index()
+    counts, lengths, average, frequencies = keyword_index(version)
     terms = set(tokens(text))
     size = len(counts)
     scored = []
-    for document, count, length in zip(corpus()[0]["documents"], counts, lengths):
+    for document, count, length in zip(corpus(version)[0]["documents"], counts, lengths):
         score = 0.0
         for term in terms:
             tf = count[term]
@@ -99,9 +101,9 @@ def normalize_vector(values):
     return [v / norm for v in values]
 
 
-def embedding_contract():
+def embedding_contract(version=VERSION):
     return {"model_id": MODEL_ID, "revision": REVISION, "runtime_version": RUNTIME,
-            "index_version": INDEX_VERSION, "dimension": DIMENSION, "pooling": POOLING, "dtype": "q8"}
+            "index_version": f"minilm-q8-discussions-{version}", "dimension": DIMENSION, "pooling": POOLING, "dtype": "q8"}
 
 
 def validate_embedding(embedding):
@@ -113,22 +115,32 @@ def validate_embedding(embedding):
 
 
 @lru_cache(maxsize=1)
-def semantic_artifacts():
+def semantic_artifacts(version=VERSION):
     try:
-        index = json.loads(ARTIFACT_ROOT.joinpath("search-index-v1.json").read_bytes())
-        report = json.loads(ROOT.joinpath("evaluation-v1.json").read_bytes())
-        calibrator = json.loads(ARTIFACT_ROOT.joinpath("search-calibration-v1.json").read_bytes())
-        contract = embedding_contract()
+        index = json.loads(ARTIFACT_ROOT.joinpath(f"search-index-{version}.json").read_bytes())
+        report = json.loads(ROOT.joinpath(f"evaluation-{version}.json").read_bytes())
+        calibrator = json.loads(ARTIFACT_ROOT.joinpath(f"search-calibration-{version}.json").read_bytes())
+        contract = embedding_contract(version)
         for artifact in (index, calibrator, report):
-            if artifact["contract"] != contract or artifact["corpus_sha256"] != corpus()[1]:
+            if artifact["contract"] != contract or artifact["corpus_sha256"] != corpus(version)[1]:
                 raise ValueError("artifact_mismatch")
-        ids = [doc["id"] for doc in corpus()[0]["documents"]]
+        ids = [doc["id"] for doc in corpus(version)[0]["documents"]]
         if index["document_ids"] != ids or len(index["vectors"]) != len(ids):
             raise ValueError("artifact_mismatch")
         # Digest binds the report and calibration to the precise exported index.
-        digest = hashlib.sha256(ARTIFACT_ROOT.joinpath("search-index-v1.json").read_bytes()).hexdigest()
+        digest = hashlib.sha256(ARTIFACT_ROOT.joinpath(f"search-index-{version}.json").read_bytes()).hexdigest()
         if calibrator["index_sha256"] != digest or report["index_sha256"] != digest:
             raise ValueError("artifact_mismatch")
+        if version == "v2":
+            policy_bytes = ROOT.joinpath("policy-v2.json").read_bytes()
+            policy = json.loads(policy_bytes)
+            source = Path(__file__).with_name("related_search.py").read_bytes().replace(b"\r\n", b"\n")
+            if report["policy_freeze_sha256"] != hashlib.sha256(policy_bytes).hexdigest() or policy["retriever_sha256"] != hashlib.sha256(source).hexdigest() or policy["calibration_sha256"] != hashlib.sha256(ARTIFACT_ROOT.joinpath("search-calibration-v2.json").read_bytes()).hexdigest():
+                raise ValueError("artifact_mismatch")
+            for doc in corpus(version)[0]["documents"]:
+                related = doc.get("related_ids", [])
+                if not isinstance(related, list) or len(related) > 3 or len(set(related)) != len(related) or any(other not in ids or other == doc["id"] for other in related):
+                    raise ValueError("artifact_mismatch")
         vectors = [normalize_vector(v) for v in index["vectors"]]
         if len(calibrator["weights"]) != 2 or not all(math.isfinite(v) for v in calibrator["weights"] + [calibrator["intercept"], calibrator["threshold"]]):
             raise ValueError("artifact_mismatch")
@@ -140,11 +152,11 @@ def semantic_artifacts():
         return None, None, None, reason
 
 
-def cosine_rank(vector, *, limit=5):
-    vectors, _, _, reason = semantic_artifacts()
+def cosine_rank(vector, *, limit=5, version=VERSION):
+    vectors, _, _, reason = semantic_artifacts(version)
     if reason:
         raise ValueError(reason)
-    scored = [(doc, max(-1.0, min(1.0, sum(a * b for a, b in zip(vector, encoded))))) for doc, encoded in zip(corpus()[0]["documents"], vectors)]
+    scored = [(doc, max(-1.0, min(1.0, sum(a * b for a, b in zip(vector, encoded))))) for doc, encoded in zip(corpus(version)[0]["documents"], vectors)]
     return sorted(scored, key=lambda pair: (-pair[1], pair[0]["id"]))[:limit]
 
 
@@ -186,9 +198,10 @@ def retrieve(text, embedding=None, *, fallback="javascript_unavailable", experim
             elif not report["gate"]["passed"] and not experimental:
                 reason = "evaluation_gate"
             else:
-                semantic_candidates = cosine_rank(vector)
+                raw_candidates = cosine_rank(vector, limit=120)
+                semantic_candidates = expand_related(raw_candidates)
                 top_score = semantic_candidates[0][1]
-                margin = top_score - semantic_candidates[1][1]
+                margin = unrelated_margin(raw_candidates)
                 confidence = relevance_confidence(top_score, margin, calibrator)
                 if confidence >= calibrator["threshold"]:
                     ranked, reason = semantic_candidates, ""
@@ -203,9 +216,10 @@ def retrieve(text, embedding=None, *, fallback="javascript_unavailable", experim
     mode = "keyword" if reason else "semantic"
     return {
         "experimental": bool(experimental and report and not report["gate"]["passed"]),
-        "mode": mode, "fallback_reason": reason or None, "notice": FALLBACK_REASONS.get(reason, "Semantic results from the evaluated public corpus."),
+        "mode": mode, "fallback_reason": reason or None, "notice": FALLBACK_REASONS.get(reason, "Semantic results with explicitly linked supporting threads."),
         "results": [{"id": doc["id"], "title": doc["title"], "text": doc["text"], "score": round(score, 6),
-                     "score_kind": "bm25" if reason else "cosine", "confidence": round(confidence, 6) if not reason and i == 0 else None} for i, (doc, score) in enumerate(ranked)],
+                     "score_kind": "bm25" if reason else "cosine", "confidence": round(confidence, 6) if not reason and i == 0 else None,
+                     "retrieval_reason": "related_thread" if not reason and i and doc['id'] in ranked[i-1][0].get('related_ids',[]) else "ranked"} for i, (doc, score) in enumerate(ranked)],
         "semantic_assessment": {"top_similarity": round(top_score, 6) if top_score is not None else None,
                                 "estimated_relevance": round(confidence, 6) if confidence is not None else None,
                                 "threshold": calibrator["threshold"] if calibrator else None},

@@ -1,0 +1,3 @@
+# Native PostgreSQL regression / conventional deployment profile.
+-r requirements.txt
+psycopg[binary]==3.3.4

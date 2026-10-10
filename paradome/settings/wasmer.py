@@ -20,13 +20,12 @@ for origin in [PUBLIC_SITE_URL, *CSRF_TRUSTED_ORIGINS]:
 if not CSRF_TRUSTED_ORIGINS or PUBLIC_SITE_URL not in CSRF_TRUSTED_ORIGINS:
     raise RuntimeError("Include the exact public origin in CSRF_TRUSTED_ORIGINS")
 DATABASES = {"default": {
-    "ENGINE": "django.db.backends.mysql", "HOST": required_env("DB_HOST"), "PORT": required_env("DB_PORT"),  # noqa: F405
+    "ENGINE": "django.db.backends.postgresql", "HOST": required_env("DB_HOST"), "PORT": required_env("DB_PORT"),  # noqa: F405
     "NAME": required_env("DB_NAME"), "USER": required_env("DB_USERNAME"), "PASSWORD": required_env("DB_PASSWORD"),  # noqa: F405
     "CONN_MAX_AGE": 30, "CONN_HEALTH_CHECKS": True,
-    "OPTIONS": {"charset": "utf8mb4", "isolation_level": "read committed", "connect_timeout": 10,
-                "init_command": "SET sql_mode='STRICT_TRANS_TABLES,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO'",
-                "ssl_mode": "VERIFY_IDENTITY" if os.environ.get("DB_SSL_CA") else "REQUIRED",
-                **({"ssl": {"ca": os.environ["DB_SSL_CA"]}} if os.environ.get("DB_SSL_CA") else {})},
+    "OPTIONS": {"connect_timeout": 10,
+                "sslmode": "verify-full" if os.environ.get("DB_SSL_CA") else "require",
+                **({"sslrootcert": os.environ["DB_SSL_CA"]} if os.environ.get("DB_SSL_CA") else {})},
 }}
 private_path = os.environ.get("PRIVATE_MEDIA_ROOT", "/data/private-media")
 private_posix = PurePosixPath(private_path)
@@ -34,6 +33,7 @@ if "\\" in private_path or ".." in private_posix.parts or not private_posix.is_a
     raise RuntimeError("Wasmer private media must live under the persistent /data volume")
 PRIVATE_MEDIA_ROOT = Path(private_path)
 WSGI_APPLICATION = "paradome.wasmer_wsgi.app"
+RICH_TEXT_SANITIZER = "ammonia-wasi"
 CONTACT_FORM_ENABLED = False
 EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"
 CHAT_REALTIME_ENABLED = False

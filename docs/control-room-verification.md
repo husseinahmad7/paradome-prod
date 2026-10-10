@@ -101,3 +101,20 @@ The Impeccable detector ran once on changed CSS/JS/templates. Its one remaining
 reported that Django `{% static %}` stylesheet links could not be resolved, so
 its inferred 16px heading sizes are incomplete evidence. No extra typography
 change or second detector pass was made from that warning alone.
+
+## Continuation — 2026-10-10
+
+V2 now passes the frozen synthetic retrieval gate on newly authored calibration
+and test groups. On the same fresh test, linked semantic Recall@5 is 0.9375,
+plain cosine is 0.78125, and BM25 is 0.6875. Paraphrase Recall@5 is 0.9167 versus
+BM25's 0.4583. Accepted top-result precision is 0.8421, below the 90% calibration
+target; the interface displays this failure and the fixture limitations.
+V1 is preserved without refitting. Both verification commands reproduced their
+frozen results; 27 search/maintenance tests and 15 JavaScript tests passed.
+
+The in-app Browser briefly recovered: a real 390×844 full-page **v1 baseline**
+capture was saved as `.impeccable/review/baseline-390.jpg`. It is not final v2
+evidence. After restarting the local app with v2, the browser connection timed
+out; connected Edge also timed out. The final capture matrix, new browser
+agreement check, and independent finish verdict remain pending. No second
+detector or visual approval is claimed.

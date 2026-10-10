@@ -19,7 +19,7 @@ class RetrievalTests(SimpleTestCase):
     def test_pinned_compatible_artifacts_and_reproducible_ranking(self):
         self.assertTrue(search.artifact_health()["healthy"])
         vector = search.semantic_artifacts()[0][0]
-        self.assertEqual(search.cosine_rank(vector)[0][0]["id"], "discussion-001-a")
+        self.assertEqual(search.cosine_rank(vector)[0][0]["id"], search.corpus()[0]['documents'][0]['id'])
         self.assertAlmostEqual(search.cosine_rank(vector)[0][1], 1.0)
         self.assertEqual(search.cosine_rank(vector), search.cosine_rank(vector))
 
@@ -44,7 +44,7 @@ class RetrievalTests(SimpleTestCase):
     def test_missing_or_mismatched_index_disables_semantic(self):
         original = Path.read_bytes
         def changed(path):
-            if path.name == "search-index-v1.json":
+            if path.name == "search-index-v2.json":
                 artifact = json.loads(original(path)); artifact["contract"]["revision"] = "wrong"
                 return json.dumps(artifact).encode()
             return original(path)
@@ -58,9 +58,12 @@ class RetrievalTests(SimpleTestCase):
 
     def test_frozen_gate_keeps_keyword_default_and_opt_in_is_labelled(self):
         embedding = {**search.embedding_contract(), "values": search.semantic_artifacts()[0][0]}
-        self.assertFalse(search.evaluation_report()["gate"]["passed"])
-        self.assertEqual(search.retrieve("A lost reply", embedding)["fallback_reason"], "evaluation_gate")
-        preview = search.retrieve("A lost reply", embedding, experimental=True)
+        self.assertFalse(search.semantic_artifacts('v1')[2]['gate']['passed'])
+        vectors,calibrator,report,reason=search.semantic_artifacts()
+        failed_report=copy.deepcopy(report); failed_report['gate']['passed']=False
+        with patch('engineering.search.semantic_artifacts',return_value=(vectors,calibrator,failed_report,reason)):
+            self.assertEqual(search.retrieve("A lost reply", embedding)["fallback_reason"], "evaluation_gate")
+            preview = search.retrieve("A lost reply", embedding, experimental=True)
         self.assertTrue(preview["experimental"])
         self.assertEqual(preview["mode"], "semantic")
         self.assertGreater(preview["semantic_assessment"]["estimated_relevance"], 0)
@@ -87,6 +90,21 @@ class RetrievalTests(SimpleTestCase):
         self.assertFalse(set(groups["development"]) & set(groups["test"]))
         self.assertFalse(set(groups["calibration"]) & set(groups["test"]))
         self.assertLess(search.relevance_confidence(.2, 0, calibrator), search.relevance_confidence(.9, .2, calibrator))
+
+    def test_fresh_holdout_and_related_retrieval_pass_gate(self):
+        report=search.evaluation_report()
+        self.assertTrue(report['gate']['passed'])
+        self.assertGreaterEqual(report['splits']['test']['semantic']['recall_at_5'],.85)
+        self.assertGreater(report['splits']['test']['semantic']['recall_at_5'],report['splits']['test']['cosine']['recall_at_5'])
+        legacy=search.semantic_artifacts('v1')[2]['frozen']['groups']
+        for split in ('calibration','test'):
+            self.assertFalse(set(report['frozen']['groups'][split])&set(sum(legacy.values(),[])))
+        vector=search.semantic_artifacts()[0][0]
+        result=search.retrieve('A related technical discussion',{**search.embedding_contract(),'values':vector})
+        first=search.corpus()[0]['documents'][0]
+        self.assertEqual(result['results'][1]['id'],first['related_ids'][0])
+        self.assertEqual(result['results'][1]['retrieval_reason'],'related_thread')
+        self.assertIsNone(result['results'][1]['confidence'])
 
 
 @override_settings(ENGINEERING_LAB_ENABLED=True, ENGINEERING_CONTROL_ROOM_ENABLED=True, ENGINEERING_SEMANTIC_ENABLED=True)

@@ -1,11 +1,11 @@
-# Wasmer independent demo — compatibility blocked
+# Wasmer independent demo — PostgreSQL compatibility work
 
 Checked 2026-10-10. The authenticated deployment environment used the supplied
 Windows user-level `WASMER_TOKEN` for namespace `h7osanna_xyc`. The intended new
-app is `paradome-control-room-preview`; the existing Teledome app was preserved.
+app was `paradome-control-room-preview`; the existing Teledome app was preserved.
 The preview has **no released application version or verified public URL**.
 
-## Observed compatibility blocker
+## Observed blockers in the original MySQL attempts
 
 Wasmer Git autobuild used Anybuild 0.33.0, Python 3.13, and the `wasix_wasm32`
 target. Its normal pipeline resolves binary target wheels from PyPI and
@@ -52,9 +52,9 @@ a provider secret; the local recovery backup uses Windows DPAPI in ignored cache
 ## Implemented deployment profile
 
 - `paradome.settings.wasmer` requires a production secret, exact HTTPS hosts and
-  origins, Wasmer's injected `DB_USERNAME`, strict MySQL/read-committed behavior,
+  origins, Wasmer's injected `DB_USERNAME`, managed PostgreSQL behavior,
   active DB TLS, secure sessions, and a private persistent path under `/data`.
-- The root `app.yaml` requests managed MySQL, `fr-roub1`, a `/data` private-media
+- The root `app.yaml` requests managed PostgreSQL, `fr-roub1`, a `/data` private-media
   volume, HTTPS, and CDN support. It is an initial compatibility preview manifest.
 - `deployment/wasmer/build.py` uses the same nine model/runtime asset hashes as
   the Node builder and collects static assets with a secret-free build profile.
@@ -63,6 +63,36 @@ a provider secret; the local recovery backup uses Windows DPAPI in ignored cache
   DB access/TLS, and a private-volume round trip in the real runtime.
 - `prepare_wasmer_demo` migrates, creates the shared cache table, runs the runtime
   probe, and seeds the independent `paradome-wasmer-guest` sandbox if missing.
+
+## PostgreSQL continuation — 2026-10-10
+
+The user authorized a database change for the independent demo. Wasmer's current
+[configuration documentation](https://docs.wasmer.io/edge/configuration/) and
+authenticated API both support `POSTGRES`; current target wheels include
+`psycopg-binary==3.3.4`. The new preview name is
+`paradome-control-room-pg-preview`. An existing database's engine cannot be
+changed in place, so no existing Teledome database is altered or deleted.
+
+The Wasmer settings, manifest, runtime TLS check and driver requirements now
+select PostgreSQL. CI runs the complete suite and row-lock/concurrency tests
+against both MySQL and PostgreSQL. The conventional production profile retains
+MySQL and nh3 0.3.7.
+
+The sanitizer candidate compiles Ammonia 4.1.4 with the existing narrow HTML5
+allowlist into a WASI executable. Its fixed path, SHA-256 manifest, bounded
+stdin, timeout and fail-closed errors replace the unavailable nh3 native binding
+only in Wasmer. Rich text is not disabled or passed through unsanitized. Native
+nh3 versus actual WASI agreement and real WASIX subprocess execution are gates;
+the code's existence does not establish that these checks passed.
+
+`prepare_source.py` creates a full-application release branch using an isolated
+Git index. Only root `requirements.txt` selects the Wasmer profile; all other
+source stays at the supplied primary revision. Anybuild's normal dependency
+steps can then bind all recursively referenced requirement files. This avoids
+the previously broken custom first install step and preserves every checkout.
+
+The PostgreSQL preview is still a compatibility candidate. No new verified
+public URL, restart-persistence check or rollback result is claimed yet.
 - `maintain_demo_sandbox` uses a database lease and one reset per UTC day, with
   bounded cleanup of expired runs, sessions, and rate-limit buckets.
 - The public manifest template includes preparation and midnight-UTC jobs.

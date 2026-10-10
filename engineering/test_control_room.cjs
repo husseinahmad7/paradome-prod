@@ -19,11 +19,11 @@ class Element {
   querySelector() { return { value: 'csrf-fixture' }; }
   requestSubmit() { this.standardSubmissions = (this.standardSubmissions || 0) + 1; }
 }
-function harness() {
+function harness({ gatePassed = false } = {}) {
   const elements = new Map(), selectors = new Map(), workers = [], requests = [], timers = new Map();
   const byId = id => { if (!elements.has(id)) elements.set(id, new Element()); return elements.get(id); };
   const selector = key => { if (!selectors.has(key)) selectors.set(key, new Element()); return selectors.get(key); };
-  byId('room-search').dataset = { semanticEnabled: 'true', gatePassed: 'false', workerUrl: '/engineering/assets/worker.mjs', searchUrl: '/search/', metricsUrl: '/metrics/' };
+  byId('room-search').dataset = { semanticEnabled: 'true', gatePassed: String(gatePassed), workerUrl: '/engineering/assets/worker.mjs', searchUrl: '/search/', metricsUrl: '/metrics/' };
   const contract = { dimension: 384, revision: 'pinned', dtype: 'q8' };
   byId('search-contract').textContent = JSON.stringify(contract);
   byId('search-text').value = 'Public discussion query';
@@ -47,7 +47,7 @@ function harness() {
   async function enable() { byId('experimental-semantic').checked = true; await byId('experimental-semantic').fire('change'); workers.at(-1).emit({ type: 'ready', model_load_ms: 50, observed_transfer_bytes: 1000 }); }
   return { byId, workers, requests, timers, contract, enable, state };
 }
-test('keyword default sends no embedding and downloads no model', async () => {
+test('failed gate sends no embedding and downloads no model', async () => {
   const h = harness();
   assert.equal(h.workers.length, 0);
   await h.byId('search-form').fire('submit');
@@ -59,6 +59,24 @@ test('keyword default sends no embedding and downloads no model', async () => {
   assert.equal(h.requests[0].options.credentials, 'same-origin');
   assert.equal(h.byId('search-submit').disabled, false);
   assert.equal(h.byId('search-results').children[0].children[0].textContent, '<img src=x onerror=alert(1)>');
+});
+test('passed gate loads only when Search opens and uses semantic retrieval without opt-in', async () => {
+  const h = harness({ gatePassed: true });
+  assert.equal(h.workers.length, 0);
+  await h.byId('search-form').fire('submit');
+  assert.equal(JSON.parse(h.requests[0].options.body).fallback, 'model_loading');
+  assert.equal(h.workers.length, 0);
+  const loading = h.byId('search-text').fire('focus');
+  assert.equal(h.workers.length, 1);
+  h.workers[0].emit({ type: 'ready', model_load_ms: 50, observed_transfer_bytes: 1000 });
+  await loading;
+  const search = h.byId('search-form').fire('submit');
+  const message = h.workers[0].messages.at(-1);
+  h.workers[0].emit({ type: 'embedding', id: message.id, values: Array(384).fill(0.1), embedding_ms: 12 });
+  await search;
+  const body = JSON.parse(h.requests.findLast(r => r.url === '/search/').options.body);
+  assert.equal(body.experimental, false);
+  assert.equal(body.embedding.values.length, 384);
 });
 test('opt-in creates a module worker and posts a versioned embedding', async () => {
   const h = harness(); await h.enable();

@@ -1,4 +1,62 @@
-# Frozen search evidence v1
+# Frozen search evidence
+
+## Active v2: linked discussions on a fresh holdout
+
+V2 keeps the exact pinned q8 encoder and adds public `related_ids` to the corpus.
+Retrieval ranks cosine similarity, includes a leading discussion's explicit
+supporting links, and continues through unseen discussions until five results
+are collected. Links are corpus metadata, not query relevance labels. The UI
+labels included related threads and displays their original cosine scores;
+those scores need not be descending after expansion.
+
+This policy was selected using only v1 development examples: Recall@5 improved
+from 0.783 to 0.951 on that development slice. Before encoding or retrieving the
+new holdout, `author_v2.py` retained the 36 development groups and authored 24
+new groups, hash-ordered into 12 calibration and 12 test groups. No v1 calibration
+or test query was reused. The complete v2 fixture still has 120 discussions and
+180 queries. `policy-v2.json` freezes the retriever source, data, embeddings,
+calibrator, and query vectors before the first test ranking.
+
+| Fresh v2 test, same 32 answerable queries | Recall@5 | nDCG@5 | Paraphrase Recall@5 |
+| --- | ---: | ---: | ---: |
+| MiniLM q8 + public related threads | 0.9375 | 0.8374 | 0.9167 |
+| Plain MiniLM q8 cosine | 0.7813 | 0.8023 | 0.6667 |
+| BM25 | 0.6875 | 0.7375 | 0.4583 |
+
+V2 passed the preregistered retrieval gate: Recall@5 >= 0.85 and paraphrase
+improvement over BM25. Semantic retrieval becomes available by default once the
+lazy browser model is ready; immediate keyword search remains usable during
+loading, outages, malformed vectors, and low-confidence retrieval.
+
+The v2 development-fitted logistic calibrator uses top cosine and the margin to
+the first unrelated discussion. Calibration selected threshold **0.728** with
+the same precision >= 0.90 and coverage >= 0.50 constraints. On the untouched
+test, accepted top-result precision was **0.8421**, coverage **0.5278**, ECE
+**0.1619**, and Brier score **0.1440**. All four no-answer queries were rejected.
+The 90% calibration target did not generalize to the test; this result is shown
+in the interface and is not repaired by retuning the frozen threshold.
+
+These are AI-authored English fixtures without independent human review.
+Paired-thread labels can favor related-link expansion, sparse labels can miss
+useful cross-topic answers, and four no-answer examples establish little about
+real-world abstention. The report includes every failure and raw-cosine/BM25
+comparisons on the same new holdout. V1 remains archived below, unchanged.
+
+```sh
+npm ci
+npm run search:assets
+node ml/search/encode.mjs v2
+python ml/search/evaluate_v2.py --verify
+python ml/search/evaluate.py --verify
+npm test
+```
+
+V2 verification uses checked-in public benchmark query vectors and the frozen
+calibrator without fitting it again. Encoding reproduces the exact model input
+contract. Any change informed by the v2 test requires a new version and fresh
+holdout; do not delete a frozen report to refit it.
+
+## Archived v1
 
 This English retrieval experiment uses 120 fictional technical discussions and
 180 AI-authored, relevance-labelled queries. It is a portfolio demonstration;

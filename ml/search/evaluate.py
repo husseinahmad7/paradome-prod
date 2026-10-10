@@ -105,7 +105,7 @@ def main(verify=False):
     if report_path.exists() and not verify:
         raise RuntimeError("v1 test already inspected. Use --verify or author a new independent holdout; do not refit v1.")
     encoded = read(ROOT / "encoded-v1.json")
-    documents = search.corpus()[0]["documents"]
+    documents = search.corpus("v1")[0]["documents"]
     vectors = [search.normalize_vector(doc["vector"]) for doc in encoded["documents"]]
     assert [d["id"] for d in encoded["documents"]] == [d["id"] for d in documents]
     query_vectors = {q["id"]: search.normalize_vector(q["vector"]) for q in encoded["queries"]}
@@ -116,7 +116,7 @@ def main(verify=False):
         scored = sorted([(doc["id"], sum(a * b for a, b in zip(vector, v))) for doc, v in zip(documents, vectors)], key=lambda p: (-p[1], p[0]))
         semantic_ms = (perf_counter() - started) * 1000
         started = perf_counter()
-        bm25 = [doc["id"] for doc, _ in search.keyword_rank(query["text"])]
+        bm25 = [doc["id"] for doc, _ in search.keyword_rank(query["text"], version="v1")]
         keyword_ms = (perf_counter() - started) * 1000
         ids = [doc_id for doc_id, _ in scored[:5]]
         rows.append({"query": query, "features": [scored[0][1], scored[0][1] - scored[1][1]],
@@ -124,7 +124,7 @@ def main(verify=False):
                      "semantic": rank_metrics(ids, query["relevance"]), "bm25": rank_metrics(bm25, query["relevance"]),
                      "semantic_ms": semantic_ms, "keyword_ms": keyword_ms})
     split_rows = {split: [r for r in rows if r["query"]["split"] == split] for split in ("development", "calibration", "test")}
-    contract, corpus_hash = search.embedding_contract(), search.corpus()[1]
+    contract, corpus_hash = search.embedding_contract("v1"), search.corpus("v1")[1]
     calibration_path = search.ARTIFACT_ROOT / "search-calibration-v1.json"
     if verify:
         calibrator = read(calibration_path)
@@ -157,7 +157,7 @@ def main(verify=False):
     write(search.ARTIFACT_ROOT / "search-golden-v1.json", {"contract": contract, "assets": read(ROOT / "assets-lock-v1.json"), "goldens": encoded["goldens"], "tolerance": {"maximum_absolute_difference": .001, "minimum_cosine": .999}})
     failures = [r for r in test if (r["semantic"] and r["semantic"]["recall_at_5"] < 1) or (confidence(r, calibrator) >= calibrator["threshold"] and not r["top_relevant"])]
     report = {"status": "frozen", "version": "search-evaluation-v1", "contract": contract, "corpus_sha256": corpus_hash, "index_sha256": index_hash,
-              "provenance": search.corpus()[0]["provenance"], "frozen": frozen,
+              "provenance": search.corpus("v1")[0]["provenance"], "frozen": frozen,
               "policy": "Rank raw semantic candidates for Recall/nDCG; report acceptance and fallback separately. No-answer queries excluded from ranking averages. Test evaluated once after policy freeze.",
               "splits": summary, "test_slices": slices, "threshold": calibrator["threshold"],
               "gate": {"passed": passed, "minimum_recall_at_5": .85, "requires_paraphrase_improvement": True},

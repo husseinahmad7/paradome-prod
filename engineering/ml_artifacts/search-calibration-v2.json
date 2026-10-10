@@ -1,0 +1,26 @@
+{
+  "weights": [
+    9.600713968766076,
+    13.426185756530826
+  ],
+  "intercept": -4.632301914380804,
+  "contract": {
+    "model_id": "Xenova/all-MiniLM-L6-v2",
+    "revision": "751bff37182d3f1213fa05d7196b954e230abad9",
+    "runtime_version": "4.3.1",
+    "index_version": "minilm-q8-discussions-v2",
+    "dimension": 384,
+    "pooling": "mean-l2",
+    "dtype": "q8"
+  },
+  "corpus_sha256": "74e9c139d6244979825f36b30e94467e7e8600cf01563f26ed42f0d34cbd8586",
+  "index_sha256": "80da20706ff847fc6351c7cd383409c0d58701952f33e08d5a4fd7a124c76b7e",
+  "threshold": 0.728,
+  "fit_split": "development",
+  "threshold_split": "calibration",
+  "features": [
+    "top cosine",
+    "margin to next unrelated discussion"
+  ],
+  "calibration_qualified": true
+}
