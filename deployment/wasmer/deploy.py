@@ -103,13 +103,13 @@ def preview(options):
         "branch": options.branch, "appName": options.name, "owner": options.owner,
         "presetName": "django", "region": "fr-roub1", "enableDatabase": True,
         "dbEngine": "MYSQL", "waitForScreenshotGeneration": False,
-        # Anybuild copies requirements.txt into its dependency layer before the
-        # rest of the repository. requirements-wasmer.txt is unavailable there.
-        "installCmd": "uv init && uv add -r requirements.txt 'mysqlclient==2.2.8' 'uvicorn==0.54.0'",
+        # Keep Anybuild's install steps: they bind-mount dependency inputs only
+        # for the step that needs them and resolve target-runtime wheels.
         "buildCmd": "python deployment/wasmer/build.py",
         "startCmd": "python -m uvicorn paradome.wasmer_wsgi:app --interface wsgi --host 0.0.0.0 --port 8080",
         "afterDeployCmd": "python manage.py prepare_wasmer_demo",
-        "envVars": [env("DJANGO_SETTINGS_MODULE", "paradome.settings.wasmer"),
+        "envVars": [env("ANYBUILD_PYTHON_EXTRA_DEPENDENCIES", json.dumps(["mysqlclient==2.2.8", "uvicorn==0.54.0"])),
+                    env("DJANGO_SETTINGS_MODULE", "paradome.settings.wasmer"),
                     env("DJANGO_SECRET_KEY", demo_key(options.name, bool(options.app_id)), True),
                     env("DJANGO_ALLOWED_HOSTS", origin.removeprefix("https://")),
                     env("DJANGO_CSRF_TRUSTED_ORIGINS", origin), env("PUBLIC_SITE_URL", origin),

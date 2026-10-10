@@ -172,7 +172,18 @@ class SearchApiTests(TestCase):
             self.assertIn("immutable", response["Cache-Control"])
             self.assertIn("'wasm-unsafe-eval'", response["Content-Security-Policy"])
             self.assertNotIn("'unsafe-eval'", response["Content-Security-Policy"])
-            response.close()
+            etag = response["ETag"]
+            # Exhaust Django's test-client iterator so it suppresses the real
+            # request-finished connection cleanup inside TestCase's transaction.
+            # Direct FileResponse.close() breaks that transaction on MySQL.
+            self.assertTrue(b"".join(response.streaming_content))
+            head = self.client.head("/engineering/assets/minilm-q8-v1/worker.mjs")
+            self.assertEqual(head.status_code, 200)
+            self.assertEqual(head.content, b"")
+            self.assertEqual(head["ETag"], etag)
+            cached = self.client.get("/engineering/assets/minilm-q8-v1/worker.mjs", HTTP_IF_NONE_MATCH=etag)
+            self.assertEqual(cached.status_code, 304)
+            self.assertIn("immutable", cached["Cache-Control"])
 
     def test_no_js_discussion_selection_is_public_id_only(self):
         response = self.client.get(f"/engineering/runs/{self.run.id}/?discussion=discussion-001-a")

@@ -4,6 +4,11 @@ This English retrieval experiment uses 120 fictional technical discussions and
 180 AI-authored, relevance-labelled queries. It is a portfolio demonstration;
 there is no independent human label review or production traffic in this report.
 
+The v1 corpus, queries, and document index are byte-addressed artifacts. Git
+attributes preserve their original line endings on every platform so their
+frozen SHA-256 digests match on Windows and Linux. This portability correction
+does not change any JSON values, rankings, fitted confidence, or test results.
+
 ## Result and release decision
 
 The first frozen test failed the semantic-default gate. Recall@5 is **0.71875**,
