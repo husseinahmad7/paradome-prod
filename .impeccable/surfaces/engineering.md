@@ -158,3 +158,99 @@ reset feedback passed. These are local-browser checks, not a native
 screen-reader audit or production release claim. The Impeccable detector
 returned no findings, with a known limitation: it could not resolve Django
 `{% static %}` stylesheet URLs, so browser checks supplied the visual evidence.
+
+## Control room extension documentation and finish status — 2026-10-10
+
+This documentation records the implementation of the extension direction
+contract above. It remains an Operate surface within the incumbent Lab, with
+architecture and evaluation material supporting the guided task. The existing
+CSS is the visual authority. No global design system replacement, `DESIGN.md`,
+or `.impeccable/design.json` is introduced by this pass.
+
+### Source-backed inheritance and extension
+
+`engineering/templates/engineering/base.html` still loads the shared
+`HusseinAh/static/css/paradome-app.css` and then `engineering/lab.css`.
+`engineering/templates/engineering/run.html` loads `control-room.css` and
+`control-room.js` only when the control room flag is enabled. The added rules
+consume the shared `--pd-*` properties and existing Lab controls rather than
+establishing another token registry.
+
+| Observed part | Implementation evidence |
+| --- | --- |
+| Palette and depth | The extension uses the incumbent navy for the guide, white for the search and architecture working surfaces, shared pale blue/line colors for tables and borders, blue actions, and teal result scores. It reuses the 14px shared panel radius and adds no panel shadow recipe. The guide's light text repeats the existing header text color; selection and scrollbar literals are local surface details, not new system tokens. |
+| Type | The shared 16px/1.55 body stack remains `Inter, Aptos, "Segoe UI", Roboto, Helvetica, Arial, sans-serif`. The run title retains `clamp(2rem, 3.6vw, 2.8rem)`. Area headings repeat the Lab section ramp (`clamp(1.6rem, 2.7vw, 2.2rem)`); the guide uses 1.3rem and result titles 1.12rem. Timing, scores, metrics, and table values use tabular numerals. No font download is added. |
+| Measure and layout | The inherited `lab-width` remains at 1160px maximum, with 48px total outer space and 32px below 540px. Search uses 1:1.15 columns with a 2rem gap; the guide has five columns and evaluation/metric lists have two. Source CSS stacks those at 840px. Below 480px it reduces search/guide padding and stacks diagram nodes. Tables have an overflow wrapper. These are observed source rules; their rendered reflow remains unverified for this extension. |
+| Controls and focus | Existing blue/secondary Lab buttons, 46px fields, 44px native disclosure targets, 10px button corners, 8px field corners, and dark-gold focus outlines remain in use. The five area links use a 48px minimum height. Native checkboxes, forms, `details`/`summary`, labelled tables, and the incumbent notification dialog provide the underlying interaction. |
+| Motion | Opening a search-result disclosure adds a 220ms reveal. The incumbent delivery update retains its 360ms background cue. Both source rules suppress those animations under `prefers-reduced-motion: reduce`; actual preference behavior remains a pending browser check. |
+
+The conditional portfolio paragraph in
+`HusseinAh/templates/HusseinAh/myPortfolio.html` reuses the existing project
+aside and `portfolio-button`; it adds the control-room description and link
+without creating portfolio styles or adding images. No shipping raster asset
+is introduced, so this extension requires no new raster provenance record.
+
+### Implemented task and evidence boundaries
+
+The run contains Search, Delivery, Architecture, Evaluation, and Metrics in that
+order. The guide follows search → inspect → use a discussion → explicit submit
+→ lost acknowledgement → recovery/replay. Selecting a discussion fills the
+source text or follows an ordinary server link; submission remains an explicit
+form action. The incumbent source → inbox → timeline order is preserved.
+
+The search form supports server-rendered keyword results. JavaScript reveals
+the optional model controls, updates results through text nodes, offers a
+standard keyword form after request failure, and refreshes run measurements
+after search and delivery updates. The failed frozen gate keeps keyword search
+as the default; semantic retrieval requires the labelled experiment when that
+feature is enabled. The frozen JSON confirms held-out Recall@5 of 0.71875
+against the 0.85 requirement, with paraphrase Recall@5 of 0.625 versus BM25's
+0.541667. The evaluation exposes synthetic provenance, calibration, coverage,
+latency scope, and failure examples. Similarity and estimated top-result
+relevance remain distinct.
+
+Architecture links connect boundary disclosures to source and tests. Delivery
+counts come from run records; search metrics cover the newest forty
+observations and duplicate/replay counts use the bounded eighty-stage trace
+window. Browser timings are labelled client-reported, and initial transfer is
+separated from lazy worker/model transfer. These observations describe the
+implemented surface rather than a promise of production performance.
+
+### Finish disposition: recapture pending
+
+The independent finish reviewer returned **recapture** for this extension.
+There is no visual approval, completed responsive QA, or release-readiness
+verdict. The prior Lab correction verdict and September screenshot record above
+do not approve the current control-room extension.
+
+This handoff inspected all six named run/partial templates, `control-room.css`,
+`control-room.js`, the conditional portfolio paragraph, the shared stylesheet,
+the incumbent Lab styles/base template, the frozen evaluation JSON, the
+detector record, and the screenshot inventory. It reviewed the recorded
+evidence below without repeating the browser run or automated checks.
+
+| Retained evidence | Result and scope |
+| --- | --- |
+| [Control-room verification](../../docs/control-room-verification.md) | MySQL CI tested commit `8f6fb959f5f6c44f78749c83258c1554c7e26a91`: 252 tests passed without skips and 14 JavaScript tests passed. Production/settings, migration, asset, audit, drift, and secret checks are recorded there. These are automated implementation checks. |
+| Local in-app Browser workflow | The record confirms search/inspection, explicit delivery, lost acknowledgement, recovery, and original replay with one submission, one receipt, two attempts, one prevented duplicate, and one replay. Controlled model outage produced labelled keyword results; the three public browser/offline embedding goldens passed their stated tolerance. |
+| Loaded-state accessibility | The recorded axe rerun had 31 passing rules and zero violations after the notification close-name correction. This covers the loaded local state, not all states or a screen-reader audit. A forced reduced-motion CSS branch was checked; it did not emulate the browser/OS preference. |
+| Capture attempts | In-app Browser screenshot commands timed out and the requested viewport override remained 1280×720. Connected Edge policy/tab access also failed. No valid final control-room screenshot matrix was saved; the current review directory contains the detector record only. |
+| [Wasmer deployment record](../../docs/wasmer-deployment.md) | The independent preview has no released version or verified public URL. Current native target wheels for pinned mysqlclient/nh3 are unavailable; runtime, persistence, cleanup/rollback, and promotion gates remain pending. |
+
+Required finish evidence remains actual 320/390/768/1440px reflow and full-page
+desktop/mobile captures followed by independent visual review. Browser checks
+with JavaScript disabled, the actual reduced-motion preference, and connected
+Edge, plus cold production transfer measurement and the recorded Wasmer gates,
+are still outstanding. Documentation records the current status and does not
+authorize shipping while recapture remains pending.
+
+### Drift and details not canonized
+
+`PRODUCT.md` retains legacy `## Register` metadata. The detector's remaining
+`flat-type-hierarchy` warning concerns the incumbent portfolio, and its reported
+16px heading sizes are incomplete because Django static stylesheet URLs could
+not be resolved. No typography repair follows from that warning alone.
+Incumbent system-derived headings and arrow glyphs remain observed details;
+they are not promoted into new global design rules. Missing global design
+artifacts, existing portfolio choices, and prior evidence are preserved rather
+than repaired as a side effect of this ordinary extension.

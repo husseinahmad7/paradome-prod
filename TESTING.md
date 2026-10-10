@@ -39,7 +39,7 @@ directory, or demo user.
 
 The additive lab is off by default. Its isolated ownership, transaction, permission,
 and model tests are discovered by the full suite. SQLite intentionally skips the
-eight real-MySQL concurrency cases; the existing CI MySQL service runs them.
+real-MySQL concurrency cases; the existing CI MySQL service runs them.
 
 ```sh
 python manage.py test engineering --settings=paradome.settings.test
@@ -52,6 +52,31 @@ See [the lab walkthrough and operations](docs/engineering-lab.md) and
 and outstanding release gates. Browser accessibility/responsive checks are not
 replaced by server-rendered form tests or the JavaScript event-contract tests.
 Offline training dependencies stay out of the production environment.
+
+## Control room and semantic retrieval
+
+Enable `ENGINEERING_LAB_ENABLED`, `ENGINEERING_CONTROL_ROOM_ENABLED`, and
+`ENGINEERING_SEMANTIC_ENABLED` in a disposable development environment. Keyword
+search works immediately. The frozen semantic model failed its release gate;
+its browser inference is an explicitly labelled opt-in experiment.
+
+```sh
+npm ci
+npm run search:assets
+npm test
+python manage.py test engineering --settings=paradome.settings.test
+npm run search:encode
+python ml/search/evaluate.py --verify
+```
+
+Node 22 or newer builds the self-hosted, hash-locked model/runtime assets and
+offline vectors. Django inference uses the standard library and checked-in
+artifacts. The newest full MySQL run passed all 252 tests without skips. SQLite
+skips 11 MySQL-only cases in this suite.
+
+See [the frozen experiment](ml/search/README.md),
+[control room verification](docs/control-room-verification.md), and
+[Wasmer compatibility and release gates](docs/wasmer-deployment.md).
 
 ## Release acceptance
 
