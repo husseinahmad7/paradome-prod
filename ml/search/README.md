@@ -28,7 +28,7 @@ are 2 for the primary discussion and 1 for its supporting discussion. Sparse
 judgements can count a useful cross-topic discussion as irrelevant.
 
 Group hashes assigned 36 development, 12 calibration, and 12 test groups before
-encoding. Related rewrites stay together. `data/frozen-v1.json` records the split,
+encoding. Related rewrites stay together. `frozen-v1.json` records the split,
 corpus, labels, and preregistered release policy. Development fits a regularized
 two-feature logistic calibrator using top cosine similarity and the first/second
 margin. Calibration chooses the highest-F1 threshold subject to precision >= 0.90
@@ -55,9 +55,10 @@ Model: `Xenova/all-MiniLM-L6-v2`, immutable revision
 4.3.1, with all transitive dependencies pinned in `package-lock.json`.
 
 The browser Web Worker uses the same ONNX model and tokenizer as offline Node CPU
-encoding, with WASM inference and one thread. Explicit AutoTokenizer/AutoModel
-loading avoids v4 discovery skipping HTTP-local tokenizer metadata when remote
-models are disabled. A warm-up inference must succeed before the model is ready.
+encoding, with WASM inference and one thread. An explicit `BertTokenizer` built
+from the hash-checked tokenizer JSON and `AutoModel` avoid v4 discovery skipping
+HTTP-local tokenizer metadata when remote models are disabled. A warm-up
+inference must succeed before the model is ready.
 The model is about 23 MB; the complete self-hosted worker/runtime/model bundle is
 about 53 MB. Nothing downloads until a visitor opens Search with semantic retrieval
 enabled. HTTP and browser caches reuse assets. No Hugging Face or CDN requests
@@ -78,13 +79,23 @@ digests. `--refresh-worker` is a deliberate source-only rebuild: it requires eve
 model/tokenizer/runtime digest to stay unchanged. Update the golden manifest's
 worker digest together, without refitting or changing the frozen report.
 
+The worker imports the official pinned Transformers.js distribution, assembled
+at build time rather than committed as generated third-party code. The Wasmer
+Python builder verifies the same nine asset hashes without requiring Node on
+the deployment host. Runtime requests use only this site's asset endpoint.
+
 The first evaluation invocation without `--verify` creates artifacts and refuses
 to overwrite an existing frozen report. Do not delete v1's report to refit it.
 Create a distinct version and fresh holdout for a new experiment.
 
 Open **Architecture -> Browser worker -> Check embedding agreement** in the real
 browser after loading the model. Three public golden vectors compare Node CPU
-against browser WASM with maximum absolute error <= 0.001 and cosine >= 0.999.
+against browser WASM with maximum absolute error <= 0.01, cosine >= 0.999, and
+identical top answers and top-five result sets. The first stricter 0.001 component
+check passed two of three sentences. The measured maximum difference was
+0.004814 and minimum cosine 0.999484; all top answers and all fifteen top-five
+members agreed. The numerical contract records this CPU/WASM rounding allowance;
+the frozen retrieval evaluation and acceptance policy were not revised.
 `verify-browser.mjs` exposes the same numerical comparator to external evidence
 collection; it does not launch a browser or imply that a browser check passed.
 

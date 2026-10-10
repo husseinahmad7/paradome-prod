@@ -7,6 +7,28 @@ related_targets: []
 
 # Engineering lab surface
 
+## Control room extension direction contract — 2026-10-10
+
+THESIS: Follow a paraphrased problem from retrieval through a lost acknowledgement
+to the one durable receipt. Published failures and measured state supply the evidence.
+
+OWN-WORLD: Preserve the navy, pale blue, white, blue and teal incumbent workbench,
+system typography, 1160px content measure, native disclosures and gold focus rings.
+
+STORY: Search fictional discussions, inspect one, submit it explicitly, recover a
+lost acknowledgement and replay. Connect boundaries to source and tests; compare
+the frozen model with BM25 and inspect this run's bounded measurements.
+
+FIRST VIEWPORT: The run title and five area links introduce the guided sequence.
+Search leads with a usable keyword form and an optional lazy browser model.
+Delivery keeps the incumbent source, inbox and ledger order below it.
+
+FORM: User-approved control room extension, code-led within the existing world.
+Signature interaction: recovery preserves one inbox effect while the diagram and
+metrics reflect actual state. Reduced motion and ordinary forms remain complete.
+
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+
 An extension of ParaDome for platform/backend recruiters. The approved plan fixes
 the blue/teal identity and the submission → receipt → trace composition. This is
 a code-led, functional interface; no generated illustration or new brand system.

@@ -1,7 +1,7 @@
 {% load tz %}{% timezone "UTC" %}
 <div id="lab-state" hx-history="false">
   <dialog id="lab-update" tabindex="-1" class="lab-toast {% if error %}is-error{% else %}is-success{% endif %}" aria-labelledby="lab-toast-title" aria-describedby="lab-toast-message"{% if error or feedback %} open{% endif %}>
-    <div class="lab-toast-heading"><strong id="lab-toast-title">{% if error %}Action needed{% else %}Lab updated{% endif %}</strong><form method="dialog"><button type="submit" class="lab-toast-dismiss" aria-label="Dismiss notification">Close</button></form></div>
+    <div class="lab-toast-heading"><strong id="lab-toast-title">{% if error %}Action needed{% else %}Lab updated{% endif %}</strong><form method="dialog"><button type="submit" class="lab-toast-dismiss" aria-label="Close notification">Close</button></form></div>
     <p id="lab-toast-message" role="{% if error %}alert{% else %}status{% endif %}" aria-atomic="true">{{ error|default:feedback }}</p>
   </dialog>
   <div class="lab-run-utility">

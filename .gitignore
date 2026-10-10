@@ -32,6 +32,8 @@ backups/
 
 # Local browser QA
 paradome/settings/qa_runtime.py
+paradome/settings/qa_nojs.py
+paradome/qa_browser.py
 .impeccable/review/
 
 # Reproducible, pinned browser ML assets are built, not checked into Git.
