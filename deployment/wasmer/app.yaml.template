@@ -1,0 +1,46 @@
+# Render with render_manifest.py after resolving the account and exact URLs.
+kind: wasmer.io/App.v0
+owner: "{owner}"
+name: "{name}"
+package: "{package}"
+debug: false
+env:
+  DJANGO_SETTINGS_MODULE: paradome.settings.wasmer
+  DJANGO_ALLOWED_HOSTS: "{hosts}"
+  DJANGO_CSRF_TRUSTED_ORIGINS: "{origins}"
+  PUBLIC_SITE_URL: "{public_url}"
+  PRIVATE_MEDIA_ROOT: /data/private-media
+  ENGINEERING_LAB_ENABLED: "true"
+  ENGINEERING_CONTROL_ROOM_ENABLED: "true"
+  ENGINEERING_SEMANTIC_ENABLED: "true"
+  ENGINEERING_SOURCE_REVISION: "{revision}"
+capabilities:
+  database:
+    engine: mysql
+  cdn_cache:
+    enabled: true
+locality:
+  regions: [fr-roub1]
+volumes:
+  - name: private-media
+    mount: /data
+redirect:
+  force_https: true
+jobs:
+  - name: prepare-database
+    trigger: pre-deployment
+    action:
+      execute:
+        command: python
+        cli_args: ["/app/manage.py", "prepare_wasmer_demo"]
+        timeout: 180s
+        retries: 0
+  - name: reset-guest-sandbox
+    trigger: "0 0 * * *"
+    action:
+      execute:
+        command: python
+        cli_args: ["/app/manage.py", "maintain_demo_sandbox"]
+        timeout: 180s
+        retries: 0
+# Package command name and /app mapping must be validated in the Wasmer build.

@@ -1,0 +1,853 @@
+{
+  "provenance": {
+    "version": "discussions-v1",
+    "language": "en",
+    "created": "2026-10-10",
+    "origin": "AI-authored fictional technical discussions; no production posts or visitor data.",
+    "labels": "Author-assigned: 2 direct answer, 1 supporting context, 0 unjudged/unrelated. No independent human review is claimed.",
+    "limitations": "Small synthetic English fixture with sparse topic-pair judgements; not a production-quality or safety certification.",
+    "split_policy": "SHA256(version + intent group), first 36 development, next 12 calibration, final 12 test. All three rewrites remain together."
+  },
+  "documents": [
+    {
+      "id": "discussion-001-a",
+      "group": "lost-ack",
+      "title": "A receipt survives a lost acknowledgement",
+      "text": "Our fictional billing relay records a destination receipt, then the network drops the reply. The source still says retry. Use a stable event ID and a unique consumer receipt so a second delivery returns the original effect instead of charging twice.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-001-b",
+      "group": "lost-ack",
+      "title": "Recovering a retryable outbox event",
+      "text": "A source write and its outbox row commit in one transaction. Claim a short lease, deliver, and acknowledge separately. If the acknowledgement is lost, retry the same event. An expired lease can be reclaimed; a stale token cannot overwrite the newer attempt.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-002-a",
+      "group": "replay-key",
+      "title": "An idempotency key identifies one payload",
+      "text": "Our ticket creation endpoint maps a client UUID to a payload hash. Repeating the same key and text returns the existing ticket. A reused key with changed text is a conflict, not a silent overwrite. The database enforces uniqueness inside the visitor run.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-002-b",
+      "group": "replay-key",
+      "title": "Stable request identifiers across retries",
+      "text": "Generate the operation key before submitting and retain it after a timeout. Changing the key on retry creates a new operation. Test simultaneous identical requests as well as conflicting bodies against a real unique constraint.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-003-a",
+      "group": "atomic-outbox",
+      "title": "Committing a write and its event together",
+      "text": "In a fictional order service, an order row and the outbound event are inserted inside one database transaction. Publishing before commit can expose an order that rolls back. Publishing afterwards without an outbox can lose the notification if the process exits.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-003-b",
+      "group": "atomic-outbox",
+      "title": "A rollback leaves no orphan event",
+      "text": "We simulate an exception between inserting a task and its outbox row. Both writes must roll back. Delivery begins only after the source transaction completes. The destination effect and source acknowledgement have separate commit boundaries.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-004-a",
+      "group": "deadlock",
+      "title": "Keep a consistent row lock order",
+      "text": "Two fictional inventory transactions deadlocked because one locked the product before the warehouse and the other reversed that order. Lock roots first, sort child IDs, keep transactions short, and retry only recognized deadlock errors with a bound.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-004-b",
+      "group": "deadlock",
+      "title": "Diagnosing MySQL lock waits",
+      "text": "A slow SQL request can be waiting on a row lock rather than scanning data. Inspect the transaction holding the lock and its age. Use read committed deliberately, a short lock timeout, and concurrency tests instead of relying on SQLite behavior.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-005-a",
+      "group": "optimistic-lock",
+      "title": "Rejecting stale document edits",
+      "text": "A fictional notes API includes an integer version. UPDATE succeeds only where the stored version equals the client's version, then increments it. Zero affected rows means somebody else edited the document. Return a conflict with a reload option.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-005-b",
+      "group": "optimistic-lock",
+      "title": "ETags protect conditional updates",
+      "text": "Return an ETag for a resource revision and require If-Match on editing. A failed precondition prevents overwriting someone else's change. This is useful when a long editing session should not hold a database lock.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-006-a",
+      "group": "csrf",
+      "title": "CSRF tokens on browser POST requests",
+      "text": "Our fictional session-backed dashboard uses a CSRF token on every state-changing form and fetch. SameSite cookies help but do not replace origin checks and tokens. A missing or mismatched token fails before any database mutation.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-006-b",
+      "group": "csrf",
+      "title": "Trusted origins are exact HTTPS origins",
+      "text": "Configure the precise production origins including scheme and port. Do not accept every subdomain to fix a CSRF error. A reverse proxy must report the external HTTPS scheme correctly so Django can compare the Origin safely.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-007-a",
+      "group": "object-access",
+      "title": "Authorize the object before fetching children",
+      "text": "A fictional private team discussion requires membership before querying its posts, replies, or attached files. A guessed ID is not permission. Apply the same rule to full pages, fragments, JSON endpoints, and downloads.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-007-b",
+      "group": "object-access",
+      "title": "Foreign objects return no private state",
+      "text": "Our access test gives a second browser another team's resource UUID. Both HTML and AJAX return a generic unavailable response. Permission is checked again before a write, including when a parent changed while the request waited.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-008-a",
+      "group": "private-files",
+      "title": "Private uploads need an authorized download",
+      "text": "Store fictional team attachments outside the public static and media directories. A download view verifies object access, then streams the file with a safe filename and nosniff. Knowing the storage key must never bypass team membership.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-008-b",
+      "group": "private-files",
+      "title": "Check file access after a restart",
+      "text": "A persistent volume keeps private files across application restarts. Verify an authorized download still works and an unrelated session gets rejected. Do not map the volume to a public URL or expose its directory listing.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-009-a",
+      "group": "sanitize",
+      "title": "Sanitize rich text at the server boundary",
+      "text": "Our fictional discussion editor can submit HTML from outside the visual editor. Run the same allowlist sanitizer server-side for every write. Remove scripts, event attributes, dangerous URL schemes, and unsafe SVG while preserving allowed paragraphs and links.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-009-b",
+      "group": "sanitize",
+      "title": "Regression cases for stored HTML",
+      "text": "Test pasted markup containing mixed-case javascript URLs, onerror handlers, nested tags, and malformed fragments. Escape plain-text fields separately. Browser editor filtering is useful for authoring but is not the security boundary.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-010-a",
+      "group": "csp",
+      "title": "A nonce authorizes repository inline scripts",
+      "text": "Our fictional dashboard uses a per-response CSP nonce and self-hosted scripts. Event-handler attributes and arbitrary inline JavaScript remain blocked. A script-src allowance for WebAssembly compilation belongs on the embedding worker response, not every application page.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-010-b",
+      "group": "csp",
+      "title": "Reporting a content security violation",
+      "text": "Check the blocked directive and resource before widening policy. A worker needs its own restrictive policy with same-origin model fetches. Avoid unsafe-eval for a third-party widget and verify that a injected inline script stays blocked.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-011-a",
+      "group": "rate-limit",
+      "title": "A shared limiter bounds public writes",
+      "text": "A fictional guest endpoint rate-limits writes by network identity using a shared database cache. Per-process memory caches diverge between workers. Return Retry-After and a recoverable 429; fail closed if the limiter storage is unavailable.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-011-b",
+      "group": "rate-limit",
+      "title": "A rejection should preserve the visitor's work",
+      "text": "When the submission limit is reached, render the entered form and a wait duration without creating an operation. Recheck ownership before including private run state in a rate-limit response. Do not automatically loop on 429.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-012-a",
+      "group": "session-expiry",
+      "title": "Expire a private run without extending login",
+      "text": "A fictional engineering run has a 24-hour maximum and a secret tied to the browser session. Logging out flushes the owner secret. Run creation must preserve the existing authenticated session deadline rather than resetting the login expiry.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-012-b",
+      "group": "session-expiry",
+      "title": "Bounded cleanup of expired run roots",
+      "text": "Delete expired runs in small batches, locking the root before collecting cascading children. An in-flight source write must finish before its root is removed. Never use a stale child snapshot taken before waiting on the root lock.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-013-a",
+      "group": "password",
+      "title": "Hash passwords and rotate the session on login",
+      "text": "A fictional account service uses Django password hashers rather than plaintext or reversible encryption. Successful login rotates the session key. Changing a password invalidates older authenticated sessions through the session authentication hash.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-013-b",
+      "group": "password",
+      "title": "A guest identity has no usable password",
+      "text": "The shared sandbox identity is authenticated only through the explicit demo-entry flow. Set an unusable password, no staff privileges, and a restricted demo group. Never publish a shared administrator password for a portfolio demonstration.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-014-a",
+      "group": "sql-params",
+      "title": "Parameterize query values",
+      "text": "A fictional reporting tool passes search values as driver parameters instead of concatenating SQL. User-supplied table names cannot be parameterized as values, so choose them from a fixed allowlist. ORM filters do not make unsafe raw SQL safe.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-014-b",
+      "group": "sql-params",
+      "title": "Escaping is not a substitute for bound parameters",
+      "text": "A quote inside a report label should be treated as text. Test malicious delimiters and verify they do not change the query structure. Use a database account with only the privileges the application requires.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-015-a",
+      "group": "upload-check",
+      "title": "Validate uploads before storing them",
+      "text": "A fictional avatar endpoint limits file size and dimensions, verifies image decoding with Pillow, and writes a generated storage filename. The browser's content type and original extension are untrusted. Reject decompression bombs and non-image payloads.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-015-b",
+      "group": "upload-check",
+      "title": "Re-encode an accepted image safely",
+      "text": "After decoding, strip unnecessary metadata and save an allowed image format. Preserve access controls around the resulting file. A small compressed input can allocate huge memory; pixel bounds matter as well as upload byte limits.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-016-a",
+      "group": "pagination",
+      "title": "Stable cursor pagination under new writes",
+      "text": "A fictional chat history sorts by timestamp and primary key. A cursor includes both so equal timestamps do not repeat or skip records. Fetch one extra row to determine whether an earlier page exists. New messages do not shift old pages like offsets do.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-016-b",
+      "group": "pagination",
+      "title": "Bound the size of a history response",
+      "text": "Our chat endpoint returns at most fifty authorized messages per page. Load earlier records on explicit user action rather than polling the whole history. A query index should match the channel filter and ordering.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-017-a",
+      "group": "n-plus-one",
+      "title": "Fetch related authors in one query",
+      "text": "A fictional discussion list performs an extra author query for every post. select_related handles single-valued foreign keys and prefetch_related handles collections. Measure query counts with a representative list rather than a one-row fixture.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-017-b",
+      "group": "n-plus-one",
+      "title": "Prefetch the collection you actually render",
+      "text": "A team overview shows post counts and a few replies. Use annotations for counts and a deliberate prefetch for displayed replies. Loading every child can be worse than an N+1 if the page only needs a summary.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-018-a",
+      "group": "index-plan",
+      "title": "Match an index to the filter and ordering",
+      "text": "A fictional incident list filters by workspace and orders by creation time. A composite index starts with workspace then creation time. Inspect the query plan on realistic rows; adding an index to every column increases write cost without ensuring use.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-018-b",
+      "group": "index-plan",
+      "title": "Measure a database plan before optimizing",
+      "text": "EXPLAIN can reveal full scans and sorts. Compare actual latency at the same result count and inspect selectivity. An index unused on ten rows may be valuable on a million; a plan alone does not establish user latency.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-019-a",
+      "group": "cache-stampede",
+      "title": "Coalesce cache misses for expensive work",
+      "text": "A fictional public catalog expires one hot cache entry and hundreds of requests rebuild it. Use a short single-flight lease and stagger expiration. Other requests may use a bounded stale value while one refreshes, provided the data is public and safe to serve stale.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-019-b",
+      "group": "cache-stampede",
+      "title": "Negative caching has a short deadline",
+      "text": "A missing public catalog item can be cached briefly to reduce repeated lookups. Do not cache authorization failures as globally shareable responses. Include all representation inputs in the key and measure hit rates.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-020-a",
+      "group": "private-cache",
+      "title": "Session pages must not be cached publicly",
+      "text": "A fictional workspace page includes browser-owned data and a CSRF token. Mark it no-store and vary on Cookie and fragment headers. A CDN should only cache immutable public assets, never a private run response shared between visitors.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-020-b",
+      "group": "private-cache",
+      "title": "Content-hashed assets can be cached for a year",
+      "text": "Our stylesheet and model filenames encode content hashes. Serve them with an immutable long cache lifetime. HTML remains fresh so it points to the current release. Keep the preceding asset version while rollback is possible.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-021-a",
+      "group": "db-pool",
+      "title": "Bound database connections in server workers",
+      "text": "A fictional deployment starts more workers than the managed database connection limit supports. Budget connections across instances and background jobs. Use health checks, bounded connection lifetime, and short transactions instead of indefinitely idle sessions.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-021-b",
+      "group": "db-pool",
+      "title": "Connection errors differ from query errors",
+      "text": "Log a safe error category without database passwords. Test reconnection after a database restart. A connection timeout limits establishing a socket; it does not limit every long-running SQL statement.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-022-a",
+      "group": "db-tls",
+      "title": "Encrypt managed database connections",
+      "text": "A fictional cloud app reads DB_HOST, DB_PORT, DB_NAME, DB_USERNAME and DB_PASSWORD injected by its platform. Require TLS and a trusted certificate when available. Do not assume the managed port is 3306 or log a connection URL containing credentials.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-022-b",
+      "group": "db-tls",
+      "title": "Prove the database connection uses TLS",
+      "text": "Query the session SSL cipher after connecting and fail the deployment check if it is empty. Credential injection is not proof of encrypted transport. Rotate a secret without writing its value into Git or a support log.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-023-a",
+      "group": "migration",
+      "title": "Expand and contract a schema safely",
+      "text": "A fictional release introduces a new nullable column, deploys readers compatible with both schemas, backfills in batches, and only later removes the old field. A rollback should still run against the expanded schema. Avoid dropping data in the first release.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-023-b",
+      "group": "migration",
+      "title": "Separate migration work from web startup",
+      "text": "Run database migrations as a bounded deployment job before promotion. Every application instance running migrations on startup can race. Check the applied migration set and stop promotion if a migration fails.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-024-a",
+      "group": "rollback",
+      "title": "Promote a verified immutable deployment",
+      "text": "A fictional release uses a unique preview URL. Verify health, session behavior, private files, and schema compatibility before moving the public alias. Record the preceding version ID and rehearse restoring it without reversing destructive migrations.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-024-b",
+      "group": "rollback",
+      "title": "Flags make an addition independently reversible",
+      "text": "A new search feature has separate interface and semantic flags. Switch it off while preserving delivery and permissions. Record which artifacts match each code release; a rollback must not pair old code with an incompatible index.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-025-a",
+      "group": "heartbeat",
+      "title": "A liveness endpoint should do bounded work",
+      "text": "A fictional health route returns a generic status and a short database connectivity check. It exposes no credentials, exception traces, or user details. Return 503 for an unavailable dependency and no-store so a CDN cannot mask a failure.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-025-b",
+      "group": "heartbeat",
+      "title": "Readiness and liveness answer different questions",
+      "text": "Liveness asks if the process can respond; readiness asks if it can safely serve traffic. Use dependency-aware readiness during deployment promotion, but do not restart every process for a brief upstream outage.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-026-a",
+      "group": "logging",
+      "title": "Redact request data from operational logs",
+      "text": "A fictional search system logs numeric duration, artifact version, and result IDs, never raw queries or vectors. Exception messages from a database driver can contain secrets, so return a fixed safe category and keep sensitive diagnostics out of public responses.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-026-b",
+      "group": "logging",
+      "title": "Correlate an operation without storing its content",
+      "text": "Generate an operation UUID and carry it through source, delivery, and acknowledgement traces. Fixed stage labels make the timeline useful while avoiding arbitrary user content. Bound the number of retained observations per run.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-027-a",
+      "group": "metrics",
+      "title": "Separate browser latency from server ranking",
+      "text": "A fictional search shows model download and embedding time measured in the visitor's browser. The server separately measures cosine or keyword ranking. Request round-trip time includes network and cannot be called server inference latency.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-027-b",
+      "group": "metrics",
+      "title": "Use distributions rather than a fabricated counter",
+      "text": "Keep bounded per-run timing samples, count real fallbacks, and show median and p95 with the sample count. A frozen offline benchmark is distinct from current visitor measurements. An empty run has no latency measurement yet.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-028-a",
+      "group": "tracing",
+      "title": "Trace transaction stages with their own clocks",
+      "text": "A fictional event timeline times each request-driven stage using a monotonic clock. The measurement ends before the enclosing transaction commit, so it is not a transport or full database commit benchmark. Label that limitation beside the trace.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-028-b",
+      "group": "tracing",
+      "title": "An operation trace is not distributed exactly-once delivery",
+      "text": "Our in-process demo exercises source and sink commit boundaries and unique receipts. It has no external queue or worker. Explain the difference between duplicate prevention for one event and a guarantee across a distributed transport.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-029-a",
+      "group": "websocket",
+      "title": "Authorize private realtime subscriptions",
+      "text": "A fictional team chat uses a private channel name tied to the channel ID. The auth endpoint verifies membership before signing the subscription. Message events contain IDs; the browser fetches an authorized server-rendered fragment for the content.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-029-b",
+      "group": "websocket",
+      "title": "Persist first, notify after commit",
+      "text": "A chat message is stored transactionally. A realtime notification is attempted only on commit, and its failure does not lose the saved message. Without realtime credentials, display a refresh control so visitors can retrieve saved messages explicitly.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-030-a",
+      "group": "email",
+      "title": "A disabled email integration must be explicit",
+      "text": "A fictional contact page on a free demo uses a mailto link. It does not claim to send messages through an unconfigured SMTP backend. When email sending is enabled, catch delivery failure and preserve the form with a useful recovery message.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-030-b",
+      "group": "email",
+      "title": "Credentials belong in deployment secrets",
+      "text": "SMTP credentials are supplied to the server through the hosting secret store. The public HTML must never contain them. A demo can link to email without configuring a new provider or silently using the console email backend.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-031-a",
+      "group": "timeouts",
+      "title": "Bound outbound calls and retry selectively",
+      "text": "A fictional API client uses a connect timeout and a total request deadline. Retry temporary failures only for safe or idempotent operations, with a bounded exponential backoff and jitter. A permanent validation error should not be retried.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-031-b",
+      "group": "timeouts",
+      "title": "Propagate a deadline through dependent work",
+      "text": "A request budget includes downstream calls and time spent waiting for locks. Cancel or decline new work when the deadline is already exhausted. A retry count alone cannot stop a slow call without a timeout.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-032-a",
+      "group": "circuit-breaker",
+      "title": "Stop hammering a failing dependency",
+      "text": "A fictional recommendation client opens a circuit after repeated failures, serves a documented fallback, and probes after a cool-down. It records the fallback reason. A circuit breaker must not turn an authorization error into public cached data.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-032-b",
+      "group": "circuit-breaker",
+      "title": "A manual outage exercise proves the fallback",
+      "text": "Expose a controlled provider-unavailable mode in the demo. Clearly mark that it is a simulation and show the alternative result path. Keep actual failures separate in metrics so a guided exercise is not mistaken for an incident.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-033-a",
+      "group": "feature-flags",
+      "title": "Separate interface and model release flags",
+      "text": "A fictional dashboard can enable the new control room independently of semantic ranking. The existing delivery flow remains available if either addition is rolled back. A server-side flag is authoritative; hiding a button is not an access rule.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-033-b",
+      "group": "feature-flags",
+      "title": "A flag should have a tested disabled path",
+      "text": "Request both new endpoints with the feature off and expect a safe unavailable response. Avoid loading large model assets when the search interface is not used. Record feature state beside artifact health during support.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-034-a",
+      "group": "worker",
+      "title": "Keep embedding work off the main browser thread",
+      "text": "A fictional search sends text to a dedicated Web Worker and receives a 384-dimensional vector. Tokenization and inference can take time, so input remains responsive. Terminate a failed worker and keep keyword search usable.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-034-b",
+      "group": "worker",
+      "title": "Load a browser model only when needed",
+      "text": "The ordinary page request contains no model bytes. Start loading after the visitor opens Search; show download progress and offer keyword search while it loads. A compatible cached artifact makes subsequent visits faster.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-035-a",
+      "group": "artifact",
+      "title": "Version the model and retrieval index together",
+      "text": "A fictional retrieval API checks model ID, immutable revision, dimension, pooling, and index version. A vector made with a different encoder must not be compared to stored vectors. Reject the mismatch and use a labelled keyword fallback.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-035-b",
+      "group": "artifact",
+      "title": "Verify downloaded assets with content hashes",
+      "text": "Pin the tokenizer, quantized ONNX file, and runtime package. Build a manifest of SHA-256 hashes and sizes and verify them before release. Browser and offline encoders must use the same normalization and truncation settings.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-036-a",
+      "group": "quantized",
+      "title": "Evaluate the quantized model that actually ships",
+      "text": "A fictional browser model uses q8 ONNX weights to reduce transfer size. Quantization can change rankings slightly, so offline evaluation must encode documents and queries with that same file. A float32 training benchmark is not proof of browser quality.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-036-b",
+      "group": "quantized",
+      "title": "Embedding agreement is a release check",
+      "text": "Compare fixed golden sentences encoded offline and in the browser using cosine and maximum absolute difference tolerances. Pin tokenization, mean pooling, and L2 normalization. Record the runtime version and artifact digest with the check.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-037-a",
+      "group": "vector-input",
+      "title": "Validate vectors before ranking",
+      "text": "A fictional search endpoint requires exactly 384 finite numeric values and a nonzero norm. Booleans, NaN, infinity, oversized arrays, and incompatible metadata are rejected. Normalize a valid vector before cosine ranking and bound the request body.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-037-b",
+      "group": "vector-input",
+      "title": "An invalid embedding still permits keyword search",
+      "text": "Return a clear embedding-invalid fallback with keyword results rather than propagating a math exception. Malformed JSON or invalid search text is a 400 with a safe message. Do not retain raw input vectors in database telemetry.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-038-a",
+      "group": "cosine",
+      "title": "Cosine similarity compares normalized vectors",
+      "text": "A fictional fixed corpus has precomputed normalized sentence embeddings. The server computes dot products against a normalized query and sorts deterministically by score then discussion ID. A similarity value is not a probability of relevance.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-038-b",
+      "group": "cosine",
+      "title": "Inspect the runner-up rather than only top score",
+      "text": "Two similar discussions can receive almost equal scores. Include the score gap as a confidence feature and show the top five candidates. A strong top cosine score alone does not establish that the corpus contains an answer.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-039-a",
+      "group": "bm25",
+      "title": "BM25 is a useful keyword baseline",
+      "text": "A fictional retrieval benchmark tokenizes English text, counts document frequencies, and applies BM25 with length normalization. Exact identifiers and rare technical terms often favor this baseline. Compare it with semantic retrieval using identical labels and splits.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-039-b",
+      "group": "bm25",
+      "title": "Keyword search works before the model downloads",
+      "text": "The server can search fixed public discussions with only standard-library code. A no-JavaScript form submits words directly. Label keyword rank scores separately from cosine and do not display an uncalibrated probability for them.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-040-a",
+      "group": "paraphrase",
+      "title": "Sentence retrieval can bridge different wording",
+      "text": "A fictional incident about a lost acknowledgement can match a question saying the receiver acted but the sender never heard back. Keyword overlap may be weak even when the meaning agrees. Evaluate this paraphrase slice separately from literal queries.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-040-b",
+      "group": "paraphrase",
+      "title": "Rare identifiers remain a semantic weakness",
+      "text": "An encoder may confuse two error codes or treat a made-up identifier as ordinary words. Keep a keyword baseline, publish failure examples, and avoid claiming semantic search always wins. The fixture should include distractors with similar wording.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-041-a",
+      "group": "calibration",
+      "title": "Fit relevance confidence on development data",
+      "text": "A fictional calibrator maps top similarity and its margin through a logistic function. Fit it using development labels, pick an acceptance threshold on calibration groups, and evaluate the frozen choice once on untouched test groups. Similarity and estimated relevance are shown separately.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-041-b",
+      "group": "calibration",
+      "title": "Reliability error compares confidence with outcomes",
+      "text": "Bin predicted top-result relevance probabilities and compare each bin's mean with observed relevance. Report expected calibration error and Brier score with the sample count. A tiny synthetic benchmark cannot certify probabilities for real traffic.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-042-a",
+      "group": "no-answer",
+      "title": "Abstain when the public corpus has no answer",
+      "text": "A fictional search benchmark includes queries about subjects absent from its 120 discussions. Do not invent an answer or force a confident match. If estimated top-result relevance falls below the calibrated threshold, show uncertain keyword suggestions with a clear no-confident-match notice.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-042-b",
+      "group": "no-answer",
+      "title": "Measure false acceptance on absent topics",
+      "text": "No-answer queries have an empty relevance map and do not contribute to Recall@5. Report their rejection rate separately. A threshold chosen to maximize recall alone may accept unrelated results, so include precision in calibration selection.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-043-a",
+      "group": "recall",
+      "title": "Recall at five measures relevant coverage",
+      "text": "A fictional evaluator counts how many labelled relevant discussions occur in the first five results, divided by the total relevant discussions for each answerable query. Average across queries and state how no-answer queries are excluded.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-043-b",
+      "group": "recall",
+      "title": "A semantic release gate needs a baseline comparison",
+      "text": "Enable the default semantic path only when held-out Recall@5 reaches 0.85 and the paraphrase slice improves over BM25. A failed gate keeps keyword default and exposes the honest report. Revisions after test feedback need a fresh holdout.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-044-a",
+      "group": "ndcg",
+      "title": "Rank useful answers ahead of partial matches",
+      "text": "A fictional benchmark assigns relevance two to a direct answer and one to a supporting discussion. nDCG at five discounts lower positions logarithmically and divides by the ideal ordering. A correct answer at rank one is better than at rank five.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-044-b",
+      "group": "ndcg",
+      "title": "Keep the relevance policy reviewable",
+      "text": "Publish query-to-discussion judgements and their rationale. A title-only overlap is not automatically a direct answer. Labels in a synthetic fixture are author-assigned and should not be represented as independent human ratings.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-045-a",
+      "group": "split-leakage",
+      "title": "Keep related query families in one split",
+      "text": "A fictional search fixture contains literal, paraphrased, and challenging versions of each intent. Assign the whole intent group to development, calibration, or test before encoding. Randomly splitting each sentence would leak nearly the same question across sets.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-045-b",
+      "group": "split-leakage",
+      "title": "Freeze the holdout before tuning",
+      "text": "Store hashes of the corpus and label file plus the split group lists. Training and threshold selection must ignore test outcomes. Once a test has influenced a design decision, replace it with a fresh holdout for the revised experiment.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-046-a",
+      "group": "monitor-drift",
+      "title": "Monitor retrieval score distributions",
+      "text": "A fictional visitor run stores only bounded numeric search observations. Show top-score bins, low-confidence rate, fallback reasons, and measured latency. These are diagnostics within a run, not proof of global model drift across all users.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-046-b",
+      "group": "monitor-drift",
+      "title": "Artifact health explains a sudden fallback",
+      "text": "If the corpus digest, vector dimensions, or evaluation version disagrees, semantic ranking is unavailable. Display the version and safe reason while keyword search stays usable. An empty observation window is different from a zero failure rate.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-047-a",
+      "group": "telemetry-cap",
+      "title": "Trim search observations under a root lock",
+      "text": "A fictional run keeps its newest forty observations. Lock the run, recheck expiry, append numeric metadata and result IDs, then delete older rows in the same transaction. Concurrent browser tabs must not exceed the bound or write after expiry.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-047-b",
+      "group": "telemetry-cap",
+      "title": "Data minimization applies to successful queries too",
+      "text": "Do not save raw search text or embeddings even when retrieval succeeds. Browser timing values are untrusted client measurements and must be finite and bounded. Label them separately from server durations calculated locally.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-048-a",
+      "group": "accessibility",
+      "title": "Interactive controls need keyboard operation",
+      "text": "A fictional architecture diagram uses native links and buttons with visible focus. Each boundary opens a named explanation and source/test links. Ensure the reading order survives a single-column mobile layout and do not rely on hover to reveal meaning.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-048-b",
+      "group": "accessibility",
+      "title": "Announce asynchronous results without stealing focus",
+      "text": "A search status uses a polite live region while the input retains focus. Result headings and inspect links are keyboard reachable. Errors explain recovery, and reduced-motion preferences disable the authored transition.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-049-a",
+      "group": "responsive",
+      "title": "Check the narrowest useful viewport",
+      "text": "A fictional control room stacks its columns on small screens, allows long identifiers to wrap, and keeps form controls at least forty-four pixels tall. Test real results and delivery state at 320, 390, 768, and 1440 pixels, not just the empty landing page.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-049-b",
+      "group": "responsive",
+      "title": "Reduced motion keeps state changes understandable",
+      "text": "Respect prefers-reduced-motion and keep all information visible without animation. A short transition may help locate a selected boundary, but motion should not be the only sign that a result or acknowledgement changed.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-050-a",
+      "group": "progressive",
+      "title": "Useful forms survive without JavaScript",
+      "text": "A fictional lab submits ordinary CSRF-protected HTML forms and redirects back to its state. JavaScript adds partial updates, model embeddings, and richer guidance. Without scripts, keyword retrieval, delivery scenarios, architecture details, and evaluation are still available.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-050-b",
+      "group": "progressive",
+      "title": "A failed enhancement should expose a recovery",
+      "text": "When fetch or the browser model fails, preserve the search text and offer a normal keyword submission. A failed partial request should not leave the control indefinitely busy. Treat network errors as outcomes that require visible recovery.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-051-a",
+      "group": "testing-races",
+      "title": "Test uniqueness against the production database",
+      "text": "A fictional concurrency test sends identical operations from separate connections behind a barrier. MySQL unique constraints and row locks must leave one source row, one event, and one receipt. SQLite tests are useful but cannot prove the same lock behavior.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-051-b",
+      "group": "testing-races",
+      "title": "Coordinate a race without timing guesses",
+      "text": "Use synchronization events to pause one writer after it acquires a root lock, then start the competing request. Release the writer once the contender reaches the lock boundary. Avoid tests that merely sleep and hope a race occurs.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-052-a",
+      "group": "demo-reset",
+      "title": "Reset only the independent guest sandbox",
+      "text": "A fictional public demo has a dedicated guest identity with an unusable password and limited permissions. A daily reset deletes only that identity's demo content, recreates text fixtures, and bounds expired-run cleanup. It never connects to the existing production dataset.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-052-b",
+      "group": "demo-reset",
+      "title": "Serialize scheduled maintenance with a database lease",
+      "text": "Two job invocations must not reset the same guest concurrently. Claim a bounded database lease and record completion. A stale lease expires after a crashed job; never rely on a process-local lock across cloud instances.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-053-a",
+      "group": "secret-store",
+      "title": "Keep deployment tokens out of source and logs",
+      "text": "A fictional deploy command reads its token from the process environment. Application secrets live in the provider store. Generated manifests contain only public configuration such as exact hosts and flags; do not print, commit, or copy credential values into documentation.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-053-b",
+      "group": "secret-store",
+      "title": "A missing credential blocks publishing, not local work",
+      "text": "Build the application and run local checks before asking for the deployment token. Preserve a concrete deployable artifact and an explicit compatibility checklist. The deployment identity supplies the actual app owner and exact HTTPS URLs.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-054-a",
+      "group": "volume",
+      "title": "A persistent volume is for files, not shared SQLite",
+      "text": "A fictional edge deployment mounts private attachments under /data/private-media and uses managed MySQL for mutable relational state. Shared read-write volumes do not make SQLite a safe multi-instance database. Verify file durability by restarting the app.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-054-b",
+      "group": "volume",
+      "title": "Package and persistent data have separate lifetimes",
+      "text": "The immutable release package contains source and public assets. A writable volume contains uploads. A rollback swaps code but retains persistent data, so old code must tolerate the current file layout and database schema.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-055-a",
+      "group": "free-budget",
+      "title": "Measure a demo's resource budget",
+      "text": "A fictional free deployment counts its model and runtime bytes separately from initial HTML and CSS. Use one lazy browser model, bounded visitor data, and explicit refresh instead of continuous polling. Do not enable a paid service to complete a free demo.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-055-b",
+      "group": "free-budget",
+      "title": "Publish measured transfer sizes with scope",
+      "text": "Resource Timing can show page and lazy asset transfers separately. Cached transfers may be zero while decoded body sizes are nonzero. State whether measurements are cold or warm and which browser and network were used.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-056-a",
+      "group": "unicode",
+      "title": "Normalize text without changing its meaning",
+      "text": "A fictional operation normalizes line endings and Unicode NFC, then trims boundary whitespace. Preserve case and meaningful internal spaces for the idempotency payload hash. Reject control characters except tab and newline and bound normalized length.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-056-b",
+      "group": "unicode",
+      "title": "Search tokenization has a separate contract",
+      "text": "A keyword ranker may lowercase and split words while an operation hash must preserve submitted meaning. Do not reuse lossy search preprocessing for an idempotency conflict check. Test combining accents and CRLF separately.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-057-a",
+      "group": "timezones",
+      "title": "Store aware timestamps and label display time",
+      "text": "A fictional run stores timezone-aware UTC dates and shows expiry with an explicit UTC label. Scheduled cleanup compares aware timestamps. Daylight saving changes can make naive local times ambiguous, so deadlines should be instants rather than formatted strings.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-057-b",
+      "group": "timezones",
+      "title": "Use monotonic time for durations",
+      "text": "Wall-clock time can jump during synchronization. Measure elapsed ranking and delivery stages with a monotonic clock, and use UTC wall time only for persisted event timestamps and expiry deadlines.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-058-a",
+      "group": "static-build",
+      "title": "Build a manifest of immutable static files",
+      "text": "A fictional Django release runs collectstatic with compressed content-hashed storage. The deployed HTML references hashed styles and scripts. A missing manifest entry fails the build instead of producing a broken production page.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-058-b",
+      "group": "static-build",
+      "title": "Self-host runtime files referenced by the worker",
+      "text": "The browser embedding bundle, ONNX runtime module, WASM binary, and tokenizer assets all use same-origin versioned paths. Preserve relative runtime imports and verify every referenced asset exists after static collection.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-059-a",
+      "group": "leases",
+      "title": "A fencing token rejects an outdated attempt",
+      "text": "A fictional delivery claim has a UUID token and an expiry. Each finalize compares the stored token, status, and current deadline while holding a lock. A delayed result from an older attempt cannot acknowledge or release a newer claim.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-059-b",
+      "group": "leases",
+      "title": "Leases cap abandoned work without guaranteeing cancellation",
+      "text": "A short lease lets another request recover after an abandoned attempt. The old process may still run, so the token check must fence its write. A timeout alone does not ensure an external side effect was canceled.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-060-a",
+      "group": "receipt",
+      "title": "The receipt row is the destination effect",
+      "text": "A fictional inbox uses one unique receipt per event. Creating the receipt and the visible inbox item is the same transaction and row, so a retry cannot produce a second item. The source acknowledgement may still be lost after that commit.",
+      "category": "Engineering discussion"
+    },
+    {
+      "id": "discussion-060-b",
+      "group": "receipt",
+      "title": "Replay and redelivery protect different boundaries",
+      "text": "A client replay returns the original submission using its idempotency key. A transport retry deduplicates the destination using the event ID. Demonstrate both and count their prevented duplicate effects separately.",
+      "category": "Engineering discussion"
+    }
+  ]
+}

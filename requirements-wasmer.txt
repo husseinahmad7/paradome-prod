@@ -1,0 +1,3 @@
+# Native packages must pass the real Wasmer build; do not remove sanitization.
+-r requirements.txt
+mysqlclient==2.2.8

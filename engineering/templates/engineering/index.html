@@ -3,7 +3,7 @@
 <section class="lab-intro" aria-labelledby="lab-title">
   <div>
     <h1 id="lab-title">Make it fail.<br>See how it recovers.</h1>
-    <p class="lab-lead">A small message. A lost acknowledgement. One inbox entry. Explore the decisions behind reliable delivery in a hands-on Django lab.</p>
+    <p class="lab-lead">{% if control_room_enabled %}Search a technical problem. Inspect evaluated retrieval. Follow one message through failure and recovery in your own engineering control room.{% else %}A small message. A lost acknowledgement. One inbox entry. Explore the decisions behind reliable delivery in a hands-on Django lab.{% endif %}</p>
     <form method="post" action="{% url 'engineering:create_run' %}">
       {% csrf_token %}
       <button class="lab-button" type="submit">Start a private lab run <span aria-hidden="true">→</span></button>
@@ -32,6 +32,7 @@
     <a href="#architecture">Delivery &amp; recovery decisions</a>
     <a href="{% url 'engineering:permissions' %}">Explore permissions</a>
     <a href="#model-evidence">Inspect ML triage evidence</a>
+    {% if control_room_enabled %}<a href="{% url 'engineering:evaluation' %}">Semantic search evaluation</a>{% endif %}
   </nav>
 </section>
 

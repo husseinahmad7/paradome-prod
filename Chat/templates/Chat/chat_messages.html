@@ -14,6 +14,7 @@
       {% if channel.topic %}<p>{{ channel.topic }}</p>{% endif %}
     </div>
     <span class="realtime-status" id="chat-status-{{ channel_id }}" role="status">Saved messages</span>
+    {% if chat_refresh_only %}<a class="button secondary-action" href="{% url 'chat:chat-channel' channel_id %}" hx-get="{% url 'chat:chat-channel' channel_id %}" hx-target="closest .chat-panel" hx-swap="outerHTML">Refresh saved messages</a>{% endif %}
   </header>
 
   <div class="chat-log" id="messages-{{ channel_id }}" role="log" aria-live="polite" aria-relevant="additions">

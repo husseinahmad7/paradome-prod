@@ -64,6 +64,15 @@ jobs:
           python-version: "3.12"
           cache: pip
           cache-dependency-path: requirements*.txt
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Verify pinned browser assets and UI recovery contracts
+        run: |
+          npm ci --ignore-scripts
+          npm run search:assets
+          npm test
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -78,11 +87,9 @@ jobs:
           python manage.py migrate --noinput
           python manage.py createcachetable
       - name: Build compressed static manifest
-        run: python manage.py collectstatic --clear --noinput
+        run: python manage.py collectstatic --clear --noinput --ignore='engineering/search-assets/*'
       - name: Run full test suite on MySQL
         run: python manage.py test --settings=paradome.settings.ci
-      - name: Verify lab progressive-enhancement event contracts
-        run: node --test engineering/test_lab_js.cjs
       - name: Audit Python dependencies
         run: |
           python -m pip install pip-audit==2.10.1

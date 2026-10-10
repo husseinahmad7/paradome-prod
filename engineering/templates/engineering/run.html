@@ -1,7 +1,20 @@
 {% extends "engineering/base.html" %}
+{% load static %}
 {% block title %}Your delivery run · ParaDome engineering lab{% endblock %}
 {% block robots %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block extra_head %}{% if control_room_enabled %}<link rel="stylesheet" href="{% static 'engineering/control-room.css' %}"><script src="{% static 'engineering/control-room.js' %}" defer></script>{% endif %}{% endblock %}
 {% block content %}
-<header class="lab-run-heading"><div><h1>Your delivery workbench</h1><p>Submit a message. Lose its acknowledgement. Recover without a second inbox entry.</p></div><a href="{% url 'engineering:index' %}#architecture">How it works</a></header>
+<header class="lab-run-heading"><div><h1>{% if control_room_enabled %}Your engineering control room{% else %}Your delivery workbench{% endif %}</h1><p>Find a discussion. Lose an acknowledgement. Recover without a second inbox entry.</p></div><a href="{% url 'engineering:index' %}#architecture">How it works</a></header>
+{% if control_room_enabled %}
+<nav class="room-nav" aria-label="Control room areas"><a href="#room-search">Search</a><a href="#room-delivery">Delivery</a><a href="#room-architecture">Architecture</a><a href="#room-evaluation">Evaluation</a><a href="#room-metrics">Metrics</a></nav>
+<section class="room-guide" aria-labelledby="room-guide-title"><h2 id="room-guide-title">Follow one problem through the system</h2><p>Find a discussion, then see why a lost reply can be recovered safely.</p><ol><li>Search in your own words</li><li>Inspect and use a discussion</li><li>Submit, then lose the acknowledgement</li><li>Recover and replay the original</li><li>Inspect the boundaries and evidence</li></ol><p class="lab-note" id="guide-status" role="status">Start with the example below. Every delivery step is an explicit action.</p></section>
+{% include "engineering/_search.html" %}
+<section id="room-delivery" class="room-area" aria-labelledby="room-delivery-title"><header class="room-area-heading"><h2 id="room-delivery-title">Delivery</h2><p>Submit once. Choose “Lost acknowledgement,” recover successfully, then replay the original key.</p></header>
+{% endif %}
 {% include "engineering/_state.html" %}
+{% if control_room_enabled %}</section>{% include "engineering/_architecture.html" %}
+<section id="room-evaluation" class="room-area" aria-labelledby="room-evaluation-title"><header class="room-area-heading"><h2 id="room-evaluation-title">Evaluation</h2><p>A frozen synthetic benchmark, published with its limits and failures.</p></header>{% include "engineering/_evaluation.html" %}</section>
+{% include "engineering/_metrics.html" %}{{ search_contract|json_script:"search-contract" }}
+<div hidden id="embedding-agreement-config" data-golden-url="{% url 'engineering:embedding_goldens' %}" data-module-url="{% static 'engineering/embedding-agreement.js' %}"></div>
+{% endif %}
 {% endblock %}

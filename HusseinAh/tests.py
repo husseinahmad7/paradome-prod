@@ -31,6 +31,12 @@ class PortfolioContactTests(TestCase):
         self.assertEqual(message.to, ["owner@example.com"])
         self.assertEqual(message.reply_to, ["visitor@example.com"])
 
+    @override_settings(CONTACT_FORM_ENABLED=False)
+    def test_disabled_contact_uses_email_link_and_sends_nothing(self):
+        self.assertContains(self.client.get(self.feedback_url), "mailto:")
+        self.assertContains(self.client.post(self.feedback_url, self.valid_message), "mailto:", status_code=503)
+        self.assertEqual(len(mail.outbox), 0)
+
     def test_honeypot_returns_success_without_sending_email(self):
         payload = {**self.valid_message, "website": "https://spam.example"}
 

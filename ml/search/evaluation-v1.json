@@ -1,0 +1,1295 @@
+{
+  "status": "frozen",
+  "version": "search-evaluation-v1",
+  "contract": {
+    "model_id": "Xenova/all-MiniLM-L6-v2",
+    "revision": "751bff37182d3f1213fa05d7196b954e230abad9",
+    "runtime_version": "4.3.1",
+    "index_version": "minilm-q8-discussions-v1",
+    "dimension": 384,
+    "pooling": "mean-l2",
+    "dtype": "q8"
+  },
+  "corpus_sha256": "41f3f95ff40d8ac0588b0e0a35ab10901175aab39c7673185c05a1ff3daa1cac",
+  "index_sha256": "12a44df9dbb0b5b4f7b184bed7cae4b20d16f56d66236b864270eaec16e84cb2",
+  "provenance": {
+    "version": "discussions-v1",
+    "language": "en",
+    "created": "2026-10-10",
+    "origin": "AI-authored fictional technical discussions; no production posts or visitor data.",
+    "labels": "Author-assigned: 2 direct answer, 1 supporting context, 0 unjudged/unrelated. No independent human review is claimed.",
+    "limitations": "Small synthetic English fixture with sparse topic-pair judgements; not a production-quality or safety certification.",
+    "split_policy": "SHA256(version + intent group), first 36 development, next 12 calibration, final 12 test. All three rewrites remain together."
+  },
+  "frozen": {
+    "version": "discussions-v1",
+    "groups": {
+      "development": [
+        "artifact",
+        "atomic-outbox",
+        "cache-stampede",
+        "circuit-breaker",
+        "csp",
+        "csrf",
+        "db-pool",
+        "db-tls",
+        "email",
+        "heartbeat",
+        "leases",
+        "logging",
+        "lost-ack",
+        "metrics",
+        "migration",
+        "ndcg",
+        "object-access",
+        "optimistic-lock",
+        "pagination",
+        "paraphrase",
+        "password",
+        "private-cache",
+        "private-files",
+        "recall",
+        "receipt",
+        "replay-key",
+        "responsive",
+        "session-expiry",
+        "split-leakage",
+        "telemetry-cap",
+        "testing-races",
+        "timeouts",
+        "timezones",
+        "tracing",
+        "unicode",
+        "websocket"
+      ],
+      "calibration": [
+        "accessibility",
+        "deadlock",
+        "demo-reset",
+        "free-budget",
+        "index-plan",
+        "n-plus-one",
+        "rate-limit",
+        "rollback",
+        "sanitize",
+        "sql-params",
+        "upload-check",
+        "vector-input"
+      ],
+      "test": [
+        "bm25",
+        "calibration",
+        "cosine",
+        "feature-flags",
+        "monitor-drift",
+        "no-answer",
+        "progressive",
+        "quantized",
+        "secret-store",
+        "static-build",
+        "volume",
+        "worker"
+      ]
+    },
+    "sha256": {
+      "corpus-v1.json": "41f3f95ff40d8ac0588b0e0a35ab10901175aab39c7673185c05a1ff3daa1cac",
+      "queries-v1.json": "801ac532e4f8bc8c0e64a8625b2744c0fe1d994c594f9a3608275abd4be6e7d8"
+    }
+  },
+  "policy": "Rank raw semantic candidates for Recall/nDCG; report acceptance and fallback separately. No-answer queries excluded from ranking averages. Test evaluated once after policy freeze.",
+  "splits": {
+    "development": {
+      "queries": 108,
+      "semantic": {
+        "answerable_queries": 92,
+        "recall_at_5": 0.782608695652174,
+        "ndcg_at_5": 0.7979364420870054
+      },
+      "bm25": {
+        "answerable_queries": 92,
+        "recall_at_5": 0.6413043478260869,
+        "ndcg_at_5": 0.6851546182947091
+      },
+      "operating_point": {
+        "precision": 0.9178082191780822,
+        "accepted": 73,
+        "coverage": 0.6759259259259259,
+        "f1": 0.9178082191780822,
+        "no_answer_count": 16,
+        "no_answer_rejection_rate": 1.0
+      },
+      "expected_calibration_error": 0.07140316783014028,
+      "brier_score": 0.08423486767002449,
+      "bins": [
+        {
+          "lower": 0.0,
+          "count": 12,
+          "mean_confidence": 0.06852249614447853,
+          "relevance_rate": 0
+        },
+        {
+          "lower": 0.1,
+          "count": 4,
+          "mean_confidence": 0.16100697449368384,
+          "relevance_rate": 0.25
+        },
+        {
+          "lower": 0.2,
+          "count": 3,
+          "mean_confidence": 0.23745003945036636,
+          "relevance_rate": 0
+        },
+        {
+          "lower": 0.3,
+          "count": 9,
+          "mean_confidence": 0.35796300966637523,
+          "relevance_rate": 0.2222222222222222
+        },
+        {
+          "lower": 0.4,
+          "count": 7,
+          "mean_confidence": 0.45348364763472165,
+          "relevance_rate": 0.42857142857142855
+        },
+        {
+          "lower": 0.5,
+          "count": 3,
+          "mean_confidence": 0.58107386616981,
+          "relevance_rate": 1
+        },
+        {
+          "lower": 0.6,
+          "count": 6,
+          "mean_confidence": 0.6541772723711142,
+          "relevance_rate": 0.5
+        },
+        {
+          "lower": 0.7,
+          "count": 9,
+          "mean_confidence": 0.7526251279791386,
+          "relevance_rate": 0.7777777777777778
+        },
+        {
+          "lower": 0.8,
+          "count": 10,
+          "mean_confidence": 0.855542087741517,
+          "relevance_rate": 0.9
+        },
+        {
+          "lower": 0.9,
+          "count": 45,
+          "mean_confidence": 0.9650643927863383,
+          "relevance_rate": 1
+        }
+      ]
+    },
+    "calibration": {
+      "queries": 36,
+      "semantic": {
+        "answerable_queries": 32,
+        "recall_at_5": 0.828125,
+        "ndcg_at_5": 0.7887499604596271
+      },
+      "bm25": {
+        "answerable_queries": 32,
+        "recall_at_5": 0.734375,
+        "ndcg_at_5": 0.6918590529119015
+      },
+      "operating_point": {
+        "precision": 0.9230769230769231,
+        "accepted": 26,
+        "coverage": 0.7222222222222222,
+        "f1": 0.9230769230769231,
+        "no_answer_count": 4,
+        "no_answer_rejection_rate": 1.0
+      },
+      "expected_calibration_error": 0.1180590016858942,
+      "brier_score": 0.0962686784710401,
+      "bins": [
+        {
+          "lower": 0.0,
+          "count": 3,
+          "mean_confidence": 0.052097894227535434,
+          "relevance_rate": 0
+        },
+        {
+          "lower": 0.1,
+          "count": 1,
+          "mean_confidence": 0.1034078247279607,
+          "relevance_rate": 0
+        },
+        {
+          "lower": 0.2,
+          "count": 0,
+          "mean_confidence": null,
+          "relevance_rate": null
+        },
+        {
+          "lower": 0.3,
+          "count": 3,
+          "mean_confidence": 0.3793108481409239,
+          "relevance_rate": 0.6666666666666666
+        },
+        {
+          "lower": 0.4,
+          "count": 4,
+          "mean_confidence": 0.44447657165770277,
+          "relevance_rate": 0.25
+        },
+        {
+          "lower": 0.5,
+          "count": 4,
+          "mean_confidence": 0.5532439995726827,
+          "relevance_rate": 0.75
+        },
+        {
+          "lower": 0.6,
+          "count": 4,
+          "mean_confidence": 0.6340691904275135,
+          "relevance_rate": 0.75
+        },
+        {
+          "lower": 0.7,
+          "count": 1,
+          "mean_confidence": 0.7252420974102173,
+          "relevance_rate": 1
+        },
+        {
+          "lower": 0.8,
+          "count": 2,
+          "mean_confidence": 0.8182369918698844,
+          "relevance_rate": 1
+        },
+        {
+          "lower": 0.9,
+          "count": 14,
+          "mean_confidence": 0.9670415962696889,
+          "relevance_rate": 1
+        }
+      ]
+    },
+    "test": {
+      "queries": 36,
+      "semantic": {
+        "answerable_queries": 32,
+        "recall_at_5": 0.71875,
+        "ndcg_at_5": 0.705263423836413
+      },
+      "bm25": {
+        "answerable_queries": 32,
+        "recall_at_5": 0.703125,
+        "ndcg_at_5": 0.6268967540372385
+      },
+      "operating_point": {
+        "precision": 0.7916666666666666,
+        "accepted": 24,
+        "coverage": 0.6666666666666666,
+        "f1": 0.8085106382978724,
+        "no_answer_count": 4,
+        "no_answer_rejection_rate": 1.0
+      },
+      "expected_calibration_error": 0.14682543068621726,
+      "brier_score": 0.13082578657625343,
+      "bins": [
+        {
+          "lower": 0.0,
+          "count": 3,
+          "mean_confidence": 0.05474703706377482,
+          "relevance_rate": 0
+        },
+        {
+          "lower": 0.1,
+          "count": 2,
+          "mean_confidence": 0.1527628332419364,
+          "relevance_rate": 0
+        },
+        {
+          "lower": 0.2,
+          "count": 2,
+          "mean_confidence": 0.24541663221251794,
+          "relevance_rate": 0.5
+        },
+        {
+          "lower": 0.3,
+          "count": 2,
+          "mean_confidence": 0.38450776344770843,
+          "relevance_rate": 0.5
+        },
+        {
+          "lower": 0.4,
+          "count": 5,
+          "mean_confidence": 0.45471799493207454,
+          "relevance_rate": 0.4
+        },
+        {
+          "lower": 0.5,
+          "count": 3,
+          "mean_confidence": 0.5526653128645146,
+          "relevance_rate": 0.3333333333333333
+        },
+        {
+          "lower": 0.6,
+          "count": 3,
+          "mean_confidence": 0.6611563251956109,
+          "relevance_rate": 1
+        },
+        {
+          "lower": 0.7,
+          "count": 2,
+          "mean_confidence": 0.7690452705683013,
+          "relevance_rate": 1
+        },
+        {
+          "lower": 0.8,
+          "count": 6,
+          "mean_confidence": 0.8711925958458878,
+          "relevance_rate": 1
+        },
+        {
+          "lower": 0.9,
+          "count": 8,
+          "mean_confidence": 0.9866158371117404,
+          "relevance_rate": 0.875
+        }
+      ]
+    }
+  },
+  "test_slices": {
+    "literal": {
+      "semantic": {
+        "answerable_queries": 12,
+        "recall_at_5": 0.8333333333333334,
+        "ndcg_at_5": 0.8974539704849713
+      },
+      "bm25": {
+        "answerable_queries": 12,
+        "recall_at_5": 0.875,
+        "ndcg_at_5": 0.8849318236183158
+      }
+    },
+    "paraphrase": {
+      "semantic": {
+        "answerable_queries": 12,
+        "recall_at_5": 0.625,
+        "ndcg_at_5": 0.5814289307119712
+      },
+      "bm25": {
+        "answerable_queries": 12,
+        "recall_at_5": 0.5416666666666666,
+        "ndcg_at_5": 0.3657072990968515
+      }
+    },
+    "distractor": {
+      "semantic": {
+        "answerable_queries": 8,
+        "recall_at_5": 0.6875,
+        "ndcg_at_5": 0.6027293435502381
+      },
+      "bm25": {
+        "answerable_queries": 8,
+        "recall_at_5": 0.6875,
+        "ndcg_at_5": 0.6316283320762033
+      }
+    }
+  },
+  "threshold": 0.493,
+  "gate": {
+    "passed": false,
+    "minimum_recall_at_5": 0.85,
+    "requires_paraphrase_improvement": true
+  },
+  "latency": {
+    "scope": "Offline host measurements, not browser or Wasmer latency; no network, CPU q8 encoder.",
+    "encoder_runtime": "Transformers.js 4.3.1 / ONNX Runtime Node CPU, q8 artifact",
+    "model_load_ms": 7184.5572999999995,
+    "query_embedding": {
+      "count": 180,
+      "median_ms": 8.367,
+      "p95_ms": 13.319
+    },
+    "semantic_rank": {
+      "count": 180,
+      "median_ms": 6.67,
+      "p95_ms": 16.946
+    },
+    "bm25_rank": {
+      "count": 180,
+      "median_ms": 0.522,
+      "p95_ms": 1.183
+    }
+  },
+  "failure_examples": [
+    {
+      "query_id": "feature-flags-literal",
+      "query": "Feature flag control room semantic ranking disabled endpoint",
+      "relevance": {
+        "discussion-033-a": 2,
+        "discussion-033-b": 1
+      },
+      "semantic_ids": [
+        "discussion-024-b",
+        "discussion-033-a",
+        "discussion-033-b",
+        "discussion-046-b",
+        "discussion-043-b"
+      ],
+      "bm25_ids": [
+        "discussion-033-a",
+        "discussion-033-b",
+        "discussion-037-a",
+        "discussion-049-a",
+        "discussion-024-b"
+      ],
+      "confidence": 0.5572553775239678,
+      "accepted": true
+    },
+    {
+      "query_id": "feature-flags-paraphrase",
+      "query": "We need to roll out a new interface while keeping its heavier model disabled. How can the switches be independent?",
+      "relevance": {
+        "discussion-033-a": 2,
+        "discussion-033-b": 1
+      },
+      "semantic_ids": [
+        "discussion-033-a",
+        "discussion-048-a",
+        "discussion-024-b",
+        "discussion-023-a",
+        "discussion-054-b"
+      ],
+      "bm25_ids": [
+        "discussion-033-b",
+        "discussion-024-b",
+        "discussion-033-a",
+        "discussion-043-b",
+        "discussion-034-b"
+      ],
+      "confidence": 0.39798218849606026,
+      "accepted": false
+    },
+    {
+      "query_id": "feature-flags-distractor",
+      "query": "Is hiding the new feature button sufficient to disable its API?",
+      "relevance": {
+        "discussion-033-b": 2,
+        "discussion-033-a": 1
+      },
+      "semantic_ids": [
+        "discussion-024-b",
+        "discussion-033-a",
+        "discussion-010-b",
+        "discussion-050-a",
+        "discussion-053-a"
+      ],
+      "bm25_ids": [
+        "discussion-033-a",
+        "discussion-033-b",
+        "discussion-024-b",
+        "discussion-048-b",
+        "discussion-031-a"
+      ],
+      "confidence": 0.14528544980861186,
+      "accepted": false
+    },
+    {
+      "query_id": "worker-literal",
+      "query": "Web Worker browser embedding tokenization main thread responsive",
+      "relevance": {
+        "discussion-034-a": 2,
+        "discussion-034-b": 1
+      },
+      "semantic_ids": [
+        "discussion-034-a",
+        "discussion-058-b",
+        "discussion-010-b",
+        "discussion-010-a",
+        "discussion-006-a"
+      ],
+      "bm25_ids": [
+        "discussion-034-a",
+        "discussion-036-b",
+        "discussion-058-b",
+        "discussion-010-a",
+        "discussion-027-a"
+      ],
+      "confidence": 0.9696460691020977,
+      "accepted": true
+    },
+    {
+      "query_id": "worker-distractor",
+      "query": "Should the landing page fetch a twenty-three-megabyte model before the visitor uses search?",
+      "relevance": {
+        "discussion-034-b": 2,
+        "discussion-034-a": 1
+      },
+      "semantic_ids": [
+        "discussion-034-b",
+        "discussion-046-a",
+        "discussion-047-b",
+        "discussion-027-a",
+        "discussion-039-b"
+      ],
+      "bm25_ids": [
+        "discussion-034-b",
+        "discussion-050-b",
+        "discussion-006-a",
+        "discussion-027-a",
+        "discussion-046-a"
+      ],
+      "confidence": 0.7782185762627182,
+      "accepted": true
+    },
+    {
+      "query_id": "quantized-literal",
+      "query": "Quantized q8 ONNX same offline browser evaluation",
+      "relevance": {
+        "discussion-036-a": 2,
+        "discussion-036-b": 1
+      },
+      "semantic_ids": [
+        "discussion-036-a",
+        "discussion-035-b",
+        "discussion-027-b",
+        "discussion-055-a",
+        "discussion-027-a"
+      ],
+      "bm25_ids": [
+        "discussion-036-a",
+        "discussion-035-b",
+        "discussion-058-b",
+        "discussion-036-b",
+        "discussion-047-a"
+      ],
+      "confidence": 0.9957811221749872,
+      "accepted": true
+    },
+    {
+      "query_id": "quantized-paraphrase",
+      "query": "The smaller downloadable model produces different vectors than my Python benchmark. Which version should we evaluate?",
+      "relevance": {
+        "discussion-036-a": 2,
+        "discussion-036-b": 1
+      },
+      "semantic_ids": [
+        "discussion-036-a",
+        "discussion-035-a",
+        "discussion-037-a",
+        "discussion-027-b",
+        "discussion-027-a"
+      ],
+      "bm25_ids": [
+        "discussion-035-a",
+        "discussion-036-a",
+        "discussion-046-b",
+        "discussion-040-a",
+        "discussion-026-a"
+      ],
+      "confidence": 0.4175018641430652,
+      "accepted": false
+    },
+    {
+      "query_id": "cosine-paraphrase",
+      "query": "The closest discussion scores 0.8. Does that mean there is an eighty-percent chance it answers my question?",
+      "relevance": {
+        "discussion-038-a": 2,
+        "discussion-038-b": 1
+      },
+      "semantic_ids": [
+        "discussion-043-a",
+        "discussion-038-b",
+        "discussion-042-a",
+        "discussion-042-b",
+        "discussion-044-a"
+      ],
+      "bm25_ids": [
+        "discussion-044-a",
+        "discussion-043-b",
+        "discussion-036-b",
+        "discussion-039-b",
+        "discussion-038-b"
+      ],
+      "confidence": 0.37103333839935665,
+      "accepted": false
+    },
+    {
+      "query_id": "cosine-distractor",
+      "query": "Why should confidence consider the difference between the first and second retrieval results?",
+      "relevance": {
+        "discussion-038-b": 2,
+        "discussion-038-a": 1
+      },
+      "semantic_ids": [
+        "discussion-041-b",
+        "discussion-042-a",
+        "discussion-040-a",
+        "discussion-042-b",
+        "discussion-041-a"
+      ],
+      "bm25_ids": [
+        "discussion-028-b",
+        "discussion-043-a",
+        "discussion-046-a",
+        "discussion-035-a",
+        "discussion-036-b"
+      ],
+      "confidence": 0.4932985692347027,
+      "accepted": true
+    },
+    {
+      "query_id": "bm25-paraphrase",
+      "query": "I need results immediately before the browser language model is ready. Which lightweight ranking path can run on the server?",
+      "relevance": {
+        "discussion-039-a": 2,
+        "discussion-039-b": 1
+      },
+      "semantic_ids": [
+        "discussion-027-a",
+        "discussion-039-b",
+        "discussion-034-b",
+        "discussion-036-a",
+        "discussion-046-a"
+      ],
+      "bm25_ids": [
+        "discussion-027-a",
+        "discussion-033-a",
+        "discussion-037-a",
+        "discussion-043-b",
+        "discussion-039-b"
+      ],
+      "confidence": 0.5585430502334412,
+      "accepted": true
+    }
+  ],
+  "test_predictions": [
+    {
+      "query_id": "feature-flags-literal",
+      "semantic_ids": [
+        "discussion-024-b",
+        "discussion-033-a",
+        "discussion-033-b",
+        "discussion-046-b",
+        "discussion-043-b"
+      ],
+      "bm25_ids": [
+        "discussion-033-a",
+        "discussion-033-b",
+        "discussion-037-a",
+        "discussion-049-a",
+        "discussion-024-b"
+      ],
+      "confidence": 0.5572553775239678
+    },
+    {
+      "query_id": "feature-flags-paraphrase",
+      "semantic_ids": [
+        "discussion-033-a",
+        "discussion-048-a",
+        "discussion-024-b",
+        "discussion-023-a",
+        "discussion-054-b"
+      ],
+      "bm25_ids": [
+        "discussion-033-b",
+        "discussion-024-b",
+        "discussion-033-a",
+        "discussion-043-b",
+        "discussion-034-b"
+      ],
+      "confidence": 0.39798218849606026
+    },
+    {
+      "query_id": "feature-flags-distractor",
+      "semantic_ids": [
+        "discussion-024-b",
+        "discussion-033-a",
+        "discussion-010-b",
+        "discussion-050-a",
+        "discussion-053-a"
+      ],
+      "bm25_ids": [
+        "discussion-033-a",
+        "discussion-033-b",
+        "discussion-024-b",
+        "discussion-048-b",
+        "discussion-031-a"
+      ],
+      "confidence": 0.14528544980861186
+    },
+    {
+      "query_id": "worker-literal",
+      "semantic_ids": [
+        "discussion-034-a",
+        "discussion-058-b",
+        "discussion-010-b",
+        "discussion-010-a",
+        "discussion-006-a"
+      ],
+      "bm25_ids": [
+        "discussion-034-a",
+        "discussion-036-b",
+        "discussion-058-b",
+        "discussion-010-a",
+        "discussion-027-a"
+      ],
+      "confidence": 0.9696460691020977
+    },
+    {
+      "query_id": "worker-paraphrase",
+      "semantic_ids": [
+        "discussion-034-a",
+        "discussion-048-b",
+        "discussion-039-b",
+        "discussion-034-b",
+        "discussion-021-a"
+      ],
+      "bm25_ids": [
+        "discussion-053-b",
+        "discussion-019-a",
+        "discussion-045-b",
+        "discussion-005-a",
+        "discussion-058-a"
+      ],
+      "confidence": 0.28010803813792046
+    },
+    {
+      "query_id": "worker-distractor",
+      "semantic_ids": [
+        "discussion-034-b",
+        "discussion-046-a",
+        "discussion-047-b",
+        "discussion-027-a",
+        "discussion-039-b"
+      ],
+      "bm25_ids": [
+        "discussion-034-b",
+        "discussion-050-b",
+        "discussion-006-a",
+        "discussion-027-a",
+        "discussion-046-a"
+      ],
+      "confidence": 0.7782185762627182
+    },
+    {
+      "query_id": "quantized-literal",
+      "semantic_ids": [
+        "discussion-036-a",
+        "discussion-035-b",
+        "discussion-027-b",
+        "discussion-055-a",
+        "discussion-027-a"
+      ],
+      "bm25_ids": [
+        "discussion-036-a",
+        "discussion-035-b",
+        "discussion-058-b",
+        "discussion-036-b",
+        "discussion-047-a"
+      ],
+      "confidence": 0.9957811221749872
+    },
+    {
+      "query_id": "quantized-paraphrase",
+      "semantic_ids": [
+        "discussion-036-a",
+        "discussion-035-a",
+        "discussion-037-a",
+        "discussion-027-b",
+        "discussion-027-a"
+      ],
+      "bm25_ids": [
+        "discussion-035-a",
+        "discussion-036-a",
+        "discussion-046-b",
+        "discussion-040-a",
+        "discussion-026-a"
+      ],
+      "confidence": 0.4175018641430652
+    },
+    {
+      "query_id": "quantized-no_answer",
+      "semantic_ids": [
+        "discussion-026-b",
+        "discussion-011-a",
+        "discussion-013-b",
+        "discussion-052-a",
+        "discussion-022-b"
+      ],
+      "bm25_ids": [],
+      "confidence": 0.037213042702698367
+    },
+    {
+      "query_id": "cosine-literal",
+      "semantic_ids": [
+        "discussion-038-a",
+        "discussion-038-b",
+        "discussion-045-a",
+        "discussion-040-a",
+        "discussion-037-a"
+      ],
+      "bm25_ids": [
+        "discussion-038-a",
+        "discussion-038-b",
+        "discussion-039-b",
+        "discussion-041-a",
+        "discussion-046-a"
+      ],
+      "confidence": 0.9991594127755118
+    },
+    {
+      "query_id": "cosine-paraphrase",
+      "semantic_ids": [
+        "discussion-043-a",
+        "discussion-038-b",
+        "discussion-042-a",
+        "discussion-042-b",
+        "discussion-044-a"
+      ],
+      "bm25_ids": [
+        "discussion-044-a",
+        "discussion-043-b",
+        "discussion-036-b",
+        "discussion-039-b",
+        "discussion-038-b"
+      ],
+      "confidence": 0.37103333839935665
+    },
+    {
+      "query_id": "cosine-distractor",
+      "semantic_ids": [
+        "discussion-041-b",
+        "discussion-042-a",
+        "discussion-040-a",
+        "discussion-042-b",
+        "discussion-041-a"
+      ],
+      "bm25_ids": [
+        "discussion-028-b",
+        "discussion-043-a",
+        "discussion-046-a",
+        "discussion-035-a",
+        "discussion-036-b"
+      ],
+      "confidence": 0.4932985692347027
+    },
+    {
+      "query_id": "bm25-literal",
+      "semantic_ids": [
+        "discussion-039-a",
+        "discussion-056-a",
+        "discussion-043-b",
+        "discussion-039-b",
+        "discussion-056-b"
+      ],
+      "bm25_ids": [
+        "discussion-039-a",
+        "discussion-043-b",
+        "discussion-040-b",
+        "discussion-005-a",
+        "discussion-056-a"
+      ],
+      "confidence": 0.9981876092807945
+    },
+    {
+      "query_id": "bm25-paraphrase",
+      "semantic_ids": [
+        "discussion-027-a",
+        "discussion-039-b",
+        "discussion-034-b",
+        "discussion-036-a",
+        "discussion-046-a"
+      ],
+      "bm25_ids": [
+        "discussion-027-a",
+        "discussion-033-a",
+        "discussion-037-a",
+        "discussion-043-b",
+        "discussion-039-b"
+      ],
+      "confidence": 0.5585430502334412
+    },
+    {
+      "query_id": "bm25-distractor",
+      "semantic_ids": [
+        "discussion-039-b",
+        "discussion-042-a",
+        "discussion-038-a",
+        "discussion-039-a",
+        "discussion-046-b"
+      ],
+      "bm25_ids": [
+        "discussion-038-a",
+        "discussion-041-b",
+        "discussion-039-b",
+        "discussion-027-a",
+        "discussion-037-b"
+      ],
+      "confidence": 0.8066473029304071
+    },
+    {
+      "query_id": "calibration-literal",
+      "semantic_ids": [
+        "discussion-041-a",
+        "discussion-045-b",
+        "discussion-041-b",
+        "discussion-042-b",
+        "discussion-038-b"
+      ],
+      "bm25_ids": [
+        "discussion-041-a",
+        "discussion-041-b",
+        "discussion-045-b",
+        "discussion-042-b",
+        "discussion-045-a"
+      ],
+      "confidence": 0.7598719648738844
+    },
+    {
+      "query_id": "calibration-paraphrase",
+      "semantic_ids": [
+        "discussion-038-b",
+        "discussion-042-a",
+        "discussion-043-a",
+        "discussion-041-b",
+        "discussion-044-a"
+      ],
+      "bm25_ids": [
+        "discussion-038-b",
+        "discussion-041-b",
+        "discussion-046-a",
+        "discussion-038-a",
+        "discussion-044-a"
+      ],
+      "confidence": 0.947155625320345
+    },
+    {
+      "query_id": "calibration-no_answer",
+      "semantic_ids": [
+        "discussion-041-a",
+        "discussion-053-a",
+        "discussion-037-a",
+        "discussion-022-b",
+        "discussion-053-b"
+      ],
+      "bm25_ids": [
+        "discussion-047-b",
+        "discussion-045-b",
+        "discussion-042-b",
+        "discussion-041-a",
+        "discussion-042-a"
+      ],
+      "confidence": 0.09312122608541043
+    },
+    {
+      "query_id": "no-answer-literal",
+      "semantic_ids": [
+        "discussion-042-a",
+        "discussion-042-b",
+        "discussion-043-a",
+        "discussion-039-b",
+        "discussion-040-a"
+      ],
+      "bm25_ids": [
+        "discussion-042-a",
+        "discussion-042-b",
+        "discussion-046-a",
+        "discussion-041-b",
+        "discussion-041-a"
+      ],
+      "confidence": 0.8687644928323224
+    },
+    {
+      "query_id": "no-answer-paraphrase",
+      "semantic_ids": [
+        "discussion-042-a",
+        "discussion-043-a",
+        "discussion-045-a",
+        "discussion-042-b",
+        "discussion-039-b"
+      ],
+      "bm25_ids": [
+        "discussion-042-a",
+        "discussion-040-a",
+        "discussion-039-b",
+        "discussion-045-a",
+        "discussion-043-a"
+      ],
+      "confidence": 0.6698929363490311
+    },
+    {
+      "query_id": "no-answer-no_answer",
+      "semantic_ids": [
+        "discussion-044-b",
+        "discussion-033-b",
+        "discussion-028-a",
+        "discussion-055-b",
+        "discussion-041-a"
+      ],
+      "bm25_ids": [],
+      "confidence": 0.16024021667526092
+    },
+    {
+      "query_id": "monitor-drift-literal",
+      "semantic_ids": [
+        "discussion-046-a",
+        "discussion-041-b",
+        "discussion-042-b",
+        "discussion-042-a",
+        "discussion-046-b"
+      ],
+      "bm25_ids": [
+        "discussion-046-a",
+        "discussion-038-b",
+        "discussion-035-a",
+        "discussion-041-b",
+        "discussion-032-a"
+      ],
+      "confidence": 0.8953919063735849
+    },
+    {
+      "query_id": "monitor-drift-paraphrase",
+      "semantic_ids": [
+        "discussion-046-a",
+        "discussion-042-a",
+        "discussion-041-b",
+        "discussion-042-b",
+        "discussion-041-a"
+      ],
+      "bm25_ids": [
+        "discussion-055-b",
+        "discussion-027-b",
+        "discussion-047-b",
+        "discussion-046-a",
+        "discussion-038-b"
+      ],
+      "confidence": 0.6503957234223994
+    },
+    {
+      "query_id": "monitor-drift-no_answer",
+      "semantic_ids": [
+        "discussion-036-b",
+        "discussion-042-a",
+        "discussion-010-a",
+        "discussion-015-a",
+        "discussion-043-a"
+      ],
+      "bm25_ids": [],
+      "confidence": 0.033906842403215655
+    },
+    {
+      "query_id": "progressive-literal",
+      "semantic_ids": [
+        "discussion-050-a",
+        "discussion-039-b",
+        "discussion-034-a",
+        "discussion-009-b",
+        "discussion-009-a"
+      ],
+      "bm25_ids": [
+        "discussion-039-b",
+        "discussion-050-a",
+        "discussion-050-b",
+        "discussion-009-b",
+        "discussion-042-a"
+      ],
+      "confidence": 0.8805354926005775
+    },
+    {
+      "query_id": "progressive-paraphrase",
+      "semantic_ids": [
+        "discussion-010-b",
+        "discussion-050-a",
+        "discussion-010-a",
+        "discussion-009-b",
+        "discussion-030-a"
+      ],
+      "bm25_ids": [
+        "discussion-010-a",
+        "discussion-050-a",
+        "discussion-010-b",
+        "discussion-037-b",
+        "discussion-001-a"
+      ],
+      "confidence": 0.41717875987228165
+    },
+    {
+      "query_id": "progressive-distractor",
+      "semantic_ids": [
+        "discussion-050-b",
+        "discussion-005-a",
+        "discussion-032-a",
+        "discussion-003-b",
+        "discussion-025-b"
+      ],
+      "bm25_ids": [
+        "discussion-050-a",
+        "discussion-050-b",
+        "discussion-033-b",
+        "discussion-006-a",
+        "discussion-033-a"
+      ],
+      "confidence": 0.6631803158154019
+    },
+    {
+      "query_id": "secret-store-literal",
+      "semantic_ids": [
+        "discussion-053-a",
+        "discussion-053-b",
+        "discussion-022-b",
+        "discussion-030-b",
+        "discussion-013-b"
+      ],
+      "bm25_ids": [
+        "discussion-030-b",
+        "discussion-053-a",
+        "discussion-025-a",
+        "discussion-022-b",
+        "discussion-053-b"
+      ],
+      "confidence": 0.8770219736640698
+    },
+    {
+      "query_id": "secret-store-paraphrase",
+      "semantic_ids": [
+        "discussion-030-b",
+        "discussion-013-b",
+        "discussion-022-b",
+        "discussion-052-a",
+        "discussion-021-b"
+      ],
+      "bm25_ids": [
+        "discussion-030-b",
+        "discussion-053-b",
+        "discussion-045-b",
+        "discussion-002-b",
+        "discussion-014-a"
+      ],
+      "confidence": 0.21072522628711543
+    },
+    {
+      "query_id": "secret-store-distractor",
+      "semantic_ids": [
+        "discussion-053-a",
+        "discussion-053-b",
+        "discussion-058-b",
+        "discussion-024-a",
+        "discussion-058-a"
+      ],
+      "bm25_ids": [
+        "discussion-053-b",
+        "discussion-022-a",
+        "discussion-054-a",
+        "discussion-053-a",
+        "discussion-059-b"
+      ],
+      "confidence": 0.5421975108361347
+    },
+    {
+      "query_id": "volume-literal",
+      "semantic_ids": [
+        "discussion-054-a",
+        "discussion-008-b",
+        "discussion-051-a",
+        "discussion-004-b",
+        "discussion-052-b"
+      ],
+      "bm25_ids": [
+        "discussion-054-a",
+        "discussion-008-b",
+        "discussion-054-b",
+        "discussion-004-b",
+        "discussion-051-a"
+      ],
+      "confidence": 0.9994332326486665
+    },
+    {
+      "query_id": "volume-paraphrase",
+      "semantic_ids": [
+        "discussion-054-a",
+        "discussion-008-b",
+        "discussion-021-a",
+        "discussion-052-b",
+        "discussion-054-b"
+      ],
+      "bm25_ids": [
+        "discussion-021-a",
+        "discussion-008-b",
+        "discussion-014-b",
+        "discussion-011-a",
+        "discussion-054-a"
+      ],
+      "confidence": 0.4513748310909141
+    },
+    {
+      "query_id": "volume-distractor",
+      "semantic_ids": [
+        "discussion-054-a",
+        "discussion-051-a",
+        "discussion-052-b",
+        "discussion-008-b",
+        "discussion-054-b"
+      ],
+      "bm25_ids": [
+        "discussion-054-a",
+        "discussion-052-b",
+        "discussion-008-b",
+        "discussion-026-b",
+        "discussion-015-a"
+      ],
+      "confidence": 0.9990054852261694
+    },
+    {
+      "query_id": "static-build-literal",
+      "semantic_ids": [
+        "discussion-058-a",
+        "discussion-020-b",
+        "discussion-058-b",
+        "discussion-013-a",
+        "discussion-033-b"
+      ],
+      "bm25_ids": [
+        "discussion-058-a",
+        "discussion-020-b",
+        "discussion-035-b",
+        "discussion-058-b",
+        "discussion-034-a"
+      ],
+      "confidence": 0.9845581403653512
+    },
+    {
+      "query_id": "static-build-paraphrase",
+      "semantic_ids": [
+        "discussion-058-b",
+        "discussion-010-a",
+        "discussion-058-a",
+        "discussion-036-b",
+        "discussion-010-b"
+      ],
+      "bm25_ids": [
+        "discussion-058-b",
+        "discussion-035-b",
+        "discussion-010-a",
+        "discussion-008-b",
+        "discussion-058-a"
+      ],
+      "confidence": 0.8987944066743652
+    },
+    {
+      "query_id": "static-build-distractor",
+      "semantic_ids": [
+        "discussion-020-b",
+        "discussion-058-b",
+        "discussion-058-a",
+        "discussion-010-a",
+        "discussion-053-a"
+      ],
+      "bm25_ids": [
+        "discussion-058-b",
+        "discussion-058-a",
+        "discussion-028-b",
+        "discussion-010-b",
+        "discussion-015-a"
+      ],
+      "confidence": 0.4942359503194089
+    }
+  ]
+}

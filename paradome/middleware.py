@@ -18,6 +18,8 @@ class SecurityHeadersMiddleware:
         response.headers.setdefault("Cross-Origin-Resource-Policy", "same-origin")
         if request.path == "/health/":
             response.headers["Cache-Control"] = "no-store"
+        if getattr(settings, "SESSION_PAGES_NOSTORE", False) and not request.path.startswith((settings.STATIC_URL, "/engineering/assets/")):
+            response.headers["Cache-Control"] = "no-store"
         user = getattr(request, "user", None)
         if user is not None and is_demo_user(user):
             response.headers["Cache-Control"] = "no-store"

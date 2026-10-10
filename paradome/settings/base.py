@@ -180,6 +180,12 @@ PUSHER_SSL = True
 DEMO_ACCOUNT_ENABLED = False
 DEMO_USERNAME = "paradome-demo"
 ENGINEERING_LAB_ENABLED = env_bool("ENGINEERING_LAB_ENABLED", default=False)
+ENGINEERING_CONTROL_ROOM_ENABLED = env_bool("ENGINEERING_CONTROL_ROOM_ENABLED", default=False)
+ENGINEERING_SEMANTIC_ENABLED = env_bool("ENGINEERING_SEMANTIC_ENABLED", default=False)
+CONTACT_FORM_ENABLED = True
+CHAT_REALTIME_ENABLED = True
+# A release can pin source links; main remains the existing-site default.
+ENGINEERING_SOURCE_REVISION = os.environ.get("ENGINEERING_SOURCE_REVISION", "main")
 
 CACHES = {"default": {
     "BACKEND": "django.core.cache.backends.locmem.LocMemCache",

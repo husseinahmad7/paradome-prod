@@ -14,6 +14,7 @@
   <meta name="htmx-config" content='{"allowEval":false,"allowScriptTags":false,"historyCacheSize":0,"selfRequestsOnly":true}'>
   <script src="{% static 'js/htmx.min.js' %}" defer></script>
   <script src="{% static 'engineering/lab.js' %}" defer></script>
+  {% block extra_head %}{% endblock %}
 </head>
 <body class="paradome-app engineering-lab">
   <a class="app-skip-link" href="#lab-main">Skip to main content</a>
@@ -30,7 +31,7 @@
   <main class="lab-width" id="lab-main" tabindex="-1">{% block content %}{% endblock %}</main>
   <footer class="lab-width lab-footer">
     <p><strong>ParaDome engineering lab</strong> · Designed and built by Hussein Ahmad.</p>
-    <p>Isolated lab records. Request-driven execution. Live chat delivery is unchanged.</p>
+    <p>Isolated lab records. Request-driven execution.</p>
     <a href="{% url 'engineering:index' %}#architecture">Read the architecture decisions</a>
   </footer>
 </body>
