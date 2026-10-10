@@ -103,7 +103,9 @@ def preview(options):
         "branch": options.branch, "appName": options.name, "owner": options.owner,
         "presetName": "django", "region": "fr-roub1", "enableDatabase": True,
         "dbEngine": "MYSQL", "waitForScreenshotGeneration": False,
-        "installCmd": "uv init && uv add -r requirements-wasmer.txt 'uvicorn==0.54.0'",
+        # Anybuild copies requirements.txt into its dependency layer before the
+        # rest of the repository. requirements-wasmer.txt is unavailable there.
+        "installCmd": "uv init && uv add -r requirements.txt 'mysqlclient==2.2.8' 'uvicorn==0.54.0'",
         "buildCmd": "python deployment/wasmer/build.py",
         "startCmd": "python -m uvicorn paradome.wasmer_wsgi:app --interface wsgi --host 0.0.0.0 --port 8080",
         "afterDeployCmd": "python manage.py prepare_wasmer_demo",
