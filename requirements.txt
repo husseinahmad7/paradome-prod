@@ -1,4 +1,2 @@
-# Cross-platform application profile; local SQLite setup works on Windows.
--r requirements-common.txt
-django-prose-editor[sanitize]==0.26.0
-nh3==0.3.7
+# Full Wasmer application runtime profile.
+-r requirements-wasmer.txt
