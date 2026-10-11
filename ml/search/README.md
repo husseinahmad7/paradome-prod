@@ -142,6 +142,14 @@ digests. `--refresh-worker` is a deliberate source-only rebuild: it requires eve
 model/tokenizer/runtime digest to stay unchanged. Update the golden manifest's
 worker digest together, without refitting or changing the frozen report.
 
+V1 verification reads the original normalized query vectors from the committed
+`evaluation-vectors-v1.json.gz` archive and the original document index. It
+checks their corpus/query/index contract before reproducing the frozen report;
+the ignored `encoded-v1.json` is needed only for original authoring. V2 likewise
+uses committed numeric evidence. `--verify` never reruns fitting or threshold
+selection, and compares floating-point metrics at twelve decimal places across
+platforms. Both historical reports and their labels remain unchanged.
+
 The worker imports the official pinned Transformers.js distribution, assembled
 at build time rather than committed as generated third-party code. The Wasmer
 Python builder verifies the same nine asset hashes without requiring Node on

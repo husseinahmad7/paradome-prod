@@ -4,6 +4,7 @@ Only stdlib + existing Django code. Running again refuses to overwrite a frozen
 report. --verify recomputes rankings/metrics without refitting or revising policy.
 """
 import argparse
+import gzip
 import hashlib
 import json
 import math
@@ -104,11 +105,24 @@ def main(verify=False):
     report_path = ROOT / "evaluation-v1.json"
     if report_path.exists() and not verify:
         raise RuntimeError("v1 test already inspected. Use --verify or author a new independent holdout; do not refit v1.")
-    encoded = read(ROOT / "encoded-v1.json")
     documents = search.corpus("v1")[0]["documents"]
-    vectors = [search.normalize_vector(doc["vector"]) for doc in encoded["documents"]]
-    assert [d["id"] for d in encoded["documents"]] == [d["id"] for d in documents]
-    query_vectors = {q["id"]: search.normalize_vector(q["vector"]) for q in encoded["queries"]}
+    if verify:
+        # Verification works from a clean clone, without the ignored encoder output.
+        evidence = json.loads(gzip.decompress((search.ARTIFACT_ROOT / "evaluation-vectors-v1.json.gz").read_bytes()))
+        index_path = search.ARTIFACT_ROOT / "search-index-v1.json"
+        index = read(index_path)
+        previous = read(report_path)
+        assert evidence["contract"] == previous["contract"] == index["contract"]
+        assert evidence["index_sha256"] == previous["index_sha256"] == hashlib.sha256(index_path.read_bytes()).hexdigest()
+        assert evidence["query_sha256"] == frozen["sha256"]["queries-v1.json"]
+        assert index["document_ids"] == [d["id"] for d in documents]
+        vectors = index["vectors"]  # Already normalized by the original encoder run.
+        query_vectors = {q["id"]: q["vector"] for q in evidence["queries"]}
+    else:
+        encoded = read(ROOT / "encoded-v1.json")
+        vectors = [search.normalize_vector(doc["vector"]) for doc in encoded["documents"]]
+        assert [d["id"] for d in encoded["documents"]] == [d["id"] for d in documents]
+        query_vectors = {q["id"]: search.normalize_vector(q["vector"]) for q in encoded["queries"]}
     rows = []
     for query in read(ROOT / "data/queries-v1.json")["queries"]:
         started = perf_counter()
@@ -145,7 +159,15 @@ def main(verify=False):
     passed = summary["test"]["semantic"]["recall_at_5"] >= .85 and slices["paraphrase"]["semantic"]["recall_at_5"] > slices["paraphrase"]["bm25"]["recall_at_5"]
     if verify:
         previous = read(report_path)
-        if summary != previous["splits"] or slices != previous["test_slices"] or passed != previous["gate"]["passed"]:
+        def rounded(value):
+            if isinstance(value, float):
+                return round(value, 12)
+            if isinstance(value, dict):
+                return {key: rounded(item) for key, item in value.items()}
+            if isinstance(value, list):
+                return [rounded(item) for item in value]
+            return value
+        if rounded(summary) != rounded(previous["splits"]) or rounded(slices) != rounded(previous["test_slices"]) or passed != previous["gate"]["passed"]:
             raise RuntimeError("Frozen metrics do not reproduce")
         print("Frozen evaluation and calibration reproduce.")
         return

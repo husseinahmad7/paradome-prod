@@ -127,6 +127,13 @@ def backfill_source_keys(apps, schema_editor):
         )
 
 
+def check_deferred_foreign_keys(apps, schema_editor):
+    # The backfill queues PostgreSQL FK checks. Complete them before ALTER TABLE,
+    # keeping the data repair and unique constraint in the same transaction.
+    if schema_editor.connection.vendor == "postgresql":
+        schema_editor.execute("SET CONSTRAINTS ALL IMMEDIATE")
+
+
 class Migration(migrations.Migration):
     dependencies = [
         ("notify", "0002_alter_notification_text_preview"),
@@ -140,6 +147,7 @@ class Migration(migrations.Migration):
             field=models.CharField(blank=True, max_length=64, null=True),
         ),
         migrations.RunPython(backfill_source_keys, migrations.RunPython.noop),
+        migrations.RunPython(check_deferred_foreign_keys, migrations.RunPython.noop),
         migrations.AlterField(
             model_name="notification",
             name="source_key",
