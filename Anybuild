@@ -16,7 +16,7 @@ config = python_config(
     python_extra_index_url = "https://python-registry.wasix.org/simple",
     python_extra_dependencies = ["psycopg[binary]==3.3.4", "uvicorn==0.54.0"],
     python_install_inputs = ["requirements.txt", "requirements-wasmer.txt", "requirements-common.txt"],
-    services = [service("database", "postgres")],
+    services = [{"name": "database", "engine": "postgres"}],
 )
 
 python_serve(
