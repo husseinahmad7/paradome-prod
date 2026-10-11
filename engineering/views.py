@@ -127,7 +127,7 @@ def _state_context(run, *, submission_form=None, delivery_form=None, feedback=""
             worker_version = json.loads(retrieval.ROOT.joinpath("assets-lock-v1.json").read_bytes())["assets"]["worker.mjs"]["sha256"]
         except (OSError, ValueError, KeyError):
             worker_version = "unavailable"
-        context.update({"search_form": SearchForm(initial={"text": "A double click creates two tickets. How do I make repeated requests return the first one?"}),
+        context.update({"search_form": SearchForm(initial={"text": "Everything passes locally but duplicate submissions appear under real simultaneous requests. How do we test the actual database race?"}),
                         "worker_version": worker_version,
                         "search_contract": retrieval.embedding_contract(), "search_health": retrieval.artifact_health(),
                         "evaluation": retrieval.evaluation_report(), "metrics": retrieval.metrics(run)})

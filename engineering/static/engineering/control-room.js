@@ -5,7 +5,7 @@
   const byId = id => document.getElementById(id);
   const form = byId('search-form'), input = byId('search-text'), submit = byId('search-submit');
   const contract = JSON.parse(byId('search-contract').textContent);
-  const example = 'A double click creates two tickets. How do I make repeated requests return the first one?';
+  const example = 'Everything passes locally but duplicate submissions appear under real simultaneous requests. How do we test the actual database race?';
   let worker = null, modelState = 'idle', modelLoadMs = null, workerTransferBytes = null, loadTimer, serial = 0, normalSubmit = false;
   const pending = new Map();
   const featureEnabled = room.dataset.semanticEnabled === 'true';
