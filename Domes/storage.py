@@ -1,3 +1,4 @@
+import os
 import warnings
 from pathlib import Path
 
@@ -28,6 +29,32 @@ class PrivateMediaStorage(FileSystemStorage):
 
     def url(self, name):
         raise ValueError("Private media must be served by an authorized view.")
+
+    def _save(self, name, content):
+        if not getattr(settings, "PRIVATE_MEDIA_EXCLUSIVE_SAVE", False):
+            return super()._save(name, content)
+        # WASIX does not implement flock. O_EXCL still gives one writer an
+        # exclusive claim on a fresh filename; never open an existing image
+        # for writing. The model references the file only after save returns.
+        full_path = self.path(name)
+        os.makedirs(os.path.dirname(full_path), mode=self.directory_permissions_mode or 0o700, exist_ok=True)
+        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_BINARY", 0)
+        while True:
+            try:
+                descriptor = os.open(full_path, flags, self.file_permissions_mode or 0o600)
+            except FileExistsError:
+                name = self.get_available_name(name)
+                full_path = self.path(name)
+                continue
+            try:
+                with os.fdopen(descriptor, "wb") as destination:
+                    for chunk in content.chunks():
+                        destination.write(chunk.encode() if isinstance(chunk, str) else chunk)
+            except BaseException:
+                # This path belongs to our successful exclusive claim only.
+                os.unlink(full_path)
+                raise
+            return name.replace("\\", "/")
 
 
 private_media_storage = PrivateMediaStorage()

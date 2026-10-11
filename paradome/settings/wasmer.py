@@ -32,6 +32,9 @@ private_posix = PurePosixPath(private_path)
 if "\\" in private_path or ".." in private_posix.parts or not private_posix.is_absolute() or not private_posix.is_relative_to(PurePosixPath("/data")):
     raise RuntimeError("Wasmer private media must live under the persistent /data volume")
 PRIVATE_MEDIA_ROOT = Path(private_path)
+PRIVATE_MEDIA_EXCLUSIVE_SAVE = True
+FILE_UPLOAD_PERMISSIONS = 0o600
+FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o700
 WSGI_APPLICATION = "paradome.wasmer_wsgi.app"
 RICH_TEXT_SANITIZER = "ammonia-wasi"
 CONTACT_FORM_ENABLED = False
