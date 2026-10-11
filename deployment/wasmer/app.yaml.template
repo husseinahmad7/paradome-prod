@@ -31,16 +31,14 @@ jobs:
     trigger: pre-deployment
     action:
       execute:
-        command: python
-        cli_args: ["/app/manage.py", "prepare_wasmer_demo"]
+        command: after_deploy
         timeout: 180s
         retries: 0
   - name: reset-guest-sandbox
     trigger: "0 0 * * *"
     action:
       execute:
-        command: python
-        cli_args: ["/app/manage.py", "maintain_demo_sandbox"]
+        command: reset_guest_sandbox
         timeout: 180s
         retries: 0
-# Package command name and /app mapping must be validated in the Wasmer build.
+# These package commands are declared by the checked-in Anybuild plan.

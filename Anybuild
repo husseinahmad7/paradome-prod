@@ -1,0 +1,30 @@
+# Explicit Wasmer Python plan. Keep the provider's dependency install steps;
+# its Django preset otherwise substitutes migrate for the preparation command.
+load("//anybuild/tools:python.bzl", "python_build", "python_config", "python_serve")
+
+config = python_config(
+    schema = 1,
+    commands = {
+        "build": "python deployment/wasmer/build.py",
+        "start": "python -m uvicorn paradome.wasmer_wsgi:app --interface wsgi --host 0.0.0.0 --port 8080",
+    },
+    python_framework = "django",
+    python_server = "uvicorn",
+    python_version = "3.13",
+    python_migration_strategy = "django",
+    python_cross_platform = "wasix_wasm32",
+    python_extra_index_url = "https://python-registry.wasix.org/simple",
+    python_extra_dependencies = ["psycopg[binary]==3.3.4", "uvicorn==0.54.0"],
+    python_install_inputs = ["requirements.txt", "requirements-wasmer.txt", "requirements-common.txt"],
+    services = [service("database", "postgres")],
+)
+
+python_serve(
+    config,
+    python_build(config),
+    extra_commands = {
+        "after_deploy": "python manage.py prepare_wasmer_demo",
+        "reset_guest_sandbox": "python manage.py maintain_demo_sandbox",
+        "verify_runtime": "python manage.py wasmer_compatibility",
+    },
+)

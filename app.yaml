@@ -17,6 +17,18 @@ volumes:
     mount: /data
 redirect:
   force_https: true
-# The initial compatibility build uses the provider's after-deploy command.
-# Add the validated package job command from deployment/wasmer/app.yaml.template
-# after confirming the provider's command and source-directory mapping.
+jobs:
+  - name: prepare-database
+    trigger: pre-deployment
+    action:
+      execute:
+        command: after_deploy
+        timeout: 180s
+        retries: 0
+  - name: reset-guest-sandbox
+    trigger: "0 0 * * *"
+    action:
+      execute:
+        command: reset_guest_sandbox
+        timeout: 180s
+        retries: 0
