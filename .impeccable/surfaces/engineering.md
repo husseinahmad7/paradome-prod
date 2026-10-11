@@ -159,13 +159,18 @@ screen-reader audit or production release claim. The Impeccable detector
 returned no findings, with a known limitation: it could not resolve Django
 `{% static %}` stylesheet URLs, so browser checks supplied the visual evidence.
 
-## Control room extension documentation and finish status — 2026-10-10
+## Control room extension documentation and finish status — 2026-10-11
 
 This documentation records the implementation of the extension direction
 contract above. It remains an Operate surface within the incumbent Lab, with
 architecture and evaluation material supporting the guided task. The existing
 CSS is the visual authority. No global design system replacement, `DESIGN.md`,
 or `.impeccable/design.json` is introduced by this pass.
+
+This final record supersedes the extension's earlier recapture-pending handoff
+and v1-current claims. The September Lab evidence above remains historical
+learning, with its original review scope. Current frontend evidence is tied to
+source `74698e57b3a1697461678d20ade395c33460e800`.
 
 ### Source-backed inheritance and extension
 
@@ -178,11 +183,11 @@ establishing another token registry.
 
 | Observed part | Implementation evidence |
 | --- | --- |
-| Palette and depth | The extension uses the incumbent navy for the guide, white for the search and architecture working surfaces, shared pale blue/line colors for tables and borders, blue actions, and teal result scores. It reuses the 14px shared panel radius and adds no panel shadow recipe. The guide's light text repeats the existing header text color; selection and scrollbar literals are local surface details, not new system tokens. |
+| Palette and depth | The extension uses the incumbent navy for the guide, white for the search and architecture working surfaces, shared pale blue/line colors for tables and borders, blue actions, and teal result scores. It reuses the 14px shared panel radius and adds no panel shadow recipe. The guide heading inherits white after the contrast correction; supporting guide text repeats the existing light header text color. Selection and scrollbar literals are local surface details, not new system tokens. |
 | Type | The shared 16px/1.55 body stack remains `Inter, Aptos, "Segoe UI", Roboto, Helvetica, Arial, sans-serif`. The run title retains `clamp(2rem, 3.6vw, 2.8rem)`. Area headings repeat the Lab section ramp (`clamp(1.6rem, 2.7vw, 2.2rem)`); the guide uses 1.3rem and result titles 1.12rem. Timing, scores, metrics, and table values use tabular numerals. No font download is added. |
-| Measure and layout | The inherited `lab-width` remains at 1160px maximum, with 48px total outer space and 32px below 540px. Search uses 1:1.15 columns with a 2rem gap; the guide has five columns and evaluation/metric lists have two. Source CSS stacks those at 840px. Below 480px it reduces search/guide padding and stacks diagram nodes. Tables have an overflow wrapper. These are observed source rules; their rendered reflow remains unverified for this extension. |
+| Measure and layout | The inherited `lab-width` remains at 1160px maximum, with 48px total outer space and 32px below 540px. Search uses 1:1.15 columns with a 2rem gap; the guide has five columns and evaluation/metric lists have two. Source CSS stacks those at 840px. Below 480px it reduces search/guide padding and stacks diagram nodes. The final 320/390/768/1280/1440px captures show the responsive composition; tables retain comparable columns inside their overflow wrapper without document overflow. These remain surface layout choices. |
 | Controls and focus | Existing blue/secondary Lab buttons, 46px fields, 44px native disclosure targets, 10px button corners, 8px field corners, and dark-gold focus outlines remain in use. The five area links use a 48px minimum height. Native checkboxes, forms, `details`/`summary`, labelled tables, and the incumbent notification dialog provide the underlying interaction. |
-| Motion | Opening a search-result disclosure adds a 220ms reveal. The incumbent delivery update retains its 360ms background cue. Both source rules suppress those animations under `prefers-reduced-motion: reduce`; actual preference behavior remains a pending browser check. |
+| Motion | Opening a search-result disclosure adds a 220ms reveal. The incumbent delivery update retains its 360ms background cue. Both source rules suppress those animations under `prefers-reduced-motion: reduce`. The local QA control forced that CSS branch and confirmed suppression; it did not emulate or change the actual browser/OS preference. |
 
 The conditional portfolio paragraph in
 `HusseinAh/templates/HusseinAh/myPortfolio.html` reuses the existing project
@@ -201,13 +206,29 @@ form action. The incumbent source → inbox → timeline order is preserved.
 The search form supports server-rendered keyword results. JavaScript reveals
 the optional model controls, updates results through text nodes, offers a
 standard keyword form after request failure, and refreshes run measurements
-after search and delivery updates. The failed frozen gate keeps keyword search
-as the default; semantic retrieval requires the labelled experiment when that
-feature is enabled. The frozen JSON confirms held-out Recall@5 of 0.71875
-against the 0.85 requirement, with paraphrase Recall@5 of 0.625 versus BM25's
-0.541667. The evaluation exposes synthetic provenance, calibration, coverage,
-latency scope, and failure examples. Similarity and estimated top-result
-relevance remain distinct.
+after search and delivery updates. Immediate keyword search remains available;
+after explicit lazy model loading, the healthy v2 artifact enables semantic
+retrieval with confidence and outage fallbacks. The current frozen
+`ml/search/evaluation-v2.json` passes the synthetic retrieval gate: MiniLM q8
+with related threads has held-out Recall@5 of 0.9375 against the 0.85 requirement,
+and paraphrase Recall@5 of 0.916667 versus BM25's 0.458333. Plain cosine remains
+separately visible at held-out Recall@5 of 0.78125; linked retrieval and BM25
+are not presented as the same method.
+
+The evaluation states that the 120 discussions and 180 labelled queries are
+fictional, with AI-authored judgements and no independent human review. The
+fresh test has 36 queries, including 32 answerable queries used in ranking
+averages. Accepted precision is approximately 84% at 53% coverage, below the
+90% calibration target retained in the methodology disclosure; the acceptance
+threshold is 0.728. Four rejected no-answer examples do not establish robust
+abstention. Similarity, estimated top-result relevance, and the incumbent
+triage score remain distinct. Passing this fixture does not establish
+production accuracy, browser latency, or Wasmer latency.
+
+Archived v1 evidence remains linked as learning: its held-out Recall@5 of
+0.71875 failed the earlier 0.85 gate, and its paraphrase Recall@5 was 0.625
+versus BM25's 0.541667. Those v1 failures and the earlier experiment-only
+default describe the superseded iteration, not the current v2 state.
 
 Architecture links connect boundary disclosures to source and tests. Delivery
 counts come from run records; search metrics cover the newest forty
@@ -216,33 +237,61 @@ window. Browser timings are labelled client-reported, and initial transfer is
 separated from lazy worker/model transfer. These observations describe the
 implemented surface rather than a promise of production performance.
 
-### Finish disposition: recapture pending
+### Final frontend finish disposition: ship
 
-The independent finish reviewer returned **recapture** for this extension.
-There is no visual approval, completed responsive QA, or release-readiness
-verdict. The prior Lab correction verdict and September screenshot record above
-do not approve the current control-room extension.
+The independent [finish review](../review/finish-review.md) returned **ship**
+for this control-room frontend at source
+`74698e57b3a1697461678d20ade395c33460e800`, with no material fixes. The final
+captures replace the earlier failed capture attempts. This is the extension's
+frontend finish verdict; it does not certify the whole application or complete
+the production persistence, rollback, and promotion gates.
 
-This handoff inspected all six named run/partial templates, `control-room.css`,
-`control-room.js`, the conditional portfolio paragraph, the shared stylesheet,
-the incumbent Lab styles/base template, the frozen evaluation JSON, the
-detector record, and the screenshot inventory. It reviewed the recorded
-evidence below without repeating the browser run or automated checks.
+This documentation pass inspected PRODUCT.md, the shared stylesheet, Lab and
+control-room styles, the base/run/search/evaluation templates, current frozen
+v2 test fields, the finish review, layout record, all ten final captures, and
+the connected Edge form-only screenshot and state report. First views were
+opened at original detail; full pages were opened for composition. The
+independent reviewer additionally inspected original-size full-page crops.
+No browser automation, detector, implementation polish, or new QA run was
+performed by the documenter.
 
 | Retained evidence | Result and scope |
 | --- | --- |
-| [Control-room verification](../../docs/control-room-verification.md) | MySQL CI tested commit `8f6fb959f5f6c44f78749c83258c1554c7e26a91`: 252 tests passed without skips and 14 JavaScript tests passed. Production/settings, migration, asset, audit, drift, and secret checks are recorded there. These are automated implementation checks. |
-| Local in-app Browser workflow | The record confirms search/inspection, explicit delivery, lost acknowledgement, recovery, and original replay with one submission, one receipt, two attempts, one prevented duplicate, and one replay. Controlled model outage produced labelled keyword results; the three public browser/offline embedding goldens passed their stated tolerance. |
-| Loaded-state accessibility | The recorded axe rerun had 31 passing rules and zero violations after the notification close-name correction. This covers the loaded local state, not all states or a screen-reader audit. A forced reduced-motion CSS branch was checked; it did not emulate the browser/OS preference. |
-| Capture attempts | In-app Browser screenshot commands timed out and the requested viewport override remained 1280×720. Connected Edge policy/tab access also failed. No valid final control-room screenshot matrix was saved; the current review directory contains the detector record only. |
-| [Wasmer deployment record](../../docs/wasmer-deployment.md) | The independent preview has no released version or verified public URL. Current native target wheels for pinned mysqlclient/nh3 are unavailable; runtime, persistence, cleanup/rollback, and promotion gates remain pending. |
+| [Final finish review](../review/finish-review.md) | Ship, no material fixes. Inherited palette/type/forms, task order, visible recovery/replay proof, qualified evaluation, and bounded telemetry match the direction contract. |
+| [Layout and accessibility record](../review/control-room-layout.json) | At 320/390/768/1280/1440 CSS pixels, `scrollWidth` equals `clientWidth`. The loaded-state axe result has 31 passing rules and zero violations. The corrected guide heading is white on navy (`#ffffff` on `#0b1730`). These checks do not constitute a screen-reader audit or certify every possible state. |
+| Local in-app Browser workflow | The supplied record confirms semantic search/inspection, explicit delivery, lost acknowledgement, recovery, and original replay with one submission, one receipt, two attempts, one prevented duplicate, and one replay. Controlled model outage produced labelled keyword results; the three public browser/offline embedding goldens passed their stated tolerance. |
+| [Connected Edge form-only capture](../review/edge-form-only.jpg) and [state report](../review/edge-form-only-state.txt) | Native BM25 search → inspect → use discussion → explicit submit → lost acknowledgement → recover → original-key replay completed with one saved source, one receipt, two attempts, duplicate prevention, and replay visible. Keyboard operation opened the public-index architecture disclosure and retained its gold focus outline. Page scripts were blocked deliberately by CSP `script-src 'none'`; the browser engine's global JavaScript setting was not disabled. Browser embeddings were unavailable and metrics recorded the keyword path and `javascript_unavailable` fallback. |
+| Reduced-motion evidence | The local QA control forced the reduced-motion CSS branch and confirmed suppression. The actual browser/OS preference was not emulated; that precise limitation remains. |
+| [Final source CI](https://github.com/husseinahmad7/paradome-prod/actions/runs/38146176006) | Supplied green result at the frontend source revision: 265 Python tests on MySQL and PostgreSQL, 15 JavaScript tests, sanitizer provenance checks, and secret checks. These are automated implementation checks, separate from the visual finish verdict. |
+| Production-gate boundary at handoff | Supplied runtime evidence has passed PostgreSQL native dependencies, sanitizer, secure sessions, and private storage checks, with healthy feature preview `dav_nBBIbtruWdqX`. Production persistence and rollback checks remain in progress and are not completed or certified by this surface record. Public deployment/verification documents are maintained separately. |
 
-Required finish evidence remains actual 320/390/768/1440px reflow and full-page
-desktop/mobile captures followed by independent visual review. Browser checks
-with JavaScript disabled, the actual reduced-motion preference, and connected
-Edge, plus cold production transfer measurement and the recorded Wasmer gates,
-are still outstanding. Documentation records the current status and does not
-authorize shipping while recapture remains pending.
+The final full-page and first-view pairs are retained under
+`.impeccable/review/` as `control-room-{320,390,768,1280,1440}.jpg` and
+`control-room-first-{320,390,768,1280,1440}.jpg`. All ten open, show the named
+control-room state, and include the document top or claimed first view. The
+full-page widths exclude the 15px scrollbar accounted for in the layout record.
+
+| CSS viewport width | Full-page capture pixels |
+| --- | --- |
+| 320 | 305 × 13062 |
+| 390 | 375 × 11590 |
+| 768 | 753 × 8868 |
+| 1280 | 1265 × 7333 |
+| 1440 | 1425 × 7337 |
+
+The captures preserve Search → Delivery → Architecture → Evaluation → Metrics,
+and source → inbox → timeline within Delivery. Narrow widths stack the guide,
+search, delivery, and metric layouts; diagram nodes become vertical below
+480px. Native table overflow retains all comparison columns. The title, area
+links, and legible navy guide lead the first view without clipped content.
+These are local preview review captures, not shipping raster assets or a cold
+production performance measurement. No new raster provenance record is owed.
+
+Actual reduced-motion preference behavior, native browser-menu zoom,
+screen-reader behavior, cold production transfer/performance, and production
+persistence/rollback/promotion are outside the completed frontend evidence.
+The connected Edge form-only check proves ordinary forms under a scripts-blocked
+page policy; it does not claim a browser-wide JavaScript-disabled test.
 
 ### Drift and details not canonized
 

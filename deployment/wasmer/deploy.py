@@ -130,9 +130,46 @@ def preview(options):
     print("Preview build dispatched. Verify it before publishing the demo link.")
 
 
+def activate(options):
+    """Restore a package AND app-scoped flags without reading or rotating secrets."""
+    if not options.app_id or not options.version_id or not re.fullmatch(r"[0-9a-f]{40}", options.revision or ""):
+        raise ValueError("Activation requires an app ID, retained version ID, and full source revision")
+    if preflight() != options.owner:
+        raise RuntimeError("Token owner differs from the confirmed demo namespace")
+    target = graphql('query($id:ID!){node(id:$id){... on DeployAppVersion{id app{id}}}}', {"id": options.version_id})["node"]
+    if not target or target["app"]["id"] != options.app_id:
+        raise RuntimeError("Retained version does not belong to the requested app")
+    values = {"ENGINEERING_CONTROL_ROOM_ENABLED": "true" if options.features else "false",
+              "ENGINEERING_SEMANTIC_ENABLED": "true" if options.features else "false",
+              "ENGINEERING_SOURCE_REVISION": options.revision}
+    app = graphql('query($id:ID!,$names:[String!]){node(id:$id){... on DeployApp{id envVars(names:$names,first:3){edges{node{id name}}}}}}', {"id": options.app_id, "names": list(values)})["node"]
+    existing = {edge["node"]["name"]: edge["node"]["id"] for edge in app["envVars"]["edges"]}
+    if set(existing) != set(values):
+        raise RuntimeError("Expected release flags are missing; refuse a partial configuration change")
+    # Update existing IDs, preserving sensitivity/build/runtime attributes and
+    # every other variable. Never retrieve values or resubmit the Django key.
+    updated = graphql('mutation($input:UpdateEnvVarsInput!){updateEnvVars(input:$input){success}}', {"input": {"appId": options.app_id, "envVars": [{"id": existing[name], "value": value} for name, value in values.items()]}})["updateEnvVars"]
+    if not updated["success"]:
+        raise RuntimeError("Release flags were not updated; no version was activated")
+    selected = graphql('mutation($input:MarkAppVersionAsActiveInput!){markAppVersionAsActive(input:$input){app{id activeVersion{id}}}}', {"input": {"appVersion": options.version_id}})["markAppVersionAsActive"]["app"]
+    if selected["id"] != options.app_id or selected["activeVersion"]["id"] != options.version_id:
+        raise RuntimeError("Version selection did not match the requested app")
+    # Wasmer environment variables belong to the app. Redeployment applies the
+    # restored flags and creates fresh runtime instances of the retained package.
+    result = graphql('mutation($input:RedeployActiveAppVersionInput!){redeployActiveAppVersion(input:$input){app{id activeVersion{id}}}}', {"input": {"appId": options.app_id}})["redeployActiveAppVersion"]["app"]
+    record = {"app_id": result["id"], "activated_from": options.version_id,
+              "active_version": result["activeVersion"]["id"], "source_revision": options.revision,
+              "features": options.features}
+    output = ROOT / "deployment/generated/activation.json"
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(record, indent=2) + "\n")
+    print(json.dumps(record))
+    print("Activation dispatched. Verify health, feature flags, and the same session before publishing.")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("action", choices=["preflight", "preview", "status"])
+    parser.add_argument("action", choices=["preflight", "preview", "status", "activate"])
     parser.add_argument("--owner", default="h7osanna_xyc")
     parser.add_argument("--name", default="paradome-control-room-pg-preview")
     parser.add_argument("--branch", default="hussein/wasmer-demo")
@@ -141,11 +178,14 @@ if __name__ == "__main__":
     parser.add_argument("--app-id")
     parser.add_argument("--features", action="store_true")
     parser.add_argument("--build-id")
+    parser.add_argument("--version-id")
     args = parser.parse_args()
     if args.action == "preflight":
         preflight()
     elif args.action == "preview":
         preview(args)
+    elif args.action == "activate":
+        activate(args)
     else:
         result = graphql('query($id: UUID!) { autobuildDeploymentStatus(buildId:$id) { status appVersion { id url } } }', {"id": args.build_id})
         print(json.dumps(result))
