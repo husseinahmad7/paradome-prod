@@ -1,0 +1,5 @@
+# The full Wasmer application uses the checked-in current Ammonia executable
+# for sanitization, and the provider's PostgreSQL binary driver build.
+-r requirements-common.txt
+psycopg[binary]==3.3.4
+uvicorn==0.54.0

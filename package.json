@@ -1,0 +1,14 @@
+{
+  "name": "paradome-search-evidence",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "search:assets": "node ml/search/build-assets.mjs",
+    "search:encode": "node ml/search/encode.mjs",
+    "test": "node --test engineering/test_lab_js.cjs engineering/test_control_room.cjs"
+  },
+  "devDependencies": {
+    "@huggingface/transformers": "4.3.1"
+  },
+  "engines": { "node": ">=22" }
+}

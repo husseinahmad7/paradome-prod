@@ -1,0 +1,86 @@
+{
+  "version": "discussions-v2",
+  "groups": {
+    "development": [
+      "artifact",
+      "atomic-outbox",
+      "cache-stampede",
+      "circuit-breaker",
+      "csp",
+      "csrf",
+      "db-pool",
+      "db-tls",
+      "email",
+      "heartbeat",
+      "leases",
+      "logging",
+      "lost-ack",
+      "metrics",
+      "migration",
+      "ndcg",
+      "object-access",
+      "optimistic-lock",
+      "pagination",
+      "paraphrase",
+      "password",
+      "private-cache",
+      "private-files",
+      "recall",
+      "receipt",
+      "replay-key",
+      "responsive",
+      "session-expiry",
+      "split-leakage",
+      "telemetry-cap",
+      "testing-races",
+      "timeouts",
+      "timezones",
+      "tracing",
+      "unicode",
+      "websocket"
+    ],
+    "calibration": [
+      "csp-worker",
+      "html-namespace",
+      "lazy-budget",
+      "link-expansion",
+      "metric-window",
+      "pg-advisory",
+      "pg-notify",
+      "pg-sequence",
+      "read-replica",
+      "reset-lease",
+      "samesite-nav",
+      "shard-unique"
+    ],
+    "test": [
+      "clock-lease",
+      "confidence-shift",
+      "cookie-cache",
+      "cursor-sign",
+      "media-sniff",
+      "pg-index",
+      "pg-migration",
+      "pg-pool",
+      "rollback-shape",
+      "secret-rotation",
+      "tls-ca",
+      "upload-quota"
+    ]
+  },
+  "sha256": {
+    "corpus-v2.json": "74e9c139d6244979825f36b30e94467e7e8600cf01563f26ed42f0d34cbd8586",
+    "queries-v2.json": "e557adfaa234fd2b85dfa1b4a0a576c14b896d50f43e0453c9c3db0660441b7b"
+  },
+  "policy": {
+    "retriever": "cosine-related-v2",
+    "expand": "Explicit related_ids after each leading unvisited discussion, capped at five, stable cosine/ID order. No query labels at runtime.",
+    "confidence_features": [
+      "top cosine",
+      "margin to next unrelated group"
+    ],
+    "minimum_recall_at_5": 0.85,
+    "require_paraphrase_improvement_over_bm25": true
+  },
+  "development_selection": "v1 development: plain cosine .782609, public sibling expansion .951087; lexical RRF did not improve over expansion."
+}

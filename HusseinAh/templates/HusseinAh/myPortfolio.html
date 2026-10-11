@@ -282,8 +282,13 @@
 
                 {% if engineering_lab_enabled %}
                 <aside class="engineering-project-link">
+                    {% if engineering_control_room_enabled %}
+                    <div><h3>ParaDome engineering control room</h3><p>Search fictional discussions with an evaluated browser model, recover a lost delivery acknowledgement, and inspect the architecture and measurements from your own run.</p></div>
+                    <a class="portfolio-button" href="{% url 'engineering:index' %}">Explore the control room</a>
+                    {% else %}
                     <div><h3>ParaDome engineering lab</h3><p>Submit a message, lose its acknowledgement, then recover without duplicating the inbox entry. Inspect the delivery trace, permissions, and a compact English classifier.</p></div>
                     <a class="portfolio-button" href="{% url 'engineering:index' %}">Explore the engineering lab</a>
+                    {% endif %}
                 </aside>
                 {% endif %}
 

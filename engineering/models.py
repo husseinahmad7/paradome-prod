@@ -114,3 +114,34 @@ class Trace(models.Model):
             "lost_ack": "Acknowledgement lost",
             "stale_attempt": "Stale attempt ignored",
         }.get(self.stage, "Execution stage")
+
+
+class SearchObservation(models.Model):
+    """Numeric diagnostics only; intentionally no query text or embedding."""
+
+    run = models.ForeignKey(LabRun, on_delete=models.CASCADE, related_name="search_observations")
+    mode = models.CharField(max_length=8)
+    fallback_reason = models.CharField(max_length=40, blank=True)
+    index_version = models.CharField(max_length=48)
+    result_ids = models.JSONField(default=list)
+    top_score = models.FloatField(null=True)
+    confidence = models.FloatField(null=True)
+    server_ranking_ms = models.FloatField()
+    browser_embedding_ms = models.FloatField(null=True)
+    browser_model_load_ms = models.FloatField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["id"]
+        constraints = [
+            models.CheckConstraint(condition=Q(mode__in=["semantic", "keyword"]), name="lab_search_mode_valid"),
+            models.CheckConstraint(condition=Q(server_ranking_ms__gte=0), name="lab_search_time_nonnegative"),
+            models.CheckConstraint(condition=Q(confidence__isnull=True) | Q(confidence__gte=0, confidence__lte=1), name="lab_search_confidence_bound"),
+        ]
+
+
+class MaintenanceLease(models.Model):
+    name = models.CharField(max_length=40, primary_key=True)
+    token = models.UUIDField(null=True)
+    expires_at = models.DateTimeField(null=True)
+    last_reset_at = models.DateTimeField(null=True)

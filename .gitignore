@@ -32,4 +32,15 @@ backups/
 
 # Local browser QA
 paradome/settings/qa_runtime.py
+paradome/settings/qa_nojs.py
+paradome/qa_browser.py
 .impeccable/review/
+
+# Reproducible, pinned browser ML assets are built, not checked into Git.
+node_modules/
+.cache/
+engineering/static/engineering/search-assets/
+ml/search/encoded-v1.json
+ml/search/encoded-v2.json
+deployment/generated/
+deployment/wasmer/sanitizer/target/

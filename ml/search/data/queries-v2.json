@@ -1,0 +1,1921 @@
+{
+  "provenance": {
+    "version": "discussions-v2",
+    "language": "en",
+    "created": "2026-10-10",
+    "origin": "AI-authored fictional technical discussions; no production posts or visitor data.",
+    "labels": "Author-assigned: 2 direct answer, 1 supporting context, 0 unjudged/unrelated. No independent human review is claimed.",
+    "limitations": "AI-authored English fixture, public paired-thread links and sparse pair judgements can favor relation expansion. No independent human review or production guarantee.",
+    "split_policy": "v1 development retained; 24 newly authored families hash-ordered into 12 calibration and 12 test groups before encoding. No v1 calibration/test query reused."
+  },
+  "queries": [
+    {
+      "id": "lost-ack-literal",
+      "group": "lost-ack",
+      "split": "development",
+      "slice": "literal",
+      "text": "How do unique consumer receipts prevent duplicate delivery after a lost acknowledgement?",
+      "relevance": {
+        "discussion-001-a": 2,
+        "discussion-001-b": 1
+      }
+    },
+    {
+      "id": "lost-ack-paraphrase",
+      "group": "lost-ack",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "The recipient got my message but the sender never heard back. How can I safely send it again?",
+      "relevance": {
+        "discussion-001-a": 2,
+        "discussion-001-b": 1
+      }
+    },
+    {
+      "id": "lost-ack-no_answer",
+      "group": "lost-ack",
+      "split": "development",
+      "slice": "no_answer",
+      "text": "How do trapped-ion qubits correct quantum phase errors?",
+      "relevance": {}
+    },
+    {
+      "id": "replay-key-literal",
+      "group": "replay-key",
+      "split": "development",
+      "slice": "literal",
+      "text": "Idempotency key payload hash conflict when text changes",
+      "relevance": {
+        "discussion-002-a": 2,
+        "discussion-002-b": 1
+      }
+    },
+    {
+      "id": "replay-key-paraphrase",
+      "group": "replay-key",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "A double click creates two tickets. How do I make repeated requests return the first one?",
+      "relevance": {
+        "discussion-002-a": 2,
+        "discussion-002-b": 1
+      }
+    },
+    {
+      "id": "replay-key-no_answer",
+      "group": "replay-key",
+      "split": "development",
+      "slice": "no_answer",
+      "text": "What is the orbital maneuver for a satellite Doppler shift?",
+      "relevance": {}
+    },
+    {
+      "id": "atomic-outbox-literal",
+      "group": "atomic-outbox",
+      "split": "development",
+      "slice": "literal",
+      "text": "Atomic transaction order row outbox rollback orphan event",
+      "relevance": {
+        "discussion-003-a": 2,
+        "discussion-003-b": 1
+      }
+    },
+    {
+      "id": "atomic-outbox-paraphrase",
+      "group": "atomic-outbox",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "The database saved an order, then the app crashed before telling another service. How do I stop that gap?",
+      "relevance": {
+        "discussion-003-a": 2,
+        "discussion-003-b": 1
+      }
+    },
+    {
+      "id": "atomic-outbox-distractor",
+      "group": "atomic-outbox",
+      "split": "development",
+      "slice": "distractor",
+      "text": "How do we test that failing midway through source persistence leaves no outbound row?",
+      "relevance": {
+        "discussion-003-b": 2,
+        "discussion-003-a": 1
+      }
+    },
+    {
+      "id": "optimistic-lock-literal",
+      "group": "optimistic-lock",
+      "split": "development",
+      "slice": "literal",
+      "text": "Optimistic locking integer version stale update conflict",
+      "relevance": {
+        "discussion-005-a": 2,
+        "discussion-005-b": 1
+      }
+    },
+    {
+      "id": "optimistic-lock-paraphrase",
+      "group": "optimistic-lock",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "Two people edit the same note. How do we stop the last save from erasing the first person's work?",
+      "relevance": {
+        "discussion-005-a": 2,
+        "discussion-005-b": 1
+      }
+    },
+    {
+      "id": "optimistic-lock-distractor",
+      "group": "optimistic-lock",
+      "split": "development",
+      "slice": "distractor",
+      "text": "Can an HTTP precondition guard a write without holding a row lock while someone types?",
+      "relevance": {
+        "discussion-005-b": 2,
+        "discussion-005-a": 1
+      }
+    },
+    {
+      "id": "csrf-literal",
+      "group": "csrf",
+      "split": "development",
+      "slice": "literal",
+      "text": "Django CSRF token browser POST SameSite origin",
+      "relevance": {
+        "discussion-006-a": 2,
+        "discussion-006-b": 1
+      }
+    },
+    {
+      "id": "csrf-paraphrase",
+      "group": "csrf",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "A malicious site tricks a signed-in visitor's browser into changing our data. How is that request rejected?",
+      "relevance": {
+        "discussion-006-a": 2,
+        "discussion-006-b": 1
+      }
+    },
+    {
+      "id": "csrf-no_answer",
+      "group": "csrf",
+      "split": "development",
+      "slice": "no_answer",
+      "text": "How do I tune a laser for Raman spectroscopy?",
+      "relevance": {}
+    },
+    {
+      "id": "object-access-literal",
+      "group": "object-access",
+      "split": "development",
+      "slice": "literal",
+      "text": "Private discussion object permission membership JSON fragments",
+      "relevance": {
+        "discussion-007-a": 2,
+        "discussion-007-b": 1
+      }
+    },
+    {
+      "id": "object-access-paraphrase",
+      "group": "object-access",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "I can guess the URL of somebody else's workspace. How do we make sure its replies are never shown?",
+      "relevance": {
+        "discussion-007-a": 2,
+        "discussion-007-b": 1
+      }
+    },
+    {
+      "id": "object-access-no_answer",
+      "group": "object-access",
+      "split": "development",
+      "slice": "no_answer",
+      "text": "Which finite-element mesh models turbine blade flutter?",
+      "relevance": {}
+    },
+    {
+      "id": "private-files-literal",
+      "group": "private-files",
+      "split": "development",
+      "slice": "literal",
+      "text": "Private attachment authorized download storage outside static",
+      "relevance": {
+        "discussion-008-a": 2,
+        "discussion-008-b": 1
+      }
+    },
+    {
+      "id": "private-files-paraphrase",
+      "group": "private-files",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "A file belongs to a closed group. Where should it live so a copied link alone does not reveal it?",
+      "relevance": {
+        "discussion-008-a": 2,
+        "discussion-008-b": 1
+      }
+    },
+    {
+      "id": "private-files-distractor",
+      "group": "private-files",
+      "split": "development",
+      "slice": "distractor",
+      "text": "How do we confirm private uploads survive a server replacement without becoming publicly reachable?",
+      "relevance": {
+        "discussion-008-b": 2,
+        "discussion-008-a": 1
+      }
+    },
+    {
+      "id": "csp-literal",
+      "group": "csp",
+      "split": "development",
+      "slice": "literal",
+      "text": "CSP nonce inline scripts WebAssembly worker script-src",
+      "relevance": {
+        "discussion-010-a": 2,
+        "discussion-010-b": 1
+      }
+    },
+    {
+      "id": "csp-paraphrase",
+      "group": "csp",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "We need a small browser model to run but want injected scripts to stay blocked. Where should permission be scoped?",
+      "relevance": {
+        "discussion-010-a": 2,
+        "discussion-010-b": 1
+      }
+    },
+    {
+      "id": "csp-distractor",
+      "group": "csp",
+      "split": "development",
+      "slice": "distractor",
+      "text": "Should a blocked widget lead us to allow arbitrary script evaluation on all pages?",
+      "relevance": {
+        "discussion-010-b": 2,
+        "discussion-010-a": 1
+      }
+    },
+    {
+      "id": "session-expiry-literal",
+      "group": "session-expiry",
+      "split": "development",
+      "slice": "literal",
+      "text": "Session run expiry 24 hours logout owner secret",
+      "relevance": {
+        "discussion-012-a": 2,
+        "discussion-012-b": 1
+      }
+    },
+    {
+      "id": "session-expiry-paraphrase",
+      "group": "session-expiry",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "The visitor signs out but an old demo URL still works. How do we revoke that private experiment?",
+      "relevance": {
+        "discussion-012-a": 2,
+        "discussion-012-b": 1
+      }
+    },
+    {
+      "id": "session-expiry-no_answer",
+      "group": "session-expiry",
+      "split": "development",
+      "slice": "no_answer",
+      "text": "Which isotope ratio identifies an ancient meteorite?",
+      "relevance": {}
+    },
+    {
+      "id": "password-literal",
+      "group": "password",
+      "split": "development",
+      "slice": "literal",
+      "text": "Password hashing login session rotation authentication hash",
+      "relevance": {
+        "discussion-013-a": 2,
+        "discussion-013-b": 1
+      }
+    },
+    {
+      "id": "password-paraphrase",
+      "group": "password",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "If the account password changes, how do we stop older logged-in browsers from staying authorized?",
+      "relevance": {
+        "discussion-013-a": 2,
+        "discussion-013-b": 1
+      }
+    },
+    {
+      "id": "password-distractor",
+      "group": "password",
+      "split": "development",
+      "slice": "distractor",
+      "text": "How can a public guest demo avoid distributing a reusable account password?",
+      "relevance": {
+        "discussion-013-b": 2,
+        "discussion-013-a": 1
+      }
+    },
+    {
+      "id": "pagination-literal",
+      "group": "pagination",
+      "split": "development",
+      "slice": "literal",
+      "text": "Cursor pagination timestamp primary key chat history",
+      "relevance": {
+        "discussion-016-a": 2,
+        "discussion-016-b": 1
+      }
+    },
+    {
+      "id": "pagination-paraphrase",
+      "group": "pagination",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "New messages arrive while I browse older ones and the pages overlap. What stable position should the next page use?",
+      "relevance": {
+        "discussion-016-a": 2,
+        "discussion-016-b": 1
+      }
+    },
+    {
+      "id": "pagination-no_answer",
+      "group": "pagination",
+      "split": "development",
+      "slice": "no_answer",
+      "text": "How do stereo cameras estimate underwater reef depth?",
+      "relevance": {}
+    },
+    {
+      "id": "cache-stampede-literal",
+      "group": "cache-stampede",
+      "split": "development",
+      "slice": "literal",
+      "text": "Cache stampede single flight lease stagger expiration",
+      "relevance": {
+        "discussion-019-a": 2,
+        "discussion-019-b": 1
+      }
+    },
+    {
+      "id": "cache-stampede-paraphrase",
+      "group": "cache-stampede",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "A popular cached page expires and everyone recomputes it at once. How can only one request rebuild it?",
+      "relevance": {
+        "discussion-019-a": 2,
+        "discussion-019-b": 1
+      }
+    },
+    {
+      "id": "cache-stampede-distractor",
+      "group": "cache-stampede",
+      "split": "development",
+      "slice": "distractor",
+      "text": "Should a missing public item be cached forever?",
+      "relevance": {
+        "discussion-019-b": 2,
+        "discussion-019-a": 1
+      }
+    },
+    {
+      "id": "private-cache-literal",
+      "group": "private-cache",
+      "split": "development",
+      "slice": "literal",
+      "text": "Private session page no-store Vary Cookie CDN",
+      "relevance": {
+        "discussion-020-a": 2,
+        "discussion-020-b": 1
+      }
+    },
+    {
+      "id": "private-cache-paraphrase",
+      "group": "private-cache",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "A second visitor sees the first visitor's dashboard through the edge cache. Which responses must be excluded?",
+      "relevance": {
+        "discussion-020-a": 2,
+        "discussion-020-b": 1
+      }
+    },
+    {
+      "id": "private-cache-distractor",
+      "group": "private-cache",
+      "split": "development",
+      "slice": "distractor",
+      "text": "How can we cache large model downloads without caching personalized HTML?",
+      "relevance": {
+        "discussion-020-b": 2,
+        "discussion-020-a": 1
+      }
+    },
+    {
+      "id": "db-pool-literal",
+      "group": "db-pool",
+      "split": "development",
+      "slice": "literal",
+      "text": "Database connection limit workers CONN_MAX_AGE health checks",
+      "relevance": {
+        "discussion-021-a": 2,
+        "discussion-021-b": 1
+      }
+    },
+    {
+      "id": "db-pool-paraphrase",
+      "group": "db-pool",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "Adding web workers made the database refuse new clients. How do we budget connections across processes?",
+      "relevance": {
+        "discussion-021-a": 2,
+        "discussion-021-b": 1
+      }
+    },
+    {
+      "id": "db-pool-no_answer",
+      "group": "db-pool",
+      "split": "development",
+      "slice": "no_answer",
+      "text": "How is a combustion flame front stabilized in a jet engine?",
+      "relevance": {}
+    },
+    {
+      "id": "db-tls-literal",
+      "group": "db-tls",
+      "split": "development",
+      "slice": "literal",
+      "text": "Managed MySQL DB_USERNAME port TLS SSL cipher",
+      "relevance": {
+        "discussion-022-a": 2,
+        "discussion-022-b": 1
+      }
+    },
+    {
+      "id": "db-tls-paraphrase",
+      "group": "db-tls",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "The hosting service gives us database credentials. How do we check that the actual connection is encrypted?",
+      "relevance": {
+        "discussion-022-a": 2,
+        "discussion-022-b": 1
+      }
+    },
+    {
+      "id": "db-tls-no_answer",
+      "group": "db-tls",
+      "split": "development",
+      "slice": "no_answer",
+      "text": "Which acoustic filter removes echoes in a concert hall?",
+      "relevance": {}
+    },
+    {
+      "id": "migration-literal",
+      "group": "migration",
+      "split": "development",
+      "slice": "literal",
+      "text": "Expand contract migration nullable column backfill rollback",
+      "relevance": {
+        "discussion-023-a": 2,
+        "discussion-023-b": 1
+      }
+    },
+    {
+      "id": "migration-paraphrase",
+      "group": "migration",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "I need to rename a stored field without breaking the previous app version during rollback. What sequence works?",
+      "relevance": {
+        "discussion-023-a": 2,
+        "discussion-023-b": 1
+      }
+    },
+    {
+      "id": "migration-distractor",
+      "group": "migration",
+      "split": "development",
+      "slice": "distractor",
+      "text": "Should each newly started web process apply schema changes itself?",
+      "relevance": {
+        "discussion-023-b": 2,
+        "discussion-023-a": 1
+      }
+    },
+    {
+      "id": "heartbeat-literal",
+      "group": "heartbeat",
+      "split": "development",
+      "slice": "literal",
+      "text": "Health endpoint 503 database no-store generic status",
+      "relevance": {
+        "discussion-025-a": 2,
+        "discussion-025-b": 1
+      }
+    },
+    {
+      "id": "heartbeat-paraphrase",
+      "group": "heartbeat",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "The edge keeps returning an old healthy response while the database is down. How should the health route behave?",
+      "relevance": {
+        "discussion-025-a": 2,
+        "discussion-025-b": 1
+      }
+    },
+    {
+      "id": "heartbeat-distractor",
+      "group": "heartbeat",
+      "split": "development",
+      "slice": "distractor",
+      "text": "Should a short third-party outage cause the platform to restart every healthy web process?",
+      "relevance": {
+        "discussion-025-b": 2,
+        "discussion-025-a": 1
+      }
+    },
+    {
+      "id": "logging-literal",
+      "group": "logging",
+      "split": "development",
+      "slice": "literal",
+      "text": "Search telemetry redact raw query embedding numeric metadata",
+      "relevance": {
+        "discussion-026-a": 2,
+        "discussion-026-b": 1
+      }
+    },
+    {
+      "id": "logging-paraphrase",
+      "group": "logging",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "I want to debug a visitor's retrieval timings without keeping what they typed. What can we record?",
+      "relevance": {
+        "discussion-026-a": 2,
+        "discussion-026-b": 1
+      }
+    },
+    {
+      "id": "logging-no_answer",
+      "group": "logging",
+      "split": "development",
+      "slice": "no_answer",
+      "text": "How do cryogenic detectors measure dark matter recoil?",
+      "relevance": {}
+    },
+    {
+      "id": "metrics-literal",
+      "group": "metrics",
+      "split": "development",
+      "slice": "literal",
+      "text": "Browser embedding latency server ranking round trip p95",
+      "relevance": {
+        "discussion-027-a": 2,
+        "discussion-027-b": 1
+      }
+    },
+    {
+      "id": "metrics-paraphrase",
+      "group": "metrics",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "The first search is slow because it downloads a model. How do I separate that cost from database-side ranking?",
+      "relevance": {
+        "discussion-027-a": 2,
+        "discussion-027-b": 1
+      }
+    },
+    {
+      "id": "metrics-no_answer",
+      "group": "metrics",
+      "split": "development",
+      "slice": "no_answer",
+      "text": "What soil chemistry predicts phosphate uptake in wheat?",
+      "relevance": {}
+    },
+    {
+      "id": "tracing-literal",
+      "group": "tracing",
+      "split": "development",
+      "slice": "literal",
+      "text": "Monotonic trace duration transaction stage commit boundary",
+      "relevance": {
+        "discussion-028-a": 2,
+        "discussion-028-b": 1
+      }
+    },
+    {
+      "id": "tracing-paraphrase",
+      "group": "tracing",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "The demo records a few milliseconds for delivery. Does that include network travel and committing the whole transaction?",
+      "relevance": {
+        "discussion-028-a": 2,
+        "discussion-028-b": 1
+      }
+    },
+    {
+      "id": "tracing-distractor",
+      "group": "tracing",
+      "split": "development",
+      "slice": "distractor",
+      "text": "Can a local outbox exercise prove exactly-once behavior across external services?",
+      "relevance": {
+        "discussion-028-b": 2,
+        "discussion-028-a": 1
+      }
+    },
+    {
+      "id": "websocket-literal",
+      "group": "websocket",
+      "split": "development",
+      "slice": "literal",
+      "text": "Private Pusher channel subscription membership authorization",
+      "relevance": {
+        "discussion-029-a": 2,
+        "discussion-029-b": 1
+      }
+    },
+    {
+      "id": "websocket-paraphrase",
+      "group": "websocket",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "A user joins a closed chat's live feed by guessing its channel name. Where should access be checked?",
+      "relevance": {
+        "discussion-029-a": 2,
+        "discussion-029-b": 1
+      }
+    },
+    {
+      "id": "websocket-distractor",
+      "group": "websocket",
+      "split": "development",
+      "slice": "distractor",
+      "text": "The notification service is down after a chat send. How can the recipient still find the message?",
+      "relevance": {
+        "discussion-029-b": 2,
+        "discussion-029-a": 1
+      }
+    },
+    {
+      "id": "email-literal",
+      "group": "email",
+      "split": "development",
+      "slice": "literal",
+      "text": "Disabled SMTP contact mailto no false success",
+      "relevance": {
+        "discussion-030-a": 2,
+        "discussion-030-b": 1
+      }
+    },
+    {
+      "id": "email-paraphrase",
+      "group": "email",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "The demo has no mail provider. How do we let visitors contact me without pretending their form was sent?",
+      "relevance": {
+        "discussion-030-a": 2,
+        "discussion-030-b": 1
+      }
+    },
+    {
+      "id": "email-distractor",
+      "group": "email",
+      "split": "development",
+      "slice": "distractor",
+      "text": "Where should an enabled mail server password be configured?",
+      "relevance": {
+        "discussion-030-b": 2,
+        "discussion-030-a": 1
+      }
+    },
+    {
+      "id": "timeouts-literal",
+      "group": "timeouts",
+      "split": "development",
+      "slice": "literal",
+      "text": "HTTP timeout exponential backoff jitter idempotent retry",
+      "relevance": {
+        "discussion-031-a": 2,
+        "discussion-031-b": 1
+      }
+    },
+    {
+      "id": "timeouts-paraphrase",
+      "group": "timeouts",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "An external call can hang forever and then we retry it repeatedly. How do we put a ceiling on total waiting?",
+      "relevance": {
+        "discussion-031-a": 2,
+        "discussion-031-b": 1
+      }
+    },
+    {
+      "id": "timeouts-no_answer",
+      "group": "timeouts",
+      "split": "development",
+      "slice": "no_answer",
+      "text": "How can an MRI sequence reduce magnetic susceptibility artifacts?",
+      "relevance": {}
+    },
+    {
+      "id": "circuit-breaker-literal",
+      "group": "circuit-breaker",
+      "split": "development",
+      "slice": "literal",
+      "text": "Circuit breaker failing dependency cooldown fallback probe",
+      "relevance": {
+        "discussion-032-a": 2,
+        "discussion-032-b": 1
+      }
+    },
+    {
+      "id": "circuit-breaker-paraphrase",
+      "group": "circuit-breaker",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "The recommendation service is offline and every visitor keeps trying it. How can the app back off and still work?",
+      "relevance": {
+        "discussion-032-a": 2,
+        "discussion-032-b": 1
+      }
+    },
+    {
+      "id": "circuit-breaker-no_answer",
+      "group": "circuit-breaker",
+      "split": "development",
+      "slice": "no_answer",
+      "text": "Which star catalog measures galactic proper motion?",
+      "relevance": {}
+    },
+    {
+      "id": "artifact-literal",
+      "group": "artifact",
+      "split": "development",
+      "slice": "literal",
+      "text": "Embedding index model revision dimension pooling compatibility",
+      "relevance": {
+        "discussion-035-a": 2,
+        "discussion-035-b": 1
+      }
+    },
+    {
+      "id": "artifact-paraphrase",
+      "group": "artifact",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "We updated the encoder but kept the old stored vectors. How do we detect that the two no longer belong together?",
+      "relevance": {
+        "discussion-035-a": 2,
+        "discussion-035-b": 1
+      }
+    },
+    {
+      "id": "artifact-distractor",
+      "group": "artifact",
+      "split": "development",
+      "slice": "distractor",
+      "text": "How do we prove downloaded model files are the exact artifacts we evaluated?",
+      "relevance": {
+        "discussion-035-b": 2,
+        "discussion-035-a": 1
+      }
+    },
+    {
+      "id": "paraphrase-literal",
+      "group": "paraphrase",
+      "split": "development",
+      "slice": "literal",
+      "text": "Semantic paraphrase search wording meaning keyword overlap",
+      "relevance": {
+        "discussion-040-a": 2,
+        "discussion-040-b": 1
+      }
+    },
+    {
+      "id": "paraphrase-paraphrase",
+      "group": "paraphrase",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "People describe the same fault using entirely different words. How do we measure whether retrieval still finds it?",
+      "relevance": {
+        "discussion-040-a": 2,
+        "discussion-040-b": 1
+      }
+    },
+    {
+      "id": "paraphrase-distractor",
+      "group": "paraphrase",
+      "split": "development",
+      "slice": "distractor",
+      "text": "Does sentence similarity reliably distinguish two nearly identical error identifiers?",
+      "relevance": {
+        "discussion-040-b": 2,
+        "discussion-040-a": 1
+      }
+    },
+    {
+      "id": "recall-literal",
+      "group": "recall",
+      "split": "development",
+      "slice": "literal",
+      "text": "Recall@5 relevant documents release gate BM25 paraphrase",
+      "relevance": {
+        "discussion-043-a": 2,
+        "discussion-043-b": 1
+      }
+    },
+    {
+      "id": "recall-paraphrase",
+      "group": "recall",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "How many of the useful discussions appear among the first five search hits?",
+      "relevance": {
+        "discussion-043-a": 2,
+        "discussion-043-b": 1
+      }
+    },
+    {
+      "id": "recall-distractor",
+      "group": "recall",
+      "split": "development",
+      "slice": "distractor",
+      "text": "Can we tweak retrieval after seeing a failed test score and still call the same test untouched?",
+      "relevance": {
+        "discussion-043-b": 2,
+        "discussion-043-a": 1
+      }
+    },
+    {
+      "id": "ndcg-literal",
+      "group": "ndcg",
+      "split": "development",
+      "slice": "literal",
+      "text": "nDCG@5 graded relevance discount ideal ordering",
+      "relevance": {
+        "discussion-044-a": 2,
+        "discussion-044-b": 1
+      }
+    },
+    {
+      "id": "ndcg-paraphrase",
+      "group": "ndcg",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "Two searches find the same useful posts but one puts the best answer first. Which metric captures that difference?",
+      "relevance": {
+        "discussion-044-a": 2,
+        "discussion-044-b": 1
+      }
+    },
+    {
+      "id": "ndcg-distractor",
+      "group": "ndcg",
+      "split": "development",
+      "slice": "distractor",
+      "text": "Should automatically authored relevance labels be advertised as a human-reviewed benchmark?",
+      "relevance": {
+        "discussion-044-b": 2,
+        "discussion-044-a": 1
+      }
+    },
+    {
+      "id": "split-leakage-literal",
+      "group": "split-leakage",
+      "split": "development",
+      "slice": "literal",
+      "text": "Grouped query split leakage development calibration holdout",
+      "relevance": {
+        "discussion-045-a": 2,
+        "discussion-045-b": 1
+      }
+    },
+    {
+      "id": "split-leakage-paraphrase",
+      "group": "split-leakage",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "My test set contains rewrites of questions used for training. Why does that make the reported score too optimistic?",
+      "relevance": {
+        "discussion-045-a": 2,
+        "discussion-045-b": 1
+      }
+    },
+    {
+      "id": "split-leakage-distractor",
+      "group": "split-leakage",
+      "split": "development",
+      "slice": "distractor",
+      "text": "What evidence shows that the held-out data was fixed before selecting a threshold?",
+      "relevance": {
+        "discussion-045-b": 2,
+        "discussion-045-a": 1
+      }
+    },
+    {
+      "id": "telemetry-cap-literal",
+      "group": "telemetry-cap",
+      "split": "development",
+      "slice": "literal",
+      "text": "Forty search observations root row lock concurrent trim",
+      "relevance": {
+        "discussion-047-a": 2,
+        "discussion-047-b": 1
+      }
+    },
+    {
+      "id": "telemetry-cap-paraphrase",
+      "group": "telemetry-cap",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "Two tabs keep sending searches at once. How can their shared history stay within a fixed storage limit?",
+      "relevance": {
+        "discussion-047-a": 2,
+        "discussion-047-b": 1
+      }
+    },
+    {
+      "id": "telemetry-cap-no_answer",
+      "group": "telemetry-cap",
+      "split": "development",
+      "slice": "no_answer",
+      "text": "Which electrochemical cell measures lithium diffusion?",
+      "relevance": {}
+    },
+    {
+      "id": "responsive-literal",
+      "group": "responsive",
+      "split": "development",
+      "slice": "literal",
+      "text": "Responsive 320 390 768 1440 wrap identifiers controls",
+      "relevance": {
+        "discussion-049-a": 2,
+        "discussion-049-b": 1
+      }
+    },
+    {
+      "id": "responsive-paraphrase",
+      "group": "responsive",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "The dashboard looks fine on a laptop but long IDs push phone content offscreen. What should we test and wrap?",
+      "relevance": {
+        "discussion-049-a": 2,
+        "discussion-049-b": 1
+      }
+    },
+    {
+      "id": "responsive-distractor",
+      "group": "responsive",
+      "split": "development",
+      "slice": "distractor",
+      "text": "How does the interface show a changed state when the visitor has disabled animation?",
+      "relevance": {
+        "discussion-049-b": 2,
+        "discussion-049-a": 1
+      }
+    },
+    {
+      "id": "testing-races-literal",
+      "group": "testing-races",
+      "split": "development",
+      "slice": "literal",
+      "text": "MySQL concurrency tests separate connections unique constraints",
+      "relevance": {
+        "discussion-051-a": 2,
+        "discussion-051-b": 1
+      }
+    },
+    {
+      "id": "testing-races-paraphrase",
+      "group": "testing-races",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "Everything passes locally but duplicate submissions appear under real simultaneous requests. How do we test the actual database race?",
+      "relevance": {
+        "discussion-051-a": 2,
+        "discussion-051-b": 1
+      }
+    },
+    {
+      "id": "testing-races-no_answer",
+      "group": "testing-races",
+      "split": "development",
+      "slice": "no_answer",
+      "text": "How do glacier cores reveal prehistoric atmospheric carbon?",
+      "relevance": {}
+    },
+    {
+      "id": "unicode-literal",
+      "group": "unicode",
+      "split": "development",
+      "slice": "literal",
+      "text": "Unicode NFC CRLF normalization idempotency text hash",
+      "relevance": {
+        "discussion-056-a": 2,
+        "discussion-056-b": 1
+      }
+    },
+    {
+      "id": "unicode-paraphrase",
+      "group": "unicode",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "Two equivalent accented strings look identical but their bytes differ. How should an operation compare them?",
+      "relevance": {
+        "discussion-056-a": 2,
+        "discussion-056-b": 1
+      }
+    },
+    {
+      "id": "unicode-no_answer",
+      "group": "unicode",
+      "split": "development",
+      "slice": "no_answer",
+      "text": "How can a radio interferometer image a pulsar?",
+      "relevance": {}
+    },
+    {
+      "id": "timezones-literal",
+      "group": "timezones",
+      "split": "development",
+      "slice": "literal",
+      "text": "Aware UTC timestamp expiry timezone scheduled cleanup",
+      "relevance": {
+        "discussion-057-a": 2,
+        "discussion-057-b": 1
+      }
+    },
+    {
+      "id": "timezones-paraphrase",
+      "group": "timezones",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "The clock changes overnight and a local expiry time becomes ambiguous. How should a stored deadline be represented?",
+      "relevance": {
+        "discussion-057-a": 2,
+        "discussion-057-b": 1
+      }
+    },
+    {
+      "id": "timezones-no_answer",
+      "group": "timezones",
+      "split": "development",
+      "slice": "no_answer",
+      "text": "Which chromatography gradient separates peptide fragments?",
+      "relevance": {}
+    },
+    {
+      "id": "leases-literal",
+      "group": "leases",
+      "split": "development",
+      "slice": "literal",
+      "text": "Delivery lease fencing token stale attempt finalize",
+      "relevance": {
+        "discussion-059-a": 2,
+        "discussion-059-b": 1
+      }
+    },
+    {
+      "id": "leases-paraphrase",
+      "group": "leases",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "A worker pauses, its lease expires, and a replacement starts. How do we stop the old worker from updating the new attempt?",
+      "relevance": {
+        "discussion-059-a": 2,
+        "discussion-059-b": 1
+      }
+    },
+    {
+      "id": "leases-distractor",
+      "group": "leases",
+      "split": "development",
+      "slice": "distractor",
+      "text": "Does a lease expiry prove the previous process stopped doing work?",
+      "relevance": {
+        "discussion-059-b": 2,
+        "discussion-059-a": 1
+      }
+    },
+    {
+      "id": "receipt-literal",
+      "group": "receipt",
+      "split": "development",
+      "slice": "literal",
+      "text": "Unique destination receipt inbox effect source acknowledgement",
+      "relevance": {
+        "discussion-060-a": 2,
+        "discussion-060-b": 1
+      }
+    },
+    {
+      "id": "receipt-paraphrase",
+      "group": "receipt",
+      "split": "development",
+      "slice": "paraphrase",
+      "text": "The sender retries an already received event. Which durable record keeps the receiver from showing it twice?",
+      "relevance": {
+        "discussion-060-a": 2,
+        "discussion-060-b": 1
+      }
+    },
+    {
+      "id": "receipt-distractor",
+      "group": "receipt",
+      "split": "development",
+      "slice": "distractor",
+      "text": "Are repeating a client submission and retrying an event the same deduplication boundary?",
+      "relevance": {
+        "discussion-060-b": 2,
+        "discussion-060-a": 1
+      }
+    },
+    {
+      "id": "pg-sequence-literal",
+      "group": "pg-sequence",
+      "split": "calibration",
+      "slice": "literal",
+      "text": "PostgreSQL nextval sequence gaps transaction rollback",
+      "relevance": {
+        "discussion-v2-001-a": 2,
+        "discussion-v2-001-b": 1
+      }
+    },
+    {
+      "id": "pg-sequence-paraphrase",
+      "group": "pg-sequence",
+      "split": "calibration",
+      "slice": "paraphrase",
+      "text": "I canceled an insert but the next record skipped a number. Did the database lose a row?",
+      "relevance": {
+        "discussion-v2-001-a": 2,
+        "discussion-v2-001-b": 1
+      }
+    },
+    {
+      "id": "pg-sequence-no_answer",
+      "group": "pg-sequence",
+      "split": "calibration",
+      "slice": "no_answer",
+      "text": "Which sourdough hydration produces the lightest crust in a wood-fired oven?",
+      "relevance": {}
+    },
+    {
+      "id": "pg-advisory-literal",
+      "group": "pg-advisory",
+      "split": "calibration",
+      "slice": "literal",
+      "text": "PostgreSQL transaction advisory lock logical tenant scheduler key",
+      "relevance": {
+        "discussion-v2-002-a": 2,
+        "discussion-v2-002-b": 1
+      }
+    },
+    {
+      "id": "pg-advisory-paraphrase",
+      "group": "pg-advisory",
+      "split": "calibration",
+      "slice": "paraphrase",
+      "text": "Two schedulers race before there is any row to lock. How can they coordinate the same tenant's daily task?",
+      "relevance": {
+        "discussion-v2-002-a": 2,
+        "discussion-v2-002-b": 1
+      }
+    },
+    {
+      "id": "pg-advisory-distractor",
+      "group": "pg-advisory",
+      "split": "calibration",
+      "slice": "distractor",
+      "text": "Can a logical lock replace the database constraint that rejects duplicate jobs?",
+      "relevance": {
+        "discussion-v2-002-b": 2,
+        "discussion-v2-002-a": 1
+      }
+    },
+    {
+      "id": "pg-migration-literal",
+      "group": "pg-migration",
+      "split": "test",
+      "slice": "literal",
+      "text": "PostgreSQL nullable column bounded backfill not null constraint migration",
+      "relevance": {
+        "discussion-v2-003-a": 2,
+        "discussion-v2-003-b": 1
+      }
+    },
+    {
+      "id": "pg-migration-paraphrase",
+      "group": "pg-migration",
+      "split": "test",
+      "slice": "paraphrase",
+      "text": "We need a new mandatory field on a large live table without freezing requests. What rollout order is safe?",
+      "relevance": {
+        "discussion-v2-003-a": 2,
+        "discussion-v2-003-b": 1
+      }
+    },
+    {
+      "id": "pg-migration-distractor",
+      "group": "pg-migration",
+      "split": "test",
+      "slice": "distractor",
+      "text": "How can a stopped data backfill resume without starting the whole table again?",
+      "relevance": {
+        "discussion-v2-003-b": 2,
+        "discussion-v2-003-a": 1
+      }
+    },
+    {
+      "id": "pg-index-literal",
+      "group": "pg-index",
+      "split": "test",
+      "slice": "literal",
+      "text": "PostgreSQL create index concurrently non atomic migration invalid index",
+      "relevance": {
+        "discussion-v2-004-a": 2,
+        "discussion-v2-004-b": 1
+      }
+    },
+    {
+      "id": "pg-index-paraphrase",
+      "group": "pg-index",
+      "split": "test",
+      "slice": "paraphrase",
+      "text": "How can we add a lookup accelerator without stopping inserts into a busy table?",
+      "relevance": {
+        "discussion-v2-004-a": 2,
+        "discussion-v2-004-b": 1
+      }
+    },
+    {
+      "id": "pg-index-no_answer",
+      "group": "pg-index",
+      "split": "test",
+      "slice": "no_answer",
+      "text": "How should a violin bow contact point change for a soft harmonic?",
+      "relevance": {}
+    },
+    {
+      "id": "pg-pool-literal",
+      "group": "pg-pool",
+      "split": "test",
+      "slice": "literal",
+      "text": "PostgreSQL connection pool replica count capacity checkout timeout",
+      "relevance": {
+        "discussion-v2-005-a": 2,
+        "discussion-v2-005-b": 1
+      }
+    },
+    {
+      "id": "pg-pool-paraphrase",
+      "group": "pg-pool",
+      "split": "test",
+      "slice": "paraphrase",
+      "text": "Each replica works alone, but adding replicas exhausts database logins. How do I budget their connections?",
+      "relevance": {
+        "discussion-v2-005-a": 2,
+        "discussion-v2-005-b": 1
+      }
+    },
+    {
+      "id": "pg-pool-distractor",
+      "group": "pg-pool",
+      "split": "test",
+      "slice": "distractor",
+      "text": "Can a setting made on one database session be assumed to survive through a transaction pool?",
+      "relevance": {
+        "discussion-v2-005-b": 2,
+        "discussion-v2-005-a": 1
+      }
+    },
+    {
+      "id": "pg-notify-literal",
+      "group": "pg-notify",
+      "split": "calibration",
+      "slice": "literal",
+      "text": "PostgreSQL LISTEN NOTIFY reconnect durable job table",
+      "relevance": {
+        "discussion-v2-006-a": 2,
+        "discussion-v2-006-b": 1
+      }
+    },
+    {
+      "id": "pg-notify-paraphrase",
+      "group": "pg-notify",
+      "split": "calibration",
+      "slice": "paraphrase",
+      "text": "A worker disconnected and missed the database's wake-up message. How can it find the work anyway?",
+      "relevance": {
+        "discussion-v2-006-a": 2,
+        "discussion-v2-006-b": 1
+      }
+    },
+    {
+      "id": "pg-notify-distractor",
+      "group": "pg-notify",
+      "split": "calibration",
+      "slice": "distractor",
+      "text": "Should receiving a notification be treated as proof that the job effect committed?",
+      "relevance": {
+        "discussion-v2-006-b": 2,
+        "discussion-v2-006-a": 1
+      }
+    },
+    {
+      "id": "shard-unique-literal",
+      "group": "shard-unique",
+      "split": "calibration",
+      "slice": "literal",
+      "text": "Tenant shard local uniqueness stable routing idempotency",
+      "relevance": {
+        "discussion-v2-007-a": 2,
+        "discussion-v2-007-b": 1
+      }
+    },
+    {
+      "id": "shard-unique-paraphrase",
+      "group": "shard-unique",
+      "split": "calibration",
+      "slice": "paraphrase",
+      "text": "The same request lands on two database shards and gets created twice. What boundary did our unique index miss?",
+      "relevance": {
+        "discussion-v2-007-a": 2,
+        "discussion-v2-007-b": 1
+      }
+    },
+    {
+      "id": "shard-unique-no_answer",
+      "group": "shard-unique",
+      "split": "calibration",
+      "slice": "no_answer",
+      "text": "Which ocean current carries larval coral across the Pacific?",
+      "relevance": {}
+    },
+    {
+      "id": "read-replica-literal",
+      "group": "read-replica",
+      "split": "calibration",
+      "slice": "literal",
+      "text": "Replica lag read your writes primary receipt",
+      "relevance": {
+        "discussion-v2-008-a": 2,
+        "discussion-v2-008-b": 1
+      }
+    },
+    {
+      "id": "read-replica-paraphrase",
+      "group": "read-replica",
+      "split": "calibration",
+      "slice": "paraphrase",
+      "text": "The save succeeded, but a following read says nothing exists until later. Which database should that read use?",
+      "relevance": {
+        "discussion-v2-008-a": 2,
+        "discussion-v2-008-b": 1
+      }
+    },
+    {
+      "id": "read-replica-distractor",
+      "group": "read-replica",
+      "split": "calibration",
+      "slice": "distractor",
+      "text": "Can slow page latency alone tell us how far a read replica is behind?",
+      "relevance": {
+        "discussion-v2-008-b": 2,
+        "discussion-v2-008-a": 1
+      }
+    },
+    {
+      "id": "tls-ca-literal",
+      "group": "tls-ca",
+      "split": "test",
+      "slice": "literal",
+      "text": "Database TLS CA hostname verification certificate identity",
+      "relevance": {
+        "discussion-v2-009-a": 2,
+        "discussion-v2-009-b": 1
+      }
+    },
+    {
+      "id": "tls-ca-paraphrase",
+      "group": "tls-ca",
+      "split": "test",
+      "slice": "paraphrase",
+      "text": "The connection is encrypted, but how do we know the database at the other end is really ours?",
+      "relevance": {
+        "discussion-v2-009-a": 2,
+        "discussion-v2-009-b": 1
+      }
+    },
+    {
+      "id": "tls-ca-distractor",
+      "group": "tls-ca",
+      "split": "test",
+      "slice": "distractor",
+      "text": "What should happen if the database certificate names a different host?",
+      "relevance": {
+        "discussion-v2-009-b": 2,
+        "discussion-v2-009-a": 1
+      }
+    },
+    {
+      "id": "secret-rotation-literal",
+      "group": "secret-rotation",
+      "split": "test",
+      "slice": "literal",
+      "text": "Credential rotation overlap connection pool revoke old secret",
+      "relevance": {
+        "discussion-v2-010-a": 2,
+        "discussion-v2-010-b": 1
+      }
+    },
+    {
+      "id": "secret-rotation-paraphrase",
+      "group": "secret-rotation",
+      "split": "test",
+      "slice": "paraphrase",
+      "text": "How can we change a service password without dropping every request at once?",
+      "relevance": {
+        "discussion-v2-010-a": 2,
+        "discussion-v2-010-b": 1
+      }
+    },
+    {
+      "id": "secret-rotation-no_answer",
+      "group": "secret-rotation",
+      "split": "test",
+      "slice": "no_answer",
+      "text": "What lunar gravity assist minimizes a spacecraft's propellant use?",
+      "relevance": {}
+    },
+    {
+      "id": "cookie-cache-literal",
+      "group": "cookie-cache",
+      "split": "test",
+      "slice": "literal",
+      "text": "Personalized fragment session no store shared edge cache",
+      "relevance": {
+        "discussion-v2-011-a": 2,
+        "discussion-v2-011-b": 1
+      }
+    },
+    {
+      "id": "cookie-cache-paraphrase",
+      "group": "cookie-cache",
+      "split": "test",
+      "slice": "paraphrase",
+      "text": "Two visitors see the same URL, but their replies differ. How do we keep an edge cache from mixing their data?",
+      "relevance": {
+        "discussion-v2-011-a": 2,
+        "discussion-v2-011-b": 1
+      }
+    },
+    {
+      "id": "cookie-cache-distractor",
+      "group": "cookie-cache",
+      "split": "test",
+      "slice": "distractor",
+      "text": "Can a private error response be cached just because its text is generic?",
+      "relevance": {
+        "discussion-v2-011-b": 2,
+        "discussion-v2-011-a": 1
+      }
+    },
+    {
+      "id": "lazy-budget-literal",
+      "group": "lazy-budget",
+      "split": "calibration",
+      "slice": "literal",
+      "text": "Lazy browser model cold initial transfer Resource Timing warmup",
+      "relevance": {
+        "discussion-v2-012-a": 2,
+        "discussion-v2-012-b": 1
+      }
+    },
+    {
+      "id": "lazy-budget-paraphrase",
+      "group": "lazy-budget",
+      "split": "calibration",
+      "slice": "paraphrase",
+      "text": "Our demo looks tiny until the user clicks search and downloads a large model. How should we report those costs honestly?",
+      "relevance": {
+        "discussion-v2-012-a": 2,
+        "discussion-v2-012-b": 1
+      }
+    },
+    {
+      "id": "lazy-budget-distractor",
+      "group": "lazy-budget",
+      "split": "calibration",
+      "slice": "distractor",
+      "text": "Is the model ready as soon as its files finish downloading?",
+      "relevance": {
+        "discussion-v2-012-b": 2,
+        "discussion-v2-012-a": 1
+      }
+    },
+    {
+      "id": "html-namespace-literal",
+      "group": "html-namespace",
+      "split": "calibration",
+      "slice": "literal",
+      "text": "HTML5 sanitizer SVG MathML namespace mutation XSS allowlist",
+      "relevance": {
+        "discussion-v2-013-a": 2,
+        "discussion-v2-013-b": 1
+      }
+    },
+    {
+      "id": "html-namespace-paraphrase",
+      "group": "html-namespace",
+      "split": "calibration",
+      "slice": "paraphrase",
+      "text": "A filter removed obvious scripts, yet malformed markup becomes active when the browser reparses it. What should the sanitizer test?",
+      "relevance": {
+        "discussion-v2-013-a": 2,
+        "discussion-v2-013-b": 1
+      }
+    },
+    {
+      "id": "html-namespace-no_answer",
+      "group": "html-namespace",
+      "split": "calibration",
+      "slice": "no_answer",
+      "text": "How does a patient's blood oxygen affect anesthetic dosing?",
+      "relevance": {}
+    },
+    {
+      "id": "csp-worker-literal",
+      "group": "csp-worker",
+      "split": "calibration",
+      "slice": "literal",
+      "text": "Worker response CSP wasm unsafe eval worker src same origin",
+      "relevance": {
+        "discussion-v2-014-a": 2,
+        "discussion-v2-014-b": 1
+      }
+    },
+    {
+      "id": "csp-worker-paraphrase",
+      "group": "csp-worker",
+      "split": "calibration",
+      "slice": "paraphrase",
+      "text": "The small browser model needs to compile WebAssembly. Can we allow that without relaxing every page's script protection?",
+      "relevance": {
+        "discussion-v2-014-a": 2,
+        "discussion-v2-014-b": 1
+      }
+    },
+    {
+      "id": "csp-worker-distractor",
+      "group": "csp-worker",
+      "split": "calibration",
+      "slice": "distractor",
+      "text": "Does a worker creation failure always mean we must allow arbitrary JavaScript evaluation?",
+      "relevance": {
+        "discussion-v2-014-b": 2,
+        "discussion-v2-014-a": 1
+      }
+    },
+    {
+      "id": "samesite-nav-literal",
+      "group": "samesite-nav",
+      "split": "calibration",
+      "slice": "literal",
+      "text": "SameSite Lax top level GET navigation CSRF POST",
+      "relevance": {
+        "discussion-v2-015-a": 2,
+        "discussion-v2-015-b": 1
+      }
+    },
+    {
+      "id": "samesite-nav-paraphrase",
+      "group": "samesite-nav",
+      "split": "calibration",
+      "slice": "paraphrase",
+      "text": "A cookie is blocked on some cross-site requests but still sent when a link opens our site. Why is a destructive GET unsafe?",
+      "relevance": {
+        "discussion-v2-015-a": 2,
+        "discussion-v2-015-b": 1
+      }
+    },
+    {
+      "id": "samesite-nav-distractor",
+      "group": "samesite-nav",
+      "split": "calibration",
+      "slice": "distractor",
+      "text": "Could a crawler following a logout link unexpectedly end a visitor's session?",
+      "relevance": {
+        "discussion-v2-015-b": 2,
+        "discussion-v2-015-a": 1
+      }
+    },
+    {
+      "id": "upload-quota-literal",
+      "group": "upload-quota",
+      "split": "test",
+      "slice": "literal",
+      "text": "Concurrent upload storage quota atomic byte reservation",
+      "relevance": {
+        "discussion-v2-016-a": 2,
+        "discussion-v2-016-b": 1
+      }
+    },
+    {
+      "id": "upload-quota-paraphrase",
+      "group": "upload-quota",
+      "split": "test",
+      "slice": "paraphrase",
+      "text": "Two uploads each fit alone but together exceed the team's storage limit. How can the check survive a race?",
+      "relevance": {
+        "discussion-v2-016-a": 2,
+        "discussion-v2-016-b": 1
+      }
+    },
+    {
+      "id": "upload-quota-no_answer",
+      "group": "upload-quota",
+      "split": "test",
+      "slice": "no_answer",
+      "text": "Which tax deduction applies to my personal house purchase?",
+      "relevance": {}
+    },
+    {
+      "id": "media-sniff-literal",
+      "group": "media-sniff",
+      "split": "test",
+      "slice": "literal",
+      "text": "Private upload nosniff content disposition unsafe MIME image dimensions",
+      "relevance": {
+        "discussion-v2-017-a": 2,
+        "discussion-v2-017-b": 1
+      }
+    },
+    {
+      "id": "media-sniff-paraphrase",
+      "group": "media-sniff",
+      "split": "test",
+      "slice": "paraphrase",
+      "text": "A user renamed executable HTML as an image. How do we serve it without letting the browser guess an active type?",
+      "relevance": {
+        "discussion-v2-017-a": 2,
+        "discussion-v2-017-b": 1
+      }
+    },
+    {
+      "id": "media-sniff-distractor",
+      "group": "media-sniff",
+      "split": "test",
+      "slice": "distractor",
+      "text": "Can a tiny compressed image still exhaust memory when decoded?",
+      "relevance": {
+        "discussion-v2-017-b": 2,
+        "discussion-v2-017-a": 1
+      }
+    },
+    {
+      "id": "cursor-sign-literal",
+      "group": "cursor-sign",
+      "split": "test",
+      "slice": "literal",
+      "text": "Signed pagination cursor tenant scope membership revocation",
+      "relevance": {
+        "discussion-v2-018-a": 2,
+        "discussion-v2-018-b": 1
+      }
+    },
+    {
+      "id": "cursor-sign-paraphrase",
+      "group": "cursor-sign",
+      "split": "test",
+      "slice": "paraphrase",
+      "text": "If a page token has a valid signature, do we still need to check who may read the rows?",
+      "relevance": {
+        "discussion-v2-018-a": 2,
+        "discussion-v2-018-b": 1
+      }
+    },
+    {
+      "id": "cursor-sign-distractor",
+      "group": "cursor-sign",
+      "split": "test",
+      "slice": "distractor",
+      "text": "Should an old cursor keep working after the user loses membership?",
+      "relevance": {
+        "discussion-v2-018-b": 2,
+        "discussion-v2-018-a": 1
+      }
+    },
+    {
+      "id": "clock-lease-literal",
+      "group": "clock-lease",
+      "split": "test",
+      "slice": "literal",
+      "text": "Distributed lease UTC persisted deadline monotonic duration claim token",
+      "relevance": {
+        "discussion-v2-019-a": 2,
+        "discussion-v2-019-b": 1
+      }
+    },
+    {
+      "id": "clock-lease-paraphrase",
+      "group": "clock-lease",
+      "split": "test",
+      "slice": "paraphrase",
+      "text": "A second machine cannot understand the first worker's local timer. What kind of deadline should they share?",
+      "relevance": {
+        "discussion-v2-019-a": 2,
+        "discussion-v2-019-b": 1
+      }
+    },
+    {
+      "id": "clock-lease-no_answer",
+      "group": "clock-lease",
+      "split": "test",
+      "slice": "no_answer",
+      "text": "How can an acoustic piano's hammer felt be voiced more softly?",
+      "relevance": {}
+    },
+    {
+      "id": "reset-lease-literal",
+      "group": "reset-lease",
+      "split": "calibration",
+      "slice": "literal",
+      "text": "Daily sandbox reset shared database lease UTC bounded cleanup",
+      "relevance": {
+        "discussion-v2-020-a": 2,
+        "discussion-v2-020-b": 1
+      }
+    },
+    {
+      "id": "reset-lease-paraphrase",
+      "group": "reset-lease",
+      "split": "calibration",
+      "slice": "paraphrase",
+      "text": "Several replicas wake up at midnight. How do we stop each one from resetting the same guest data?",
+      "relevance": {
+        "discussion-v2-020-a": 2,
+        "discussion-v2-020-b": 1
+      }
+    },
+    {
+      "id": "reset-lease-distractor",
+      "group": "reset-lease",
+      "split": "calibration",
+      "slice": "distractor",
+      "text": "If cleanup needs another batch, must the guest sandbox be reset again?",
+      "relevance": {
+        "discussion-v2-020-b": 2,
+        "discussion-v2-020-a": 1
+      }
+    },
+    {
+      "id": "rollback-shape-literal",
+      "group": "rollback-shape",
+      "split": "test",
+      "slice": "literal",
+      "text": "Additive schema binary rollback feature flag session persistence",
+      "relevance": {
+        "discussion-v2-021-a": 2,
+        "discussion-v2-021-b": 1
+      }
+    },
+    {
+      "id": "rollback-shape-paraphrase",
+      "group": "rollback-shape",
+      "split": "test",
+      "slice": "paraphrase",
+      "text": "We saved yesterday's release, but how do we know it can still run against today's database changes?",
+      "relevance": {
+        "discussion-v2-021-a": 2,
+        "discussion-v2-021-b": 1
+      }
+    },
+    {
+      "id": "rollback-shape-distractor",
+      "group": "rollback-shape",
+      "split": "test",
+      "slice": "distractor",
+      "text": "Does retaining a release identifier prove that sessions and uploaded files survive rollback?",
+      "relevance": {
+        "discussion-v2-021-b": 2,
+        "discussion-v2-021-a": 1
+      }
+    },
+    {
+      "id": "metric-window-literal",
+      "group": "metric-window",
+      "split": "calibration",
+      "slice": "literal",
+      "text": "Bounded monitoring newest forty observations client server latency scope",
+      "relevance": {
+        "discussion-v2-022-a": 2,
+        "discussion-v2-022-b": 1
+      }
+    },
+    {
+      "id": "metric-window-paraphrase",
+      "group": "metric-window",
+      "split": "calibration",
+      "slice": "paraphrase",
+      "text": "A dashboard discards old samples but calls its totals all-time. What should those charts actually say?",
+      "relevance": {
+        "discussion-v2-022-a": 2,
+        "discussion-v2-022-b": 1
+      }
+    },
+    {
+      "id": "metric-window-no_answer",
+      "group": "metric-window",
+      "split": "calibration",
+      "slice": "no_answer",
+      "text": "What geological process created the mineral bands in an agate?",
+      "relevance": {}
+    },
+    {
+      "id": "confidence-shift-literal",
+      "group": "confidence-shift",
+      "split": "test",
+      "slice": "literal",
+      "text": "Relevance confidence calibration dataset shift cosine probability threshold",
+      "relevance": {
+        "discussion-v2-023-a": 2,
+        "discussion-v2-023-b": 1
+      }
+    },
+    {
+      "id": "confidence-shift-paraphrase",
+      "group": "confidence-shift",
+      "split": "test",
+      "slice": "paraphrase",
+      "text": "Our embedding model stayed the same, but its confidence became unreliable on new kinds of questions. What changed?",
+      "relevance": {
+        "discussion-v2-023-a": 2,
+        "discussion-v2-023-b": 1
+      }
+    },
+    {
+      "id": "confidence-shift-distractor",
+      "group": "confidence-shift",
+      "split": "test",
+      "slice": "distractor",
+      "text": "Does a cosine similarity of 0.7 mean the answer is seventy percent likely to be right?",
+      "relevance": {
+        "discussion-v2-023-b": 2,
+        "discussion-v2-023-a": 1
+      }
+    },
+    {
+      "id": "link-expansion-literal",
+      "group": "link-expansion",
+      "split": "calibration",
+      "slice": "literal",
+      "text": "Explicit related discussion links retrieval expansion unseen holdout",
+      "relevance": {
+        "discussion-v2-024-a": 2,
+        "discussion-v2-024-b": 1
+      }
+    },
+    {
+      "id": "link-expansion-paraphrase",
+      "group": "link-expansion",
+      "split": "calibration",
+      "slice": "paraphrase",
+      "text": "The closest post answers the question, but search misses the companion explanation. How can a known relation help without hiding the ranking rule?",
+      "relevance": {
+        "discussion-v2-024-a": 2,
+        "discussion-v2-024-b": 1
+      }
+    },
+    {
+      "id": "link-expansion-distractor",
+      "group": "link-expansion",
+      "split": "calibration",
+      "slice": "distractor",
+      "text": "Can the retrieval policy be changed repeatedly after reading the same held-out failures?",
+      "relevance": {
+        "discussion-v2-024-b": 2,
+        "discussion-v2-024-a": 1
+      }
+    }
+  ]
+}

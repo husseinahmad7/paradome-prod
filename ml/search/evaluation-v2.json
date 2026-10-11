@@ -1,0 +1,1550 @@
+{
+  "status": "frozen",
+  "version": "search-evaluation-v2",
+  "retriever_name": "MiniLM q8 + related threads",
+  "contract": {
+    "model_id": "Xenova/all-MiniLM-L6-v2",
+    "revision": "751bff37182d3f1213fa05d7196b954e230abad9",
+    "runtime_version": "4.3.1",
+    "index_version": "minilm-q8-discussions-v2",
+    "dimension": 384,
+    "pooling": "mean-l2",
+    "dtype": "q8"
+  },
+  "corpus_sha256": "74e9c139d6244979825f36b30e94467e7e8600cf01563f26ed42f0d34cbd8586",
+  "index_sha256": "80da20706ff847fc6351c7cd383409c0d58701952f33e08d5a4fd7a124c76b7e",
+  "provenance": {
+    "version": "discussions-v2",
+    "language": "en",
+    "created": "2026-10-10",
+    "origin": "AI-authored fictional technical discussions; no production posts or visitor data.",
+    "labels": "Author-assigned: 2 direct answer, 1 supporting context, 0 unjudged/unrelated. No independent human review is claimed.",
+    "limitations": "AI-authored English fixture, public paired-thread links and sparse pair judgements can favor relation expansion. No independent human review or production guarantee.",
+    "split_policy": "v1 development retained; 24 newly authored families hash-ordered into 12 calibration and 12 test groups before encoding. No v1 calibration/test query reused."
+  },
+  "frozen": {
+    "version": "discussions-v2",
+    "groups": {
+      "development": [
+        "artifact",
+        "atomic-outbox",
+        "cache-stampede",
+        "circuit-breaker",
+        "csp",
+        "csrf",
+        "db-pool",
+        "db-tls",
+        "email",
+        "heartbeat",
+        "leases",
+        "logging",
+        "lost-ack",
+        "metrics",
+        "migration",
+        "ndcg",
+        "object-access",
+        "optimistic-lock",
+        "pagination",
+        "paraphrase",
+        "password",
+        "private-cache",
+        "private-files",
+        "recall",
+        "receipt",
+        "replay-key",
+        "responsive",
+        "session-expiry",
+        "split-leakage",
+        "telemetry-cap",
+        "testing-races",
+        "timeouts",
+        "timezones",
+        "tracing",
+        "unicode",
+        "websocket"
+      ],
+      "calibration": [
+        "csp-worker",
+        "html-namespace",
+        "lazy-budget",
+        "link-expansion",
+        "metric-window",
+        "pg-advisory",
+        "pg-notify",
+        "pg-sequence",
+        "read-replica",
+        "reset-lease",
+        "samesite-nav",
+        "shard-unique"
+      ],
+      "test": [
+        "clock-lease",
+        "confidence-shift",
+        "cookie-cache",
+        "cursor-sign",
+        "media-sniff",
+        "pg-index",
+        "pg-migration",
+        "pg-pool",
+        "rollback-shape",
+        "secret-rotation",
+        "tls-ca",
+        "upload-quota"
+      ]
+    },
+    "sha256": {
+      "corpus-v2.json": "74e9c139d6244979825f36b30e94467e7e8600cf01563f26ed42f0d34cbd8586",
+      "queries-v2.json": "e557adfaa234fd2b85dfa1b4a0a576c14b896d50f43e0453c9c3db0660441b7b"
+    },
+    "policy": {
+      "retriever": "cosine-related-v2",
+      "expand": "Explicit related_ids after each leading unvisited discussion, capped at five, stable cosine/ID order. No query labels at runtime.",
+      "confidence_features": [
+        "top cosine",
+        "margin to next unrelated group"
+      ],
+      "minimum_recall_at_5": 0.85,
+      "require_paraphrase_improvement_over_bm25": true
+    },
+    "development_selection": "v1 development: plain cosine .782609, public sibling expansion .951087; lexical RRF did not improve over expansion."
+  },
+  "policy_freeze_sha256": "7ccb0c4041526469bac8c86b708874ae0e5ab451d5eebfc1cbd635a77484e64d",
+  "policy": "Raw cosine orders leading discussions; explicit public related_ids expand supporting threads, capped at five. Confidence uses the unrelated-runner margin. Query relevance labels are never retrieval inputs. Ranking is measured before abstention; no-answer queries are excluded. Development/calibration policy froze before new test groups were ranked.",
+  "splits": {
+    "development": {
+      "queries": 108,
+      "semantic": {
+        "answerable_queries": 92,
+        "recall_at_5": 0.9565217391304348,
+        "ndcg_at_5": 0.8827172635723343
+      },
+      "cosine": {
+        "answerable_queries": 92,
+        "recall_at_5": 0.8152173913043478,
+        "ndcg_at_5": 0.8199941897448306
+      },
+      "bm25": {
+        "answerable_queries": 92,
+        "recall_at_5": 0.6413043478260869,
+        "ndcg_at_5": 0.6889442476085703
+      },
+      "operating_point": {
+        "precision": 0.9714285714285714,
+        "accepted": 70,
+        "coverage": 0.6481481481481481,
+        "f1": 0.9189189189189189,
+        "no_answer_count": 16,
+        "no_answer_rejection_rate": 1.0
+      },
+      "expected_calibration_error": 0.060841089419504724,
+      "brier_score": 0.060118230465706836,
+      "bins": [
+        {
+          "lower": 0.0,
+          "count": 8,
+          "mean_confidence": 0.05612448142581142,
+          "relevance_rate": 0
+        },
+        {
+          "lower": 0.1,
+          "count": 5,
+          "mean_confidence": 0.12742086399071365,
+          "relevance_rate": 0
+        },
+        {
+          "lower": 0.2,
+          "count": 5,
+          "mean_confidence": 0.23913504542302014,
+          "relevance_rate": 0.2
+        },
+        {
+          "lower": 0.3,
+          "count": 6,
+          "mean_confidence": 0.35982693807662725,
+          "relevance_rate": 0.16666666666666666
+        },
+        {
+          "lower": 0.4,
+          "count": 5,
+          "mean_confidence": 0.4406621451799174,
+          "relevance_rate": 0.4
+        },
+        {
+          "lower": 0.5,
+          "count": 6,
+          "mean_confidence": 0.5317105050253563,
+          "relevance_rate": 0.5
+        },
+        {
+          "lower": 0.6,
+          "count": 1,
+          "mean_confidence": 0.654410097969567,
+          "relevance_rate": 1
+        },
+        {
+          "lower": 0.7,
+          "count": 6,
+          "mean_confidence": 0.7417796450832748,
+          "relevance_rate": 0.6666666666666666
+        },
+        {
+          "lower": 0.8,
+          "count": 9,
+          "mean_confidence": 0.8457106234991683,
+          "relevance_rate": 1
+        },
+        {
+          "lower": 0.9,
+          "count": 57,
+          "mean_confidence": 0.9727779874862755,
+          "relevance_rate": 1
+        }
+      ]
+    },
+    "calibration": {
+      "queries": 36,
+      "semantic": {
+        "answerable_queries": 32,
+        "recall_at_5": 0.953125,
+        "ndcg_at_5": 0.8750557474060237
+      },
+      "cosine": {
+        "answerable_queries": 32,
+        "recall_at_5": 0.875,
+        "ndcg_at_5": 0.8473036122129189
+      },
+      "bm25": {
+        "answerable_queries": 32,
+        "recall_at_5": 0.78125,
+        "ndcg_at_5": 0.8267962102146612
+      },
+      "operating_point": {
+        "precision": 0.9166666666666666,
+        "accepted": 24,
+        "coverage": 0.6666666666666666,
+        "f1": 0.8799999999999999,
+        "no_answer_count": 4,
+        "no_answer_rejection_rate": 1.0
+      },
+      "expected_calibration_error": 0.1201063210880029,
+      "brier_score": 0.11766356105289755,
+      "bins": [
+        {
+          "lower": 0.0,
+          "count": 2,
+          "mean_confidence": 0.05635071908406393,
+          "relevance_rate": 0
+        },
+        {
+          "lower": 0.1,
+          "count": 2,
+          "mean_confidence": 0.12090782276426049,
+          "relevance_rate": 0
+        },
+        {
+          "lower": 0.2,
+          "count": 1,
+          "mean_confidence": 0.2951704220556289,
+          "relevance_rate": 1
+        },
+        {
+          "lower": 0.3,
+          "count": 0,
+          "mean_confidence": null,
+          "relevance_rate": null
+        },
+        {
+          "lower": 0.4,
+          "count": 1,
+          "mean_confidence": 0.4562302784004435,
+          "relevance_rate": 0
+        },
+        {
+          "lower": 0.5,
+          "count": 3,
+          "mean_confidence": 0.5480044977866305,
+          "relevance_rate": 0.6666666666666666
+        },
+        {
+          "lower": 0.6,
+          "count": 3,
+          "mean_confidence": 0.6620870419382829,
+          "relevance_rate": 0.3333333333333333
+        },
+        {
+          "lower": 0.7,
+          "count": 5,
+          "mean_confidence": 0.7689240809559628,
+          "relevance_rate": 0.8
+        },
+        {
+          "lower": 0.8,
+          "count": 4,
+          "mean_confidence": 0.8463429175256805,
+          "relevance_rate": 1
+        },
+        {
+          "lower": 0.9,
+          "count": 15,
+          "mean_confidence": 0.9797330041036146,
+          "relevance_rate": 0.9333333333333333
+        }
+      ]
+    },
+    "test": {
+      "queries": 36,
+      "semantic": {
+        "answerable_queries": 32,
+        "recall_at_5": 0.9375,
+        "ndcg_at_5": 0.8373615637853548
+      },
+      "cosine": {
+        "answerable_queries": 32,
+        "recall_at_5": 0.78125,
+        "ndcg_at_5": 0.8022565168759193
+      },
+      "bm25": {
+        "answerable_queries": 32,
+        "recall_at_5": 0.6875,
+        "ndcg_at_5": 0.7375381056141375
+      },
+      "operating_point": {
+        "precision": 0.8421052631578947,
+        "accepted": 19,
+        "coverage": 0.5277777777777778,
+        "f1": 0.744186046511628,
+        "no_answer_count": 4,
+        "no_answer_rejection_rate": 1.0
+      },
+      "expected_calibration_error": 0.1619228524851927,
+      "brier_score": 0.14401961531050994,
+      "bins": [
+        {
+          "lower": 0.0,
+          "count": 4,
+          "mean_confidence": 0.054890363885618215,
+          "relevance_rate": 0
+        },
+        {
+          "lower": 0.1,
+          "count": 0,
+          "mean_confidence": null,
+          "relevance_rate": null
+        },
+        {
+          "lower": 0.2,
+          "count": 1,
+          "mean_confidence": 0.281609929254287,
+          "relevance_rate": 0
+        },
+        {
+          "lower": 0.3,
+          "count": 2,
+          "mean_confidence": 0.3772993397035659,
+          "relevance_rate": 1
+        },
+        {
+          "lower": 0.4,
+          "count": 4,
+          "mean_confidence": 0.45158198096236185,
+          "relevance_rate": 0.25
+        },
+        {
+          "lower": 0.5,
+          "count": 3,
+          "mean_confidence": 0.5517805730143277,
+          "relevance_rate": 0.6666666666666666
+        },
+        {
+          "lower": 0.6,
+          "count": 3,
+          "mean_confidence": 0.6655130334862336,
+          "relevance_rate": 1
+        },
+        {
+          "lower": 0.7,
+          "count": 1,
+          "mean_confidence": 0.754465739945427,
+          "relevance_rate": 0
+        },
+        {
+          "lower": 0.8,
+          "count": 5,
+          "mean_confidence": 0.8542293467178749,
+          "relevance_rate": 0.8
+        },
+        {
+          "lower": 0.9,
+          "count": 13,
+          "mean_confidence": 0.9925069543226728,
+          "relevance_rate": 0.9230769230769231
+        }
+      ]
+    }
+  },
+  "test_slices": {
+    "literal": {
+      "semantic": {
+        "answerable_queries": 12,
+        "recall_at_5": 0.9583333333333334,
+        "ndcg_at_5": 0.8873391171275388
+      },
+      "cosine": {
+        "answerable_queries": 12,
+        "recall_at_5": 0.875,
+        "ndcg_at_5": 0.8707647412706355
+      },
+      "bm25": {
+        "answerable_queries": 12,
+        "recall_at_5": 0.875,
+        "ndcg_at_5": 0.9475437726113033
+      }
+    },
+    "paraphrase": {
+      "semantic": {
+        "answerable_queries": 12,
+        "recall_at_5": 0.9166666666666666,
+        "ndcg_at_5": 0.7525968215054775
+      },
+      "cosine": {
+        "answerable_queries": 12,
+        "recall_at_5": 0.6666666666666666,
+        "ndcg_at_5": 0.6967281184141568
+      },
+      "bm25": {
+        "answerable_queries": 12,
+        "recall_at_5": 0.4583333333333333,
+        "ndcg_at_5": 0.47791858725039993
+      }
+    },
+    "distractor": {
+      "semantic": {
+        "answerable_queries": 8,
+        "recall_at_5": 0.9375,
+        "ndcg_at_5": 0.8895423471918948
+      },
+      "cosine": {
+        "answerable_queries": 8,
+        "recall_at_5": 0.8125,
+        "ndcg_at_5": 0.8577867779764883
+      },
+      "bm25": {
+        "answerable_queries": 8,
+        "recall_at_5": 0.75,
+        "ndcg_at_5": 0.8119588826639949
+      }
+    }
+  },
+  "threshold": 0.728,
+  "gate": {
+    "passed": true,
+    "minimum_recall_at_5": 0.85,
+    "requires_paraphrase_improvement": true,
+    "calibration_qualified": true
+  },
+  "latency": {
+    "scope": "Offline host evidence, not browser or Wasmer latency; stdlib ranking and Node CPU q8.",
+    "encoder_runtime": "Transformers.js 4.3.1 / ONNX Runtime Node CPU, q8 artifact",
+    "model_load_ms": 70977.13140000001,
+    "query_embedding": {
+      "count": 180,
+      "median_ms": 22.869,
+      "p95_ms": 147.608
+    },
+    "semantic_rank": {
+      "count": 180,
+      "median_ms": 11.406,
+      "p95_ms": 58.333
+    },
+    "bm25_rank": {
+      "count": 180,
+      "median_ms": 0.677,
+      "p95_ms": 6.497
+    }
+  },
+  "failure_examples": [
+    {
+      "query_id": "pg-migration-literal",
+      "query": "PostgreSQL nullable column bounded backfill not null constraint migration",
+      "relevance": {
+        "discussion-v2-003-a": 2,
+        "discussion-v2-003-b": 1
+      },
+      "semantic_ids": [
+        "discussion-v2-001-a",
+        "discussion-v2-001-b",
+        "discussion-023-a",
+        "discussion-023-b",
+        "discussion-v2-003-a"
+      ],
+      "cosine_ids": [
+        "discussion-v2-001-a",
+        "discussion-023-a",
+        "discussion-v2-003-a",
+        "discussion-v2-002-a",
+        "discussion-v2-021-a"
+      ],
+      "bm25_ids": [
+        "discussion-v2-003-a",
+        "discussion-023-b",
+        "discussion-v2-003-b",
+        "discussion-023-a",
+        "discussion-v2-021-a"
+      ],
+      "confidence": 0.4663972276787648,
+      "accepted": false
+    },
+    {
+      "query_id": "pg-migration-paraphrase",
+      "query": "We need a new mandatory field on a large live table without freezing requests. What rollout order is safe?",
+      "relevance": {
+        "discussion-v2-003-a": 2,
+        "discussion-v2-003-b": 1
+      },
+      "semantic_ids": [
+        "discussion-023-a",
+        "discussion-023-b",
+        "discussion-v2-021-a",
+        "discussion-v2-021-b",
+        "discussion-v2-003-a"
+      ],
+      "cosine_ids": [
+        "discussion-023-a",
+        "discussion-v2-021-a",
+        "discussion-v2-003-a",
+        "discussion-003-b",
+        "discussion-v2-001-a"
+      ],
+      "bm25_ids": [
+        "discussion-v2-004-a",
+        "discussion-003-a",
+        "discussion-023-a",
+        "discussion-008-a",
+        "discussion-019-a"
+      ],
+      "confidence": 0.879977078118331,
+      "accepted": true
+    },
+    {
+      "query_id": "pg-migration-distractor",
+      "query": "How can a stopped data backfill resume without starting the whole table again?",
+      "relevance": {
+        "discussion-v2-003-b": 2,
+        "discussion-v2-003-a": 1
+      },
+      "semantic_ids": [
+        "discussion-v2-006-b",
+        "discussion-v2-006-a",
+        "discussion-v2-001-a",
+        "discussion-v2-001-b",
+        "discussion-v2-003-b"
+      ],
+      "cosine_ids": [
+        "discussion-v2-006-b",
+        "discussion-v2-001-a",
+        "discussion-v2-003-b",
+        "discussion-v2-001-b",
+        "discussion-v2-021-a"
+      ],
+      "bm25_ids": [
+        "discussion-v2-020-b",
+        "discussion-v2-006-a",
+        "discussion-v2-003-b",
+        "discussion-016-b",
+        "discussion-007-b"
+      ],
+      "confidence": 0.41843321925854443,
+      "accepted": false
+    },
+    {
+      "query_id": "tls-ca-paraphrase",
+      "query": "The connection is encrypted, but how do we know the database at the other end is really ours?",
+      "relevance": {
+        "discussion-v2-009-a": 2,
+        "discussion-v2-009-b": 1
+      },
+      "semantic_ids": [
+        "discussion-022-a",
+        "discussion-022-b",
+        "discussion-v2-009-a",
+        "discussion-v2-009-b",
+        "discussion-v2-010-a"
+      ],
+      "cosine_ids": [
+        "discussion-022-a",
+        "discussion-022-b",
+        "discussion-v2-009-a",
+        "discussion-v2-010-a",
+        "discussion-021-a"
+      ],
+      "bm25_ids": [
+        "discussion-022-b",
+        "discussion-021-b",
+        "discussion-021-a",
+        "discussion-v2-005-a",
+        "discussion-022-a"
+      ],
+      "confidence": 0.9894612620354087,
+      "accepted": true
+    },
+    {
+      "query_id": "secret-rotation-paraphrase",
+      "query": "How can we change a service password without dropping every request at once?",
+      "relevance": {
+        "discussion-v2-010-a": 2,
+        "discussion-v2-010-b": 1
+      },
+      "semantic_ids": [
+        "discussion-013-a",
+        "discussion-013-b",
+        "discussion-v2-010-a",
+        "discussion-v2-010-b",
+        "discussion-002-b"
+      ],
+      "cosine_ids": [
+        "discussion-013-a",
+        "discussion-v2-010-a",
+        "discussion-002-b",
+        "discussion-013-b",
+        "discussion-022-b"
+      ],
+      "bm25_ids": [
+        "discussion-013-a",
+        "discussion-051-b",
+        "discussion-013-b",
+        "discussion-003-a",
+        "discussion-021-b"
+      ],
+      "confidence": 0.754465739945427,
+      "accepted": true
+    },
+    {
+      "query_id": "clock-lease-paraphrase",
+      "query": "A second machine cannot understand the first worker's local timer. What kind of deadline should they share?",
+      "relevance": {
+        "discussion-v2-019-a": 2,
+        "discussion-v2-019-b": 1
+      },
+      "semantic_ids": [
+        "discussion-057-b",
+        "discussion-057-a",
+        "discussion-031-b",
+        "discussion-031-a",
+        "discussion-v2-019-a"
+      ],
+      "cosine_ids": [
+        "discussion-057-b",
+        "discussion-031-b",
+        "discussion-057-a",
+        "discussion-v2-019-a",
+        "discussion-v2-019-b"
+      ],
+      "bm25_ids": [
+        "discussion-v2-019-a",
+        "discussion-v2-014-b",
+        "discussion-v2-016-b",
+        "discussion-031-b",
+        "discussion-v2-012-b"
+      ],
+      "confidence": 0.47958587603490366,
+      "accepted": false
+    }
+  ],
+  "test_predictions": [
+    {
+      "query_id": "pg-migration-literal",
+      "semantic_ids": [
+        "discussion-v2-001-a",
+        "discussion-v2-001-b",
+        "discussion-023-a",
+        "discussion-023-b",
+        "discussion-v2-003-a"
+      ],
+      "cosine_ids": [
+        "discussion-v2-001-a",
+        "discussion-023-a",
+        "discussion-v2-003-a",
+        "discussion-v2-002-a",
+        "discussion-v2-021-a"
+      ],
+      "bm25_ids": [
+        "discussion-v2-003-a",
+        "discussion-023-b",
+        "discussion-v2-003-b",
+        "discussion-023-a",
+        "discussion-v2-021-a"
+      ],
+      "confidence": 0.4663972276787648
+    },
+    {
+      "query_id": "pg-migration-paraphrase",
+      "semantic_ids": [
+        "discussion-023-a",
+        "discussion-023-b",
+        "discussion-v2-021-a",
+        "discussion-v2-021-b",
+        "discussion-v2-003-a"
+      ],
+      "cosine_ids": [
+        "discussion-023-a",
+        "discussion-v2-021-a",
+        "discussion-v2-003-a",
+        "discussion-003-b",
+        "discussion-v2-001-a"
+      ],
+      "bm25_ids": [
+        "discussion-v2-004-a",
+        "discussion-003-a",
+        "discussion-023-a",
+        "discussion-008-a",
+        "discussion-019-a"
+      ],
+      "confidence": 0.879977078118331
+    },
+    {
+      "query_id": "pg-migration-distractor",
+      "semantic_ids": [
+        "discussion-v2-006-b",
+        "discussion-v2-006-a",
+        "discussion-v2-001-a",
+        "discussion-v2-001-b",
+        "discussion-v2-003-b"
+      ],
+      "cosine_ids": [
+        "discussion-v2-006-b",
+        "discussion-v2-001-a",
+        "discussion-v2-003-b",
+        "discussion-v2-001-b",
+        "discussion-v2-021-a"
+      ],
+      "bm25_ids": [
+        "discussion-v2-020-b",
+        "discussion-v2-006-a",
+        "discussion-v2-003-b",
+        "discussion-016-b",
+        "discussion-007-b"
+      ],
+      "confidence": 0.41843321925854443
+    },
+    {
+      "query_id": "pg-index-literal",
+      "semantic_ids": [
+        "discussion-v2-004-a",
+        "discussion-v2-004-b",
+        "discussion-v2-001-a",
+        "discussion-v2-001-b",
+        "discussion-v2-002-a"
+      ],
+      "cosine_ids": [
+        "discussion-v2-004-a",
+        "discussion-v2-004-b",
+        "discussion-v2-001-a",
+        "discussion-v2-002-a",
+        "discussion-v2-007-a"
+      ],
+      "bm25_ids": [
+        "discussion-v2-004-a",
+        "discussion-023-b",
+        "discussion-v2-004-b",
+        "discussion-035-a",
+        "discussion-v2-003-b"
+      ],
+      "confidence": 0.989788806014094
+    },
+    {
+      "query_id": "pg-index-paraphrase",
+      "semantic_ids": [
+        "discussion-v2-004-a",
+        "discussion-v2-004-b",
+        "discussion-v2-001-a",
+        "discussion-v2-001-b",
+        "discussion-047-a"
+      ],
+      "cosine_ids": [
+        "discussion-v2-004-a",
+        "discussion-v2-001-a",
+        "discussion-v2-004-b",
+        "discussion-047-a",
+        "discussion-v2-006-b"
+      ],
+      "bm25_ids": [
+        "discussion-v2-004-a",
+        "discussion-v2-004-b",
+        "discussion-v2-006-a",
+        "discussion-v2-002-b",
+        "discussion-v2-003-a"
+      ],
+      "confidence": 0.3857625325340696
+    },
+    {
+      "query_id": "pg-index-no_answer",
+      "semantic_ids": [
+        "discussion-049-b",
+        "discussion-049-a",
+        "discussion-v2-008-b",
+        "discussion-v2-008-a",
+        "discussion-v2-023-b"
+      ],
+      "cosine_ids": [
+        "discussion-049-b",
+        "discussion-v2-008-b",
+        "discussion-v2-023-b",
+        "discussion-v2-009-a",
+        "discussion-v2-009-b"
+      ],
+      "bm25_ids": [
+        "discussion-030-a",
+        "discussion-005-b",
+        "discussion-v2-007-b",
+        "discussion-v2-023-a"
+      ],
+      "confidence": 0.036734242620195555
+    },
+    {
+      "query_id": "pg-pool-literal",
+      "semantic_ids": [
+        "discussion-v2-005-a",
+        "discussion-v2-005-b",
+        "discussion-021-a",
+        "discussion-021-b",
+        "discussion-v2-004-a"
+      ],
+      "cosine_ids": [
+        "discussion-v2-005-a",
+        "discussion-021-a",
+        "discussion-v2-004-a",
+        "discussion-031-b",
+        "discussion-031-a"
+      ],
+      "bm25_ids": [
+        "discussion-v2-005-a",
+        "discussion-021-b",
+        "discussion-v2-001-a",
+        "discussion-031-b",
+        "discussion-021-a"
+      ],
+      "confidence": 0.9969117555890372
+    },
+    {
+      "query_id": "pg-pool-paraphrase",
+      "semantic_ids": [
+        "discussion-v2-005-a",
+        "discussion-v2-005-b",
+        "discussion-021-a",
+        "discussion-021-b",
+        "discussion-v2-008-b"
+      ],
+      "cosine_ids": [
+        "discussion-v2-005-a",
+        "discussion-021-a",
+        "discussion-v2-008-b",
+        "discussion-v2-010-a",
+        "discussion-022-a"
+      ],
+      "bm25_ids": [
+        "discussion-v2-005-a",
+        "discussion-021-a",
+        "discussion-v2-008-b",
+        "discussion-028-a",
+        "discussion-051-a"
+      ],
+      "confidence": 0.4419116008772346
+    },
+    {
+      "query_id": "pg-pool-distractor",
+      "semantic_ids": [
+        "discussion-v2-005-b",
+        "discussion-v2-005-a",
+        "discussion-v2-010-a",
+        "discussion-v2-010-b",
+        "discussion-051-a"
+      ],
+      "cosine_ids": [
+        "discussion-v2-005-b",
+        "discussion-v2-010-a",
+        "discussion-051-a",
+        "discussion-021-a",
+        "discussion-028-a"
+      ],
+      "bm25_ids": [
+        "discussion-v2-005-b",
+        "discussion-v2-005-a",
+        "discussion-v2-001-a",
+        "discussion-v2-011-b",
+        "discussion-013-a"
+      ],
+      "confidence": 0.9944799387712291
+    },
+    {
+      "query_id": "tls-ca-literal",
+      "semantic_ids": [
+        "discussion-022-b",
+        "discussion-022-a",
+        "discussion-v2-009-a",
+        "discussion-v2-009-b",
+        "discussion-v2-007-a"
+      ],
+      "cosine_ids": [
+        "discussion-022-b",
+        "discussion-v2-009-a",
+        "discussion-v2-009-b",
+        "discussion-022-a",
+        "discussion-v2-007-a"
+      ],
+      "bm25_ids": [
+        "discussion-v2-009-a",
+        "discussion-v2-009-b",
+        "discussion-022-a",
+        "discussion-022-b",
+        "discussion-013-b"
+      ],
+      "confidence": 0.5097482340964872
+    },
+    {
+      "query_id": "tls-ca-paraphrase",
+      "semantic_ids": [
+        "discussion-022-a",
+        "discussion-022-b",
+        "discussion-v2-009-a",
+        "discussion-v2-009-b",
+        "discussion-v2-010-a"
+      ],
+      "cosine_ids": [
+        "discussion-022-a",
+        "discussion-022-b",
+        "discussion-v2-009-a",
+        "discussion-v2-010-a",
+        "discussion-021-a"
+      ],
+      "bm25_ids": [
+        "discussion-022-b",
+        "discussion-021-b",
+        "discussion-021-a",
+        "discussion-v2-005-a",
+        "discussion-022-a"
+      ],
+      "confidence": 0.9894612620354087
+    },
+    {
+      "query_id": "tls-ca-distractor",
+      "semantic_ids": [
+        "discussion-v2-009-a",
+        "discussion-v2-009-b",
+        "discussion-022-a",
+        "discussion-022-b",
+        "discussion-v2-010-a"
+      ],
+      "cosine_ids": [
+        "discussion-v2-009-a",
+        "discussion-v2-009-b",
+        "discussion-022-a",
+        "discussion-022-b",
+        "discussion-v2-010-a"
+      ],
+      "bm25_ids": [
+        "discussion-022-a",
+        "discussion-v2-009-b",
+        "discussion-v2-009-a",
+        "discussion-025-b",
+        "discussion-060-b"
+      ],
+      "confidence": 0.5954889359353158
+    },
+    {
+      "query_id": "secret-rotation-literal",
+      "semantic_ids": [
+        "discussion-v2-010-a",
+        "discussion-v2-010-b",
+        "discussion-022-b",
+        "discussion-022-a",
+        "discussion-013-b"
+      ],
+      "cosine_ids": [
+        "discussion-v2-010-a",
+        "discussion-022-b",
+        "discussion-013-b",
+        "discussion-013-a",
+        "discussion-v2-007-b"
+      ],
+      "bm25_ids": [
+        "discussion-v2-010-a",
+        "discussion-022-b",
+        "discussion-v2-005-a",
+        "discussion-v2-021-a",
+        "discussion-v2-003-b"
+      ],
+      "confidence": 0.9931186991945569
+    },
+    {
+      "query_id": "secret-rotation-paraphrase",
+      "semantic_ids": [
+        "discussion-013-a",
+        "discussion-013-b",
+        "discussion-v2-010-a",
+        "discussion-v2-010-b",
+        "discussion-002-b"
+      ],
+      "cosine_ids": [
+        "discussion-013-a",
+        "discussion-v2-010-a",
+        "discussion-002-b",
+        "discussion-013-b",
+        "discussion-022-b"
+      ],
+      "bm25_ids": [
+        "discussion-013-a",
+        "discussion-051-b",
+        "discussion-013-b",
+        "discussion-003-a",
+        "discussion-021-b"
+      ],
+      "confidence": 0.754465739945427
+    },
+    {
+      "query_id": "secret-rotation-no_answer",
+      "semantic_ids": [
+        "discussion-049-b",
+        "discussion-049-a",
+        "discussion-010-a",
+        "discussion-010-b",
+        "discussion-v2-024-b"
+      ],
+      "cosine_ids": [
+        "discussion-049-b",
+        "discussion-010-a",
+        "discussion-v2-024-b",
+        "discussion-v2-016-a",
+        "discussion-056-b"
+      ],
+      "bm25_ids": [
+        "discussion-v2-001-a",
+        "discussion-v2-008-a",
+        "discussion-v2-010-b",
+        "discussion-v2-011-a",
+        "discussion-057-b"
+      ],
+      "confidence": 0.03910836945635894
+    },
+    {
+      "query_id": "cookie-cache-literal",
+      "semantic_ids": [
+        "discussion-v2-011-a",
+        "discussion-v2-011-b",
+        "discussion-020-a",
+        "discussion-020-b",
+        "discussion-019-b"
+      ],
+      "cosine_ids": [
+        "discussion-v2-011-a",
+        "discussion-v2-011-b",
+        "discussion-020-a",
+        "discussion-019-b",
+        "discussion-019-a"
+      ],
+      "bm25_ids": [
+        "discussion-v2-011-a",
+        "discussion-020-a",
+        "discussion-v2-011-b",
+        "discussion-013-b",
+        "discussion-025-a"
+      ],
+      "confidence": 0.9847360765131609
+    },
+    {
+      "query_id": "cookie-cache-paraphrase",
+      "semantic_ids": [
+        "discussion-v2-011-a",
+        "discussion-v2-011-b",
+        "discussion-019-a",
+        "discussion-019-b",
+        "discussion-027-a"
+      ],
+      "cosine_ids": [
+        "discussion-v2-011-a",
+        "discussion-019-a",
+        "discussion-027-a",
+        "discussion-019-b",
+        "discussion-020-a"
+      ],
+      "bm25_ids": [
+        "discussion-v2-006-b",
+        "discussion-020-a",
+        "discussion-v2-019-b",
+        "discussion-v2-011-b",
+        "discussion-007-a"
+      ],
+      "confidence": 0.5501045490111802
+    },
+    {
+      "query_id": "cookie-cache-distractor",
+      "semantic_ids": [
+        "discussion-v2-011-b",
+        "discussion-v2-011-a",
+        "discussion-020-a",
+        "discussion-020-b",
+        "discussion-019-b"
+      ],
+      "cosine_ids": [
+        "discussion-v2-011-b",
+        "discussion-v2-011-a",
+        "discussion-020-a",
+        "discussion-019-b",
+        "discussion-019-a"
+      ],
+      "bm25_ids": [
+        "discussion-v2-011-b",
+        "discussion-007-b",
+        "discussion-020-a",
+        "discussion-v2-013-a",
+        "discussion-032-a"
+      ],
+      "confidence": 0.36883614687306215
+    },
+    {
+      "query_id": "upload-quota-literal",
+      "semantic_ids": [
+        "discussion-v2-016-a",
+        "discussion-v2-016-b",
+        "discussion-v2-004-a",
+        "discussion-v2-004-b",
+        "discussion-008-a"
+      ],
+      "cosine_ids": [
+        "discussion-v2-016-a",
+        "discussion-v2-016-b",
+        "discussion-v2-004-a",
+        "discussion-008-a",
+        "discussion-v2-002-b"
+      ],
+      "bm25_ids": [
+        "discussion-v2-016-a",
+        "discussion-v2-016-b",
+        "discussion-v2-004-a",
+        "discussion-v2-017-b",
+        "discussion-v2-004-b"
+      ],
+      "confidence": 0.9995581121035128
+    },
+    {
+      "query_id": "upload-quota-paraphrase",
+      "semantic_ids": [
+        "discussion-v2-016-a",
+        "discussion-v2-016-b",
+        "discussion-008-a",
+        "discussion-008-b",
+        "discussion-051-b"
+      ],
+      "cosine_ids": [
+        "discussion-v2-016-a",
+        "discussion-008-a",
+        "discussion-v2-016-b",
+        "discussion-051-b",
+        "discussion-028-b"
+      ],
+      "bm25_ids": [
+        "discussion-v2-016-a",
+        "discussion-008-a",
+        "discussion-023-b",
+        "discussion-v2-001-a",
+        "discussion-059-b"
+      ],
+      "confidence": 0.8154962970173532
+    },
+    {
+      "query_id": "upload-quota-no_answer",
+      "semantic_ids": [
+        "discussion-060-a",
+        "discussion-060-b",
+        "discussion-v2-011-a",
+        "discussion-v2-011-b",
+        "discussion-019-b"
+      ],
+      "cosine_ids": [
+        "discussion-060-a",
+        "discussion-v2-011-a",
+        "discussion-019-b",
+        "discussion-010-a",
+        "discussion-v2-021-b"
+      ],
+      "bm25_ids": [
+        "discussion-047-b"
+      ],
+      "confidence": 0.04979787764987267
+    },
+    {
+      "query_id": "media-sniff-literal",
+      "semantic_ids": [
+        "discussion-v2-017-a",
+        "discussion-v2-017-b",
+        "discussion-008-a",
+        "discussion-008-b",
+        "discussion-035-b"
+      ],
+      "cosine_ids": [
+        "discussion-v2-017-a",
+        "discussion-008-a",
+        "discussion-v2-017-b",
+        "discussion-035-b",
+        "discussion-v2-016-a"
+      ],
+      "bm25_ids": [
+        "discussion-v2-017-a",
+        "discussion-v2-017-b",
+        "discussion-010-b",
+        "discussion-008-a",
+        "discussion-v2-016-a"
+      ],
+      "confidence": 0.8701604973543408
+    },
+    {
+      "query_id": "media-sniff-paraphrase",
+      "semantic_ids": [
+        "discussion-020-b",
+        "discussion-020-a",
+        "discussion-v2-017-a",
+        "discussion-v2-017-b",
+        "discussion-035-b"
+      ],
+      "cosine_ids": [
+        "discussion-020-b",
+        "discussion-v2-017-a",
+        "discussion-035-b",
+        "discussion-v2-013-a",
+        "discussion-v2-012-a"
+      ],
+      "bm25_ids": [
+        "discussion-v2-017-a",
+        "discussion-v2-017-b",
+        "discussion-020-b",
+        "discussion-v2-013-a",
+        "discussion-v2-020-b"
+      ],
+      "confidence": 0.281609929254287
+    },
+    {
+      "query_id": "media-sniff-distractor",
+      "semantic_ids": [
+        "discussion-v2-017-b",
+        "discussion-v2-017-a",
+        "discussion-047-b",
+        "discussion-047-a",
+        "discussion-035-b"
+      ],
+      "cosine_ids": [
+        "discussion-v2-017-b",
+        "discussion-047-b",
+        "discussion-035-b",
+        "discussion-v2-016-b",
+        "discussion-v2-012-b"
+      ],
+      "bm25_ids": [
+        "discussion-v2-017-b",
+        "discussion-008-b",
+        "discussion-001-a",
+        "discussion-023-a",
+        "discussion-060-a"
+      ],
+      "confidence": 0.9985616583110775
+    },
+    {
+      "query_id": "cursor-sign-literal",
+      "semantic_ids": [
+        "discussion-v2-018-a",
+        "discussion-v2-018-b",
+        "discussion-v2-010-a",
+        "discussion-v2-010-b",
+        "discussion-016-a"
+      ],
+      "cosine_ids": [
+        "discussion-v2-018-a",
+        "discussion-v2-018-b",
+        "discussion-v2-010-a",
+        "discussion-016-a",
+        "discussion-v2-002-a"
+      ],
+      "bm25_ids": [
+        "discussion-v2-018-a",
+        "discussion-v2-018-b",
+        "discussion-016-a",
+        "discussion-v2-007-a",
+        "discussion-v2-022-a"
+      ],
+      "confidence": 0.9970526112957036
+    },
+    {
+      "query_id": "cursor-sign-paraphrase",
+      "semantic_ids": [
+        "discussion-v2-018-a",
+        "discussion-v2-018-b",
+        "discussion-020-a",
+        "discussion-020-b",
+        "discussion-007-a"
+      ],
+      "cosine_ids": [
+        "discussion-v2-018-a",
+        "discussion-020-a",
+        "discussion-007-a",
+        "discussion-006-a",
+        "discussion-002-a"
+      ],
+      "bm25_ids": [
+        "discussion-v2-008-a",
+        "discussion-059-b",
+        "discussion-v2-018-b",
+        "discussion-v2-010-b",
+        "discussion-v2-009-a"
+      ],
+      "confidence": 0.6323721029860668
+    },
+    {
+      "query_id": "cursor-sign-distractor",
+      "semantic_ids": [
+        "discussion-v2-018-b",
+        "discussion-v2-018-a",
+        "discussion-016-a",
+        "discussion-016-b",
+        "discussion-032-a"
+      ],
+      "cosine_ids": [
+        "discussion-v2-018-b",
+        "discussion-v2-018-a",
+        "discussion-016-a",
+        "discussion-032-a",
+        "discussion-005-a"
+      ],
+      "bm25_ids": [
+        "discussion-v2-018-b",
+        "discussion-v2-018-a",
+        "discussion-016-a",
+        "discussion-v2-006-b",
+        "discussion-v2-007-b"
+      ],
+      "confidence": 0.9952163563419335
+    },
+    {
+      "query_id": "clock-lease-literal",
+      "semantic_ids": [
+        "discussion-v2-019-a",
+        "discussion-v2-019-b",
+        "discussion-059-b",
+        "discussion-059-a",
+        "discussion-057-b"
+      ],
+      "cosine_ids": [
+        "discussion-v2-019-a",
+        "discussion-059-b",
+        "discussion-v2-019-b",
+        "discussion-059-a",
+        "discussion-057-b"
+      ],
+      "bm25_ids": [
+        "discussion-v2-019-a",
+        "discussion-057-b",
+        "discussion-059-a",
+        "discussion-001-b",
+        "discussion-v2-020-a"
+      ],
+      "confidence": 0.9719247153625458
+    },
+    {
+      "query_id": "clock-lease-paraphrase",
+      "semantic_ids": [
+        "discussion-057-b",
+        "discussion-057-a",
+        "discussion-031-b",
+        "discussion-031-a",
+        "discussion-v2-019-a"
+      ],
+      "cosine_ids": [
+        "discussion-057-b",
+        "discussion-031-b",
+        "discussion-057-a",
+        "discussion-v2-019-a",
+        "discussion-v2-019-b"
+      ],
+      "bm25_ids": [
+        "discussion-v2-019-a",
+        "discussion-v2-014-b",
+        "discussion-v2-016-b",
+        "discussion-031-b",
+        "discussion-v2-012-b"
+      ],
+      "confidence": 0.47958587603490366
+    },
+    {
+      "query_id": "clock-lease-no_answer",
+      "semantic_ids": [
+        "discussion-056-b",
+        "discussion-056-a",
+        "discussion-049-b",
+        "discussion-049-a",
+        "discussion-016-a"
+      ],
+      "cosine_ids": [
+        "discussion-056-b",
+        "discussion-049-b",
+        "discussion-056-a",
+        "discussion-016-a",
+        "discussion-v2-006-a"
+      ],
+      "bm25_ids": [
+        "discussion-021-a",
+        "discussion-v2-010-b",
+        "discussion-v2-011-a",
+        "discussion-005-b",
+        "discussion-v2-001-a"
+      ],
+      "confidence": 0.09392096581604568
+    },
+    {
+      "query_id": "rollback-shape-literal",
+      "semantic_ids": [
+        "discussion-v2-021-b",
+        "discussion-v2-021-a",
+        "discussion-023-a",
+        "discussion-023-b",
+        "discussion-003-b"
+      ],
+      "cosine_ids": [
+        "discussion-v2-021-b",
+        "discussion-v2-021-a",
+        "discussion-023-a",
+        "discussion-003-b",
+        "discussion-v2-005-b"
+      ],
+      "bm25_ids": [
+        "discussion-v2-021-a",
+        "discussion-v2-021-b",
+        "discussion-023-a",
+        "discussion-v2-003-b",
+        "discussion-013-a"
+      ],
+      "confidence": 0.8448501490627959
+    },
+    {
+      "query_id": "rollback-shape-paraphrase",
+      "semantic_ids": [
+        "discussion-v2-021-b",
+        "discussion-v2-021-a",
+        "discussion-005-b",
+        "discussion-005-a",
+        "discussion-023-a"
+      ],
+      "cosine_ids": [
+        "discussion-v2-021-b",
+        "discussion-v2-021-a",
+        "discussion-005-b",
+        "discussion-023-a",
+        "discussion-005-a"
+      ],
+      "bm25_ids": [
+        "discussion-023-a",
+        "discussion-v2-021-b",
+        "discussion-v2-008-a",
+        "discussion-051-a",
+        "discussion-v2-010-b"
+      ],
+      "confidence": 0.6843196604653807
+    },
+    {
+      "query_id": "rollback-shape-distractor",
+      "semantic_ids": [
+        "discussion-v2-021-b",
+        "discussion-v2-021-a",
+        "discussion-003-b",
+        "discussion-003-a",
+        "discussion-023-a"
+      ],
+      "cosine_ids": [
+        "discussion-v2-021-b",
+        "discussion-v2-021-a",
+        "discussion-003-b",
+        "discussion-023-a",
+        "discussion-v2-016-a"
+      ],
+      "bm25_ids": [
+        "discussion-v2-021-b",
+        "discussion-v2-017-a",
+        "discussion-v2-001-a",
+        "discussion-v2-021-a",
+        "discussion-023-a"
+      ],
+      "confidence": 0.8606627120365534
+    },
+    {
+      "query_id": "confidence-shift-literal",
+      "semantic_ids": [
+        "discussion-v2-023-a",
+        "discussion-v2-023-b",
+        "discussion-045-b",
+        "discussion-045-a",
+        "discussion-043-a"
+      ],
+      "cosine_ids": [
+        "discussion-v2-023-a",
+        "discussion-v2-023-b",
+        "discussion-045-b",
+        "discussion-043-a",
+        "discussion-v2-024-b"
+      ],
+      "bm25_ids": [
+        "discussion-v2-023-a",
+        "discussion-v2-023-b",
+        "discussion-045-b",
+        "discussion-044-b",
+        "discussion-016-a"
+      ],
+      "confidence": 0.9920370489185825
+    },
+    {
+      "query_id": "confidence-shift-paraphrase",
+      "semantic_ids": [
+        "discussion-v2-023-a",
+        "discussion-v2-023-b",
+        "discussion-043-a",
+        "discussion-043-b",
+        "discussion-v2-012-b"
+      ],
+      "cosine_ids": [
+        "discussion-v2-023-a",
+        "discussion-043-a",
+        "discussion-v2-012-b",
+        "discussion-035-a",
+        "discussion-v2-024-b"
+      ],
+      "bm25_ids": [
+        "discussion-v2-023-a",
+        "discussion-v2-014-a",
+        "discussion-025-b",
+        "discussion-049-b",
+        "discussion-v2-012-b"
+      ],
+      "confidence": 0.6798473370072531
+    },
+    {
+      "query_id": "confidence-shift-distractor",
+      "semantic_ids": [
+        "discussion-v2-023-b",
+        "discussion-v2-023-a",
+        "discussion-044-a",
+        "discussion-044-b",
+        "discussion-043-a"
+      ],
+      "cosine_ids": [
+        "discussion-v2-023-b",
+        "discussion-v2-023-a",
+        "discussion-044-a",
+        "discussion-043-a",
+        "discussion-040-a"
+      ],
+      "bm25_ids": [
+        "discussion-v2-023-b",
+        "discussion-044-a",
+        "discussion-044-b",
+        "discussion-043-b",
+        "discussion-025-b"
+      ],
+      "confidence": 0.9997433657439042
+    }
+  ]
+}

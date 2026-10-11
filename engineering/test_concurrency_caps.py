@@ -1,4 +1,4 @@
-"""MySQL regression for expired-run collection racing an in-flight source write."""
+"""Database regression for expired cleanup racing an in-flight source write."""
 
 from concurrent.futures import ThreadPoolExecutor
 from datetime import timedelta
@@ -26,7 +26,7 @@ def isolated_connection(callback):
         connections.close_all()
 
 
-@skipUnless(connection.vendor == "mysql", "Requires real MySQL locks and foreign keys.")
+@skipUnless(connection.vendor in {"mysql", "postgresql"}, "Requires real row locks and foreign keys.")
 class LabExpiredCleanupConcurrencyTests(TransactionTestCase):
     def test_create_run_collects_expired_children_after_inflight_source_commit(self):
         # Establish ownership before the race; owner initialization has its own

@@ -17,6 +17,8 @@ def home(request):
 @require_http_methods(["GET", "POST"])
 @ratelimit(key="ip", rate="3/h", method="POST", block=True)
 def mailme(request):
+    if not settings.CONTACT_FORM_ENABLED:
+        return render(request, 'HusseinAh/contact_link.html', status=200 if request.method == 'GET' else 503)
     sent = False
 
     if request.method == 'POST':

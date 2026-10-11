@@ -1,0 +1,21 @@
+{
+  "retriever_sha256": "4615b2327665d2fb2f867e7637a49ed6a52137cd290f3ae12ef58e13a6e028fb",
+  "index_sha256": "80da20706ff847fc6351c7cd383409c0d58701952f33e08d5a4fd7a124c76b7e",
+  "calibration_sha256": "3e2894f80ba7cbbb34ef3c102a524af376441d5fa8eb22114bae0a72936ce3af",
+  "query_vectors_sha256": "21ec177097b002a298181b3129be26db84f7251cffc41b43e2ffb76ef7efdce5",
+  "holdout_sha256": {
+    "corpus-v2.json": "74e9c139d6244979825f36b30e94467e7e8600cf01563f26ed42f0d34cbd8586",
+    "queries-v2.json": "e557adfaa234fd2b85dfa1b4a0a576c14b896d50f43e0453c9c3db0660441b7b"
+  },
+  "test_inspected": false,
+  "policy": {
+    "retriever": "cosine-related-v2",
+    "expand": "Explicit related_ids after each leading unvisited discussion, capped at five, stable cosine/ID order. No query labels at runtime.",
+    "confidence_features": [
+      "top cosine",
+      "margin to next unrelated group"
+    ],
+    "minimum_recall_at_5": 0.85,
+    "require_paraphrase_improvement_over_bm25": true
+  }
+}

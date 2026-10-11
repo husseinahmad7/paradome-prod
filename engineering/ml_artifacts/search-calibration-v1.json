@@ -1,0 +1,23 @@
+{
+  "weights": [
+    7.947364596062021,
+    15.548252853344893
+  ],
+  "intercept": -4.313635495015328,
+  "threshold": 0.493,
+  "contract": {
+    "model_id": "Xenova/all-MiniLM-L6-v2",
+    "revision": "751bff37182d3f1213fa05d7196b954e230abad9",
+    "runtime_version": "4.3.1",
+    "index_version": "minilm-q8-discussions-v1",
+    "dimension": 384,
+    "pooling": "mean-l2",
+    "dtype": "q8"
+  },
+  "corpus_sha256": "41f3f95ff40d8ac0588b0e0a35ab10901175aab39c7673185c05a1ff3daa1cac",
+  "fit_split": "development",
+  "threshold_split": "calibration",
+  "regularization": 0.02,
+  "selection": "Max F1 at precision >= .90 and coverage >= .50 on calibration; ties prefer higher threshold. Otherwise reject all.",
+  "index_sha256": "12a44df9dbb0b5b4f7b184bed7cae4b20d16f56d66236b864270eaec16e84cb2"
+}

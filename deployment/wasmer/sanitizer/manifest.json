@@ -1,0 +1,11 @@
+{
+  "version": "sanitizer-wasi-v1",
+  "policy": "prose-v1",
+  "ammonia": "4.1.4",
+  "sha256": "d6d08b49a7e7420f2c18fe33cfd8f37fae8dcc0aedb579ceba0f06dab9f84ad3",
+  "bytes": 868002,
+  "compiler": "rustc 1.98.1 (48a229cea 2026-09-01)",
+  "target": "wasm32-wasip1",
+  "source_sha256": "0a0345cb1c05d832a437a9109465954d2b4be2ad17219b3a3640a7672e2f1745",
+  "lock_sha256": "f5d31f4efc7b21f41efff60dee73959a75da7246ebe54136962e067287072e36"
+}

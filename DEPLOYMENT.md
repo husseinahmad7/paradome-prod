@@ -262,3 +262,15 @@ it does not terminate HTTPS on port 8000. The container runs unprivileged,
 waits for healthy MySQL, applies migrations, creates the shared cache table,
 collects fingerprinted static assets, and starts Gunicorn. Use
 `docker-compose.debug.yml` only for direct local HTTP development.
+
+## Independent Wasmer demo — release blocked
+
+The Wasmer profile, public manifest template, asset builder, runtime compatibility
+probe, preparation command, and bounded daily maintenance command are in
+`deployment/wasmer/` and `paradome/settings/wasmer.py`. The preview has not been
+released: Wasmer's Python target currently lacks the pinned mysqlclient and nh3
+wheels. No demo URL has been promoted.
+
+See [Wasmer deployment and compatibility evidence](docs/wasmer-deployment.md)
+before retrying. Runtime, managed MySQL, sessions, authorized private media,
+persistence, cleanup, scheduled jobs, and rollback remain release gates.

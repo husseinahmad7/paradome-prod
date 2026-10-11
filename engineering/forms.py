@@ -38,3 +38,14 @@ class SubmissionForm(forms.Form):
 class DeliveryForm(forms.Form):
     event_id = forms.UUIDField(widget=forms.HiddenInput)
     scenario = forms.ChoiceField(choices=SCENARIOS, label="Delivery scenario")
+
+
+class SearchForm(forms.Form):
+    text = forms.CharField(label="Describe a technical problem", min_length=3, max_length=240,
+                           widget=forms.Textarea(attrs={"rows": 2, "maxlength": 240, "id": "search-text"}))
+
+    def clean_text(self):
+        value = normalize_submission(self.cleaned_data["text"])
+        if len(value) < 3 or len(value) > 240 or any(unicodedata.category(c).startswith("C") and c not in "\n\t" for c in value):
+            raise forms.ValidationError("Use 3–240 characters of plain English text.")
+        return value

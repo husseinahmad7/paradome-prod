@@ -1,0 +1,34 @@
+# Git autobuild supplies the Python package. This is an independent preview;
+# publish its URL only after runtime, persistence, authorization and rollback QA.
+kind: wasmer.io/App.v0
+owner: h7osanna_xyc
+name: paradome-control-room-pg-preview
+package: .
+debug: false
+capabilities:
+  database:
+    engine: postgres
+  cdn_cache:
+    enabled: true
+locality:
+  regions: [fr-roub1]
+volumes:
+  - name: private-media
+    mount: /data
+redirect:
+  force_https: true
+jobs:
+  - name: prepare-database
+    trigger: pre-deployment
+    action:
+      execute:
+        command: after_deploy
+        timeout: 180s
+        retries: 0
+  - name: reset-guest-sandbox
+    trigger: "0 0 * * *"
+    action:
+      execute:
+        command: reset_guest_sandbox
+        timeout: 180s
+        retries: 0

@@ -50,6 +50,8 @@ def _channel_for_user(user, pk):
 
 
 def _publish_message(message):
+    if not settings.CHAT_REALTIME_ENABLED:
+        return
     try:
         get_pusher_client().trigger(
             f"private-chat-{message.channel_id}",
@@ -101,6 +103,7 @@ class ChatMessageList(
                 "private_channel_name": f"private-chat-{channel.pk}",
                 "pusher_key": getattr(settings, "PUSHER_KEY", ""),
                 "pusher_cluster": getattr(settings, "PUSHER_CLUSTER", ""),
+                "chat_refresh_only": not settings.CHAT_REALTIME_ENABLED,
                 "can_manage_chat": can_manage_dome(self.request.user, dome),
             }
         )
@@ -209,6 +212,8 @@ def pusher_auth(request):
     if not match or not socket_id:
         return HttpResponse("Invalid channel authorization request", status=400)
     _channel_for_user(request.user, int(match.group("channel_id")))
+    if not settings.CHAT_REALTIME_ENABLED:
+        return HttpResponse("Realtime messaging is disabled. Refresh saved messages explicitly.", status=503)
     try:
         authorization = get_pusher_client().authenticate(
             channel=channel_name, socket_id=socket_id

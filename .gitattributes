@@ -2,8 +2,17 @@ docker-entrypoint.sh text eol=lf
 Dockerfile text eol=lf
 docker-compose*.yml text eol=lf
 .github/workflows/*.yml text eol=lf
-# Frozen ML evidence hashes these JSON files byte-for-byte.
-ml/data/*.json text eol=lf
-ml/frozen-*.json text eol=lf
-ml/evaluation-*.json text eol=lf
-engineering/ml_artifacts/*.json text eol=lf
+# Frozen evidence hashes the originally evaluated bytes, including line endings.
+# Preserve those bytes on Windows and Linux; JSON values are unchanged.
+ml/search/data/corpus-v1.json -text
+ml/search/data/queries-v1.json -text
+engineering/ml_artifacts/search-index-v1.json -text
+# New artifacts are authored as UTF-8 LF before freezing.
+ml/search/data/*-v2.json text eol=lf
+ml/search/frozen-v2.json text eol=lf
+ml/search/*-v2.json text eol=lf
+engineering/ml_artifacts/*-v2.json text eol=lf
+deployment/wasmer/sanitizer/*.json text eol=lf
+deployment/wasmer/sanitizer/*.lock text eol=lf
+deployment/wasmer/sanitizer/src/*.rs text eol=lf
+deployment/wasmer/sanitizer/bin/*.wasm -text

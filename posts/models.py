@@ -17,7 +17,7 @@ from PIL import Image, UnidentifiedImageError
 from Domes.access import DEMO_GROUP_NAME
 from Domes.models import Dome
 from Domes.storage import private_media_storage
-from posts.sanitizers import sanitize_rich_text
+from posts.sanitizers import sanitize_prose_field, sanitize_rich_text
 
 def user_directory_path(instance,filename):
     suffix = Path(filename).suffix.lower()[:10]
@@ -83,7 +83,7 @@ class Tag(models.Model):
 class Post(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     question_text = models.CharField(max_length=200)
-    content = ProseEditorField(extensions=PROSE_EXTENSIONS, sanitize=True)
+    content = ProseEditorField(extensions=PROSE_EXTENSIONS, sanitize=sanitize_prose_field)
     # content = models.TextField(max_length=2000)
     picture = models.ImageField(
         upload_to=user_directory_path,
@@ -130,7 +130,7 @@ class Post(models.Model):
 class Comment(models.Model):
     post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
     user = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE)
-    comment = ProseEditorField(extensions=PROSE_EXTENSIONS, sanitize=True)
+    comment = ProseEditorField(extensions=PROSE_EXTENSIONS, sanitize=sanitize_prose_field)
     commented = models.DateTimeField(auto_now_add=True)
     reply_to = models.ForeignKey('self', null=True, blank=True, related_name='replied_to', on_delete=models.CASCADE)
     

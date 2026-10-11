@@ -150,6 +150,22 @@ class ChatSecurityTests(TestCase):
         self.assertNotContains(older, "message-05")
         self.assertNotContains(older, "Load earlier messages")
 
+    @override_settings(CHAT_REALTIME_ENABLED=False)
+    @patch("Chat.views.get_pusher_client")
+    def test_refresh_only_chat_persists_without_publisher_and_keeps_authorization(self, get_client):
+        self.client.force_login(self.member)
+        url = reverse("chat:chat-channel", args=[self.channel.pk])
+        with self.captureOnCommitCallbacks(execute=True):
+            response = self.client.post(url, {"body": "Saved with explicit refresh"}, HTTP_HX_REQUEST="true")
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(ChatMessage.objects.filter(body="Saved with explicit refresh").exists())
+        get_client.assert_not_called()
+        self.assertContains(self.client.get(url), "Refresh saved messages")
+        payload = {"channel_name": f"private-chat-{self.channel.pk}", "socket_id": "123.456"}
+        self.assertEqual(self.client.post(reverse("chat:pusher-auth"), payload).status_code, 503)
+        self.client.force_login(self.outsider)
+        self.assertEqual(self.client.post(reverse("chat:pusher-auth"), payload).status_code, 403)
+
     def test_channel_route_supports_native_and_htmx_navigation(self):
         self.client.force_login(self.member)
         url = reverse("chat:chat-channel", args=[self.channel.pk])
